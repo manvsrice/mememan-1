@@ -1,0 +1,34 @@
+Minimal requirements of prototype:
+- Steady FPS of game, no laggy feeling.
+- Menu system and general gui heavily inspired by mega man. Healthbar for hero, and powerbar for hero's special weapons.
+- One playable level, with different enemies and a end-level boss. All enemies should have/show different movement patterns and attacks.
+- Hero takes damage when touchin most enemies or enemies' projectiles, and certain level tiles.
+- Empty hero healthbar or hero falling off screen usually equals death.
+- Most of the time the game view is following. Sometimes the view is locked while the hero moves around.
+- Different powerups scattered around, being dropped of dead enemies etc. Health and power for weapons. Occasionally extra lives, possibillities for making new stuff.
+- Some kind of sprite-system, but again, some enemies in the prototype can just be simple shapes (rectangles, triangles, circles) as long as they move and stuff.
+- Graphics should be pixelated in style, like good old NES 8-bit.
+- Hero must have at least 2-3 weapons to demonstrate weapon system
+- Responsive and fluent movement of hero.
+- Example of sound effects/music, nothing fancy.
+- Possibillites/examples of writing text (dialog text)
+- Levels should be possible to define in a file.
+- Movement keys should be configurable in files at least.
+   Seven key inputs: <move right>, <move left>, <climb down>, <climb up>, <jump>, <shoot>, <menu/select> 
+   Special move: <climb down> + <jump> = slide (short rapid forward movement) See video 1, at time 2:02
+   Most weapons should always fire straight forward, but for some, one should be able to chose direction by pressing <move right/left> and <climb up/down>
+
+
+Nice to have stuff:
+- Would be nice if the sw architeture supports for retrieving data from the internets in the future
+- Password system, like 4:58 in video 1. See video 2 for how to enter password. The password loads a state of hero: lives, levels cleared.
+- Splash/intro screen
+- End screen/credits example
+
+
+References:
+Mega Man 3 video:
+http://www.youtube.com/watch?v=OZ6IF9_rhhg
+
+Mega Man 3 video of password system:
+http://www.youtube.com/watch?v=rego6HpICwU
