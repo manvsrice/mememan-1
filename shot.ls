@@ -1,4 +1,4 @@
 global.shot = mixin thing, ->
-	sprite: "megaman/5"
-	size: v3(4,4,0)
+	sprite: "shot/shot"
+	size: v3(7,7,0)
 	collide: ~> @destroy! if it.solid

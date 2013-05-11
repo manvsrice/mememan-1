@@ -22,7 +22,7 @@ require("viclib")();
           this$.pos.y += 0.5 * G * dt * dt;
           this$.vel.y += G * dt;
         }
-        this$.grounded = false;
+        this$.is_grounded = just(false);
         return each(function(it){
           return this$.check_collision(it);
         }, things);
@@ -70,7 +70,7 @@ require("viclib")();
             if (byi < ayf && ayf < byf) {
               a.pos.y += dy;
               a.vel.y = 0;
-              this.grounded = true;
+              this.is_grounded = just(true);
             }
           }
         }

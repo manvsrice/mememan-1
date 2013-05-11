@@ -14,7 +14,7 @@ global.thing = mixin ->
 			@pos.y += 0.5*G*dt*dt
 			@vel.y += G*dt
 
-		@grounded = false
+		@is_grounded = just false
 		(~>@check_collision it) `each` things
 	check_collision: (b) ->
 		a = @; abs = Math.abs;
@@ -32,7 +32,7 @@ global.thing = mixin ->
 				if (bxi < axf < bxf) then a.pos.x += bxi - axf; a.vel.x = 0
 			else
 				if (byi < ayi < byf) then a.pos.y += -dy; a.vel.y = 0
-				if (byi < ayf < byf) then a.pos.y += dy; a.vel.y = 0; @grounded = true
+				if (byi < ayf < byf) then a.pos.y += dy; a.vel.y = 0; @is_grounded = just true
 		a.collide? b
 		true
 	floats: true

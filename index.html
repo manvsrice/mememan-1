@@ -14136,12 +14136,30 @@ require("viclib")();
   require("./thing");
   require("./mememan");
   require("./shot");
-  require("./floor");
+  require("./ground");
   require("./level");
-  global.B = 24;
-  global.VI = 6 * B;
-  global.G = 12 * B;
-  last_time = Date.now();
+  global.B = 16;
+  global.VI = 22 * B;
+  global.G = 84 * B;
+  global.now = function(){
+    return Date.now() / 1000;
+  };
+  global.just = function(val){
+    return function(){
+      return val;
+    };
+  };
+  global.true_for = function(secs){
+    var start;
+    start = now();
+    return function(){
+      return now() - start < secs;
+    };
+  };
+  global.time_since = function(it){
+    return now() - it;
+  };
+  last_time = now();
   $("body").append(processing(1200, 800, function(){
     var this$ = this;
     return global.sprite = _.memoize(function(url){
@@ -14149,23 +14167,26 @@ require("viclib")();
     });
   }, function(){
     var dt, this$ = this;
+    this.scale(1.5);
     this.background(240, 240, 240);
     this.strokeWeight(3);
-    dt = (Date.now() - last_time) / 1000;
+    dt = now() - last_time;
     each(function(it){
       return it.tick(dt);
     }, things);
-    last_time = Date.now();
+    last_time = now();
     return each(function(it){
-      var ref$;
-      return this$.image(sprite((ref$ = it.sprite) != null ? ref$ : "mememan/0"), it.pos.x, it.pos.y);
-    }, things);
+      var img, ref$;
+      img = sprite((ref$ = it.sprite) != null ? ref$ : "ground/0");
+      return this$.image(img, it.pos.x - img.width / 2, it.pos.y - img.height / 2);
+    })(
+    things);
   }));
   level();
 }).call(this);
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/index.js","/")
-},{"./thing":5,"./mememan":6,"./shot":7,"./floor":8,"./level":9,"viclib":10,"boxes":11,"key":12,"victhree":13,"prelude-ls":14,"lodash":15,"__browserify_process":1,"__browserify_buffer":2}],14:[function(require,module,exports){
+},{"./thing":5,"./mememan":6,"./shot":7,"./ground":8,"./level":9,"viclib":10,"boxes":11,"key":12,"victhree":13,"prelude-ls":14,"lodash":15,"__browserify_process":1,"__browserify_buffer":2}],14:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){// prelude.ls 0.6.0
 // Copyright (c) 2012 George Zahariev
 // Released under the MIT License
@@ -20326,7 +20347,179 @@ function import$(obj, src){
 }).call(this);
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/../node_modules/viclib.js","/../node_modules")
-},{"prelude-ls":14,"__browserify_process":1,"__browserify_buffer":2}],11:[function(require,module,exports){
+},{"prelude-ls":14,"__browserify_process":1,"__browserify_buffer":2}],12:[function(require,module,exports){
+(function(process,Buffer,global,__filename,__dirname){jQuery = require("jquery-browserify");
+module.exports = (function(){
+	var KEYCODES = {
+		'backspace' : 8,
+		'tab' : 9,
+		'enter' : 13,
+		'shift' : 16,
+		'ctrl' : 17,
+		'alt' : 18,
+		'pause_break' : 19,
+		'caps_lock' : 20,
+		'escape' : 27,
+		'space' : 32,
+		'page_up' : 33,
+		'page down' : 34,
+		'end' : 35,
+		'home' : 36,
+		'left_arrow' : 37,
+		'up_arrow' : 38,
+		'right_arrow' : 39,
+		'down_arrow' : 40,
+		'insert' : 45,
+		'delete' : 46,
+		'0' : 48,
+		'1' : 49,
+		'2' : 50,
+		'3' : 51,
+		'4' : 52,
+		'5' : 53,
+		'6' : 54,
+		'7' : 55,
+		'8' : 56,
+		'9' : 57,
+		'a' : 65,
+		'b' : 66,
+		'c' : 67,
+		'd' : 68,
+		'e' : 69,
+		'f' : 70,
+		'g' : 71,
+		'h' : 72,
+		'i' : 73,
+		'j' : 74,
+		'k' : 75,
+		'l' : 76,
+		'm' : 77,
+		'n' : 78,
+		'o' : 79,
+		'p' : 80,
+		'q' : 81,
+		'r' : 82,
+		's' : 83,
+		't' : 84,
+		'u' : 85,
+		'v' : 86,
+		'w' : 87,
+		'x' : 88,
+		'y' : 89,
+		'z' : 90,
+		'left_window key' : 91,
+		'right_window key' : 92,
+		'select_key' : 93,
+		'numpad 0' : 96,
+		'numpad 1' : 97,
+		'numpad 2' : 98,
+		'numpad 3' : 99,
+		'numpad 4' : 100,
+		'numpad 5' : 101,
+		'numpad 6' : 102,
+		'numpad 7' : 103,
+		'numpad 8' : 104,
+		'numpad 9' : 105,
+		'multiply' : 106,
+		'add' : 107,
+		'subtract' : 109,
+		'decimal point' : 110,
+		'divide' : 111,
+		'f1' : 112,
+		'f2' : 113,
+		'f3' : 114,
+		'f4' : 115,
+		'f5' : 116,
+		'f6' : 117,
+		'f7' : 118,
+		'f8' : 119,
+		'f9' : 120,
+		'f10' : 121,
+		'f11' : 122,
+		'f12' : 123,
+		'num_lock' : 144,
+		'scroll_lock' : 145,
+		'semi_colon' : 186,
+		'equal_sign' : 187,
+		'comma' : 188,
+		'dash' : 189,
+		'period' : 190,
+		'forward_slash' : 191,
+		'grave_accent' : 192,
+		'open_bracket' : 219,
+		'backslash' : 220,
+		'closebracket' : 221,
+		'single_quote' : 222,
+		'mouse1': 'mouse1',
+		'mouse2': 'mouse2',
+		'mouse3': 'mouse3'
+	};
+	var KEYSTRINGS = {};
+	for (key in KEYCODES)
+		KEYSTRINGS[KEYCODES[key]] = key;
+
+	var keydown = {};
+	var keypressEvents = {};
+	var keyreleaseEvents = {};
+	var keydownEvents = {};
+	jQuery(document).keydown(function(e){ pressKeyProcedure(e); });
+	jQuery(document).keyup(function(e){ releaseKeyProcedure(e); });
+	jQuery(document).mousedown(function(e){
+		pressKeyProcedure({keyCode:"mouse"+e.which});
+	});
+	jQuery(document).mouseup(function(e){
+		releaseKeyProcedure({keyCode:"mouse"+e.which});
+	});
+	function releaseKeyProcedure(e){
+		if (keydown[e.keyCode])
+			if (typeof(keyreleaseEvents[e.keyCode])!="undefined")
+				keyreleaseEvents[e.keyCode].forEach(function(releaseEvent){ releaseEvent(e); });
+		keydown[e.keyCode]=false;
+	}
+	function pressKeyProcedure(e){
+		if (!keydown[e.keyCode])
+			if (typeof(keypressEvents[e.keyCode])!="undefined")
+				keypressEvents[e.keyCode].forEach(function(pressEvent){ pressEvent(e); });
+		keydown[e.keyCode]=true;
+	}
+
+	var mouse_pos = [0,0];
+	jQuery(document).mousemove(function(e){
+		mouse_pos = [e.pageX,e.pageY];
+	});
+
+	function press(keyCode_or_keyString,callback){
+		var keyCode = keyCode_or_keyString;
+		if (typeof(keyCode_or_keyString)=="string")
+			keyCode = KEYCODES[keyCode_or_keyString];
+		
+		if (typeof(keypressEvents[keyCode])=="undefined")
+			keypressEvents[keyCode]=[];
+		keypressEvents[keyCode].push(callback);
+	};
+	function release(keyCode_or_keyString,callback){
+		var keyCode = keyCode_or_keyString;
+		if (typeof(keyCode_or_keyString)=="string")
+			keyCode = KEYCODES[keyCode_or_keyString];
+			
+		if (typeof(keyreleaseEvents[keyCode])=="undefined")
+			keyreleaseEvents[keyCode]=[];
+		keyreleaseEvents[keyCode].push(callback);
+	};
+
+	return {
+		release:release,
+		press:press,
+		down:function(key){return keydown[KEYCODES[key]]},
+		up:function(key){return !keydown[KEYCODES[key]]},
+		mouse_pos:function(){return mouse_pos},
+		mouse_x:function(){return mouse_pos[0]},
+		mouse_y:function(){return mouse_pos[1]}
+	};
+})();
+
+})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/../node_modules/key.js","/../node_modules")
+},{"jquery-browserify":16,"__browserify_process":1,"__browserify_buffer":2}],11:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
 require("viclib")();
 (function(){
@@ -20515,179 +20708,186 @@ require("viclib")();
 }).call(this);
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/../node_modules/boxes.js","/../node_modules")
-},{"viclib":10,"processing":3,"prelude-ls":14,"jquery-browserify":16,"__browserify_process":1,"__browserify_buffer":2}],12:[function(require,module,exports){
-(function(process,Buffer,global,__filename,__dirname){jQuery = require("jquery-browserify");
-module.exports = (function(){
-	var KEYCODES = {
-		'backspace' : 8,
-		'tab' : 9,
-		'enter' : 13,
-		'shift' : 16,
-		'ctrl' : 17,
-		'alt' : 18,
-		'pause_break' : 19,
-		'caps_lock' : 20,
-		'escape' : 27,
-		'space' : 32,
-		'page_up' : 33,
-		'page down' : 34,
-		'end' : 35,
-		'home' : 36,
-		'left_arrow' : 37,
-		'up_arrow' : 38,
-		'right_arrow' : 39,
-		'down_arrow' : 40,
-		'insert' : 45,
-		'delete' : 46,
-		'0' : 48,
-		'1' : 49,
-		'2' : 50,
-		'3' : 51,
-		'4' : 52,
-		'5' : 53,
-		'6' : 54,
-		'7' : 55,
-		'8' : 56,
-		'9' : 57,
-		'a' : 65,
-		'b' : 66,
-		'c' : 67,
-		'd' : 68,
-		'e' : 69,
-		'f' : 70,
-		'g' : 71,
-		'h' : 72,
-		'i' : 73,
-		'j' : 74,
-		'k' : 75,
-		'l' : 76,
-		'm' : 77,
-		'n' : 78,
-		'o' : 79,
-		'p' : 80,
-		'q' : 81,
-		'r' : 82,
-		's' : 83,
-		't' : 84,
-		'u' : 85,
-		'v' : 86,
-		'w' : 87,
-		'x' : 88,
-		'y' : 89,
-		'z' : 90,
-		'left_window key' : 91,
-		'right_window key' : 92,
-		'select_key' : 93,
-		'numpad 0' : 96,
-		'numpad 1' : 97,
-		'numpad 2' : 98,
-		'numpad 3' : 99,
-		'numpad 4' : 100,
-		'numpad 5' : 101,
-		'numpad 6' : 102,
-		'numpad 7' : 103,
-		'numpad 8' : 104,
-		'numpad 9' : 105,
-		'multiply' : 106,
-		'add' : 107,
-		'subtract' : 109,
-		'decimal point' : 110,
-		'divide' : 111,
-		'f1' : 112,
-		'f2' : 113,
-		'f3' : 114,
-		'f4' : 115,
-		'f5' : 116,
-		'f6' : 117,
-		'f7' : 118,
-		'f8' : 119,
-		'f9' : 120,
-		'f10' : 121,
-		'f11' : 122,
-		'f12' : 123,
-		'num_lock' : 144,
-		'scroll_lock' : 145,
-		'semi_colon' : 186,
-		'equal_sign' : 187,
-		'comma' : 188,
-		'dash' : 189,
-		'period' : 190,
-		'forward_slash' : 191,
-		'grave_accent' : 192,
-		'open_bracket' : 219,
-		'backslash' : 220,
-		'closebracket' : 221,
-		'single_quote' : 222,
-		'mouse1': 'mouse1',
-		'mouse2': 'mouse2',
-		'mouse3': 'mouse3'
-	};
-	var KEYSTRINGS = {};
-	for (key in KEYCODES)
-		KEYSTRINGS[KEYCODES[key]] = key;
+},{"viclib":10,"processing":3,"prelude-ls":14,"jquery-browserify":16,"__browserify_process":1,"__browserify_buffer":2}],6:[function(require,module,exports){
+(function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
+require("viclib")();
+(function(){
+  var key;
+  key = require('key');
+  global.cycle = function(arr, interval){
+    return arr[floor((now() % interval) / interval * arr.length)];
+  };
+  global.mememan = mixin(thing, function(){
+    var this$ = this;
+    key.press('j', function(){
+      if (this$.is_sliding()) {
+        return;
+      }
+      if (this$.is_grounded() && key.down('s')) {
+        return this$.is_sliding = true_for(0.35);
+      } else {
+        if (this$.is_grounded()) {
+          return this$.vel.y = -VI;
+        }
+      }
+    });
+    key.press('k', function(){
+      shot({}, {
+        pos: v3(this$.pos.x + B * this$.dir, this$.pos.y, 0),
+        vel: v3(18 * B * this$.dir, 0, 0)
+      });
+      return this$.is_shooting = true_for(0.3);
+    });
+    key.release('j', function(){
+      if (this$.vel.y < 0) {
+        return this$.vel.y = 0;
+      }
+    });
+    return {
+      sprite: "mememan/standing0",
+      nome: "meme",
+      is_sliding: just(false),
+      is_shooting: just(false),
+      is_stopped: function(){
+        return this$.vel.x === 0 && this$.vel.y === 0;
+      },
+      floats: false,
+      pos: v3(150, 100, 0),
+      size: v3(22, 25, 0),
+      vel: v3(0, 0, 0),
+      tick: after(this.tick, function(){
+        this$.vel.x = (function(){
+          switch (false) {
+          case !this.is_sliding():
+            return this.dir * 12 * B;
+          case !key.down('d'):
+            return B * 4.4;
+          case !key.down('a'):
+            return -B * 4.4;
+          default:
+            return 0;
+          }
+        }.call(this$));
+        if (this$.vel.x > 0) {
+          this$.dir = 1;
+        }
+        if (this$.vel.x < 0) {
+          this$.dir = -1;
+        }
+        this$.sprite = this$.is_grounded()
+          ? this$.is_stopped()
+            ? this$.is_shooting()
+              ? "mememan/standing_shoot"
+              : "mememan/standing" + cycle([0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 5)
+            : this$.is_shooting()
+              ? "mememan/walking_shoot" + cycle([0, 1, 2, 1], 0.5)
+              : this$.is_sliding()
+                ? "mememan/sliding"
+                : "mememan/walking" + cycle([0, 1, 2, 1], 0.5)
+          : this$.is_shooting() ? "mememan/jumping_shoot" : "mememan/jumping";
+        if (this$.dir === 1) {
+          return this$.sprite += '_r';
+        }
+      })
+    };
+  });
+}).call(this);
 
-	var keydown = {};
-	var keypressEvents = {};
-	var keyreleaseEvents = {};
-	var keydownEvents = {};
-	jQuery(document).keydown(function(e){ pressKeyProcedure(e); });
-	jQuery(document).keyup(function(e){ releaseKeyProcedure(e); });
-	jQuery(document).mousedown(function(e){
-		pressKeyProcedure({keyCode:"mouse"+e.which});
-	});
-	jQuery(document).mouseup(function(e){
-		releaseKeyProcedure({keyCode:"mouse"+e.which});
-	});
-	function releaseKeyProcedure(e){
-		if (keydown[e.keyCode])
-			if (typeof(keyreleaseEvents[e.keyCode])!="undefined")
-				keyreleaseEvents[e.keyCode].forEach(function(releaseEvent){ releaseEvent(e); });
-		keydown[e.keyCode]=false;
-	}
-	function pressKeyProcedure(e){
-		if (!keydown[e.keyCode])
-			if (typeof(keypressEvents[e.keyCode])!="undefined")
-				keypressEvents[e.keyCode].forEach(function(pressEvent){ pressEvent(e); });
-		keydown[e.keyCode]=true;
-	}
+})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/mememan.js","/")
+},{"key":12,"viclib":10,"prelude-ls":14,"__browserify_process":1,"__browserify_buffer":2}],5:[function(require,module,exports){
+(function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
+require("viclib")();
+(function(){
+  global.things = [];
+  global.thing = mixin(function(){
+    var this$ = this;
+    things.push(this);
+    return {
+      draw: function(screen){
+        screen.fill(this.col[0], this.col[1], this.col[2]);
+        return screen.rect(this.pos.x - this.size.x / 2, this.pos.y - this.size.y / 2, this.size.x, this.size.y);
+      },
+      destroy: function(){
+        return defer(function(){
+          return things.splice(things.indexOf(this$), 1);
+        });
+      },
+      tick: function(dt){
+        this$.pos.x += this$.vel.x * dt;
+        this$.pos.y += this$.vel.y * dt;
+        if (!this$.floats) {
+          this$.pos.y += 0.5 * G * dt * dt;
+          this$.vel.y += G * dt;
+        }
+        this$.is_grounded = just(false);
+        return each(function(it){
+          return this$.check_collision(it);
+        }, things);
+      },
+      check_collision: function(b){
+        var a, abs, ax, aw, axi, axf, ay, ah, ayi, ayf, bx, bw, bxi, bxf, by, bh, byi, byf, dx, dy;
+        a = this;
+        abs = Math.abs;
+        ax = a.pos.x;
+        aw = a.size.x / 2;
+        axi = ax - aw;
+        axf = ax + aw;
+        ay = a.pos.y;
+        ah = a.size.y / 2;
+        ayi = ay - ah;
+        ayf = ay + ah;
+        bx = b.pos.x;
+        bw = b.size.x / 2;
+        bxi = bx - bw;
+        bxf = bx + bw;
+        by = b.pos.y;
+        bh = b.size.y / 2;
+        byi = by - bh;
+        byf = by + bh;
+        dx = abs(bx - ax) - (aw + bw);
+        dy = abs(by - ay) - (ah + bh);
+        if (dx >= 0 || dy >= 0) {
+          return false;
+        }
+        if (b.solid) {
+          if (dx > dy) {
+            if (bxi < axi && axi < bxf) {
+              a.pos.x += bxf - axi;
+              a.vel.x = 0;
+            }
+            if (bxi < axf && axf < bxf) {
+              a.pos.x += bxi - axf;
+              a.vel.x = 0;
+            }
+          } else {
+            if (byi < ayi && ayi < byf) {
+              a.pos.y += -dy;
+              a.vel.y = 0;
+            }
+            if (byi < ayf && ayf < byf) {
+              a.pos.y += dy;
+              a.vel.y = 0;
+              this.is_grounded = just(true);
+            }
+          }
+        }
+        if (typeof a.collide === 'function') {
+          a.collide(b);
+        }
+        return true;
+      },
+      floats: true,
+      solid: false,
+      col: [200, 200, 200],
+      size: v3(B, B, 0),
+      pos: v3(0, 0, 0),
+      vel: v3(0, 0, 0)
+    };
+  });
+}).call(this);
 
-	var mouse_pos = [0,0];
-	jQuery(document).mousemove(function(e){
-		mouse_pos = [e.pageX,e.pageY];
-	});
-
-	function press(keyCode_or_keyString,callback){
-		var keyCode = keyCode_or_keyString;
-		if (typeof(keyCode_or_keyString)=="string")
-			keyCode = KEYCODES[keyCode_or_keyString];
-		
-		if (typeof(keypressEvents[keyCode])=="undefined")
-			keypressEvents[keyCode]=[];
-		keypressEvents[keyCode].push(callback);
-	};
-	function release(keyCode_or_keyString,callback){
-		var keyCode = keyCode_or_keyString;
-		if (typeof(keyCode_or_keyString)=="string")
-			keyCode = KEYCODES[keyCode_or_keyString];
-			
-		if (typeof(keyreleaseEvents[keyCode])=="undefined")
-			keyreleaseEvents[keyCode]=[];
-		keyreleaseEvents[keyCode].push(callback);
-	};
-
-	return {
-		release:release,
-		press:press,
-		down:function(key){return keydown[KEYCODES[key]]},
-		up:function(key){return !keydown[KEYCODES[key]]},
-		mouse_pos:function(){return mouse_pos},
-		mouse_x:function(){return mouse_pos[0]},
-		mouse_y:function(){return mouse_pos[1]}
-	};
-})();
-
-})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/../node_modules/key.js","/../node_modules")
-},{"jquery-browserify":16,"__browserify_process":1,"__browserify_buffer":2}],13:[function(require,module,exports){
+})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/thing.js","/")
+},{"viclib":10,"prelude-ls":14,"__browserify_process":1,"__browserify_buffer":2}],13:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){THREE = require('three');
 
 THREE.Vector3.prototype.obj = function(){
@@ -20798,175 +20998,15 @@ module.exports = {
 };
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/../node_modules/victhree.js","/../node_modules")
-},{"key":12,"three":17,"__browserify_process":1,"__browserify_buffer":2}],5:[function(require,module,exports){
-(function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
-require("viclib")();
-(function(){
-  global.things = [];
-  global.thing = mixin(function(){
-    var this$ = this;
-    things.push(this);
-    return {
-      draw: function(screen){
-        screen.fill(this.col[0], this.col[1], this.col[2]);
-        return screen.rect(this.pos.x - this.size.x / 2, this.pos.y - this.size.y / 2, this.size.x, this.size.y);
-      },
-      destroy: function(){
-        return defer(function(){
-          return things.splice(things.indexOf(this$), 1);
-        });
-      },
-      tick: function(dt){
-        this$.pos.x += this$.vel.x * dt;
-        this$.pos.y += this$.vel.y * dt;
-        if (!this$.floats) {
-          this$.pos.y += 0.5 * G * dt * dt;
-          this$.vel.y += G * dt;
-        }
-        this$.grounded = false;
-        return each(function(it){
-          return this$.check_collision(it);
-        }, things);
-      },
-      check_collision: function(b){
-        var a, abs, ax, aw, axi, axf, ay, ah, ayi, ayf, bx, bw, bxi, bxf, by, bh, byi, byf, dx, dy;
-        a = this;
-        abs = Math.abs;
-        ax = a.pos.x;
-        aw = a.size.x / 2;
-        axi = ax - aw;
-        axf = ax + aw;
-        ay = a.pos.y;
-        ah = a.size.y / 2;
-        ayi = ay - ah;
-        ayf = ay + ah;
-        bx = b.pos.x;
-        bw = b.size.x / 2;
-        bxi = bx - bw;
-        bxf = bx + bw;
-        by = b.pos.y;
-        bh = b.size.y / 2;
-        byi = by - bh;
-        byf = by + bh;
-        dx = abs(bx - ax) - (aw + bw);
-        dy = abs(by - ay) - (ah + bh);
-        if (dx >= 0 || dy >= 0) {
-          return false;
-        }
-        if (b.solid) {
-          if (dx > dy) {
-            if (bxi < axi && axi < bxf) {
-              a.pos.x += bxf - axi;
-              a.vel.x = 0;
-            }
-            if (bxi < axf && axf < bxf) {
-              a.pos.x += bxi - axf;
-              a.vel.x = 0;
-            }
-          } else {
-            if (byi < ayi && ayi < byf) {
-              a.pos.y += -dy;
-              a.vel.y = 0;
-            }
-            if (byi < ayf && ayf < byf) {
-              a.pos.y += dy;
-              a.vel.y = 0;
-              this.grounded = true;
-            }
-          }
-        }
-        if (typeof a.collide === 'function') {
-          a.collide(b);
-        }
-        return true;
-      },
-      floats: true,
-      solid: false,
-      col: [200, 200, 200],
-      size: v3(B, B, 0),
-      pos: v3(0, 0, 0),
-      vel: v3(0, 0, 0)
-    };
-  });
-}).call(this);
-
-})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/thing.js","/")
-},{"viclib":10,"prelude-ls":14,"__browserify_process":1,"__browserify_buffer":2}],6:[function(require,module,exports){
-(function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
-require("viclib")();
-(function(){
-  var key;
-  key = require('key');
-  global.mememan = mixin(thing, function(){
-    var this$ = this;
-    key.press('j', function(){
-      return this$.jump();
-    });
-    key.press('k', function(){
-      return this$.shot();
-    });
-    key.release('j', function(){
-      return this$.stop_jump();
-    });
-    return {
-      sprite: "mememan/1",
-      nome: "meme",
-      floats: false,
-      pos: v3(150, 100, 0),
-      size: v3(B * 0.7, B, 0),
-      vel: v3(0, 0, 0),
-      jump: function(){
-        if (this$.grounded) {
-          return this$.vel.y = -VI;
-        }
-      },
-      stop_jump: function(){
-        if (this$.vel.y < 0) {
-          return this$.vel.y = 0;
-        }
-      },
-      shot: function(){
-        return shot({}, {
-          pos: clone$(this$.pos),
-          vel: v3(8 * B * this$.dir, 0, 0)
-        });
-      },
-      tick: after(this.tick, function(){
-        this$.vel.x = (function(){
-          switch (false) {
-          case !key.down('d'):
-            return B * 2.5;
-          case !key.down('a'):
-            return -B * 2.5;
-          default:
-            return 0;
-          }
-        }());
-        if (this$.vel.x > 0) {
-          this$.dir = 1;
-        }
-        if (this$.vel.x < 0) {
-          return this$.dir = -1;
-        }
-      })
-    };
-  });
-  function clone$(it){
-    function fun(){} fun.prototype = it;
-    return new fun;
-  }
-}).call(this);
-
-})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/mememan.js","/")
-},{"viclib":10,"key":12,"prelude-ls":14,"__browserify_process":1,"__browserify_buffer":2}],7:[function(require,module,exports){
+},{"key":12,"three":17,"__browserify_process":1,"__browserify_buffer":2}],7:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
 require("viclib")();
 (function(){
   global.shot = mixin(thing, function(){
     var this$ = this;
     return {
-      sprite: "megaman/5",
-      size: v3(4, 4, 0),
+      sprite: "shot/shot",
+      size: v3(7, 7, 0),
       collide: function(it){
         if (it.solid) {
           return this$.destroy();
@@ -20981,35 +21021,34 @@ require("viclib")();
 (function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
 require("viclib")();
 (function(){
-  global.floor = mixin(thing, function(){
+  global.ground = mixin(thing, function(){
     return {
+      sprite: "ground/0",
       solid: true
     };
   });
 }).call(this);
 
-})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/floor.js","/")
+})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/ground.js","/")
 },{"viclib":10,"prelude-ls":14,"__browserify_process":1,"__browserify_buffer":2}],9:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
 require("viclib")();
 (function(){
   global.level = function(){
-    var level, i$, to$, y, lresult$, j$, to1$, x, ref$, results$ = [];
-    level = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]];
-    mememan();
+    var level, i$, to$, y, j$, to1$, x;
+    level = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]];
     for (i$ = 0, to$ = level.length; i$ < to$; ++i$) {
       y = i$;
-      lresult$ = [];
       for (j$ = 0, to1$ = level[y].length; j$ < to1$; ++j$) {
         x = j$;
-        log(x, y);
         if (level[y][x] === 1) {
-          lresult$.push((ref$ = floor(), ref$.pos = v3(x * B, y * B, 0), ref$));
+          ground().pos = v3(x * B, y * B, 0);
         }
       }
-      results$.push(lresult$);
     }
-    return results$;
+    return mememan({}, {
+      pos: v3(6 * B, 4 * B, 0)
+    });
   };
 }).call(this);
 
