@@ -4,6 +4,7 @@ require("viclib")();
   global.ground = mixin(thing, function(){
     return {
       sprite: "ground/" + this.border_type,
+      floats: true,
       solid: true
     };
   });

@@ -1,6 +1,9 @@
 require! {"./quadtree"}
 global.things = []
 global.tree = quadtree {width:128,height:128}
+global.get_around = (x,y) -> tree.get(x - B/2, y - B/2, x + B/2, y + B/2)
+global.has_solid = (x,y) -> not empty(filter (.solid), get_around(x,y))
+global.has_stair = (x,y) -> not empty(filter (.is_stair), get_around(x,y))
 global.thing = mixin ->
 	defer ~> 
 		things.push @
@@ -24,7 +27,7 @@ global.thing = mixin ->
 		@is_grounded = just false
 
 		if @collides
-			near_things = tree.get(@pos.x - B*6, @pos.y - B*6, @pos.x + B*6, @pos.y + B*6)
+			near_things = tree.get(@pos.x - B*4, @pos.y - B*4, @pos.x + B*4, @pos.y + B*4)
 			(~>@check_collision it) `each` near_things
 
 		if (@pos.x != @old_pos.x and @pos.y != @old_pos.y) then
@@ -52,7 +55,7 @@ global.thing = mixin ->
 		a.collide? b
 		true
 	ghost: false
-	floats: true
+	floats: false
 	solid: false
 	hp: 28
 	col: [200,200,200]

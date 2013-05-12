@@ -12,12 +12,20 @@ global.now = -> Date.now!/1000
 global.just = (val) -> -> val
 global.true_for = (secs) -> start = now!; -> (now! - start) < secs
 global.time_since = -> (now! - it)
-global.camera = do mixin -> pos:v3(0,0,0), scale:3, offset: ~> x:-@pos.x + canvas.width/@scale/2, y:0
 global.width = window.innerWidth
 global.height = window.innerHeight
+global.camera = do mixin -> 
+	width: window.innerWidth
+	height: window.innerHeight
+	pos:v3(0,0,0),
+	scale:height/(16*16)
+	offset: ~> x:-max(@pos.x,@width/@scale/2) + @width/@scale/2, y:0
+	tick: ~>
+		if global.hero?.pos.y < @y then
+			@y -= 8*16
 last_time = now!
 
-global.canvas = processing window.innerWidth, window.innerHeight,
+global.canvas = processing camera.width, camera.height,
 	-> 
 		global.sprite = _.memoize (url) ~> @loadImage url+".png"
 
@@ -32,8 +40,9 @@ global.canvas = processing window.innerWidth, window.innerHeight,
 
 		global.background = @loadImage "background.png"
 		# tamanho original da tela: 320x320
-		camera.scale = height/(16*20)
 	->
+		camera.tick!
+
 		@scale camera.scale
 		@background 222 222 222
 		@noStroke!
@@ -44,7 +53,6 @@ global.canvas = processing window.innerWidth, window.innerHeight,
 		dt = min((now! - last_time),0.05)
 		(.tick dt) `each` things
 		last_time := now!
-		log global.coln
 
 		(~>it.draw @) `each` things
 		#things |> each ~>

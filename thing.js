@@ -8,6 +8,19 @@ require("viclib")();
     width: 128,
     height: 128
   });
+  global.get_around = function(x, y){
+    return tree.get(x - B / 2, y - B / 2, x + B / 2, y + B / 2);
+  };
+  global.has_solid = function(x, y){
+    return !empty(filter(function(it){
+      return it.solid;
+    }, get_around(x, y)));
+  };
+  global.has_stair = function(x, y){
+    return !empty(filter(function(it){
+      return it.is_stair;
+    }, get_around(x, y)));
+  };
   global.thing = mixin(function(){
     var this$ = this;
     defer(function(){
@@ -35,7 +48,7 @@ require("viclib")();
         }
         this$.is_grounded = just(false);
         if (this$.collides) {
-          near_things = tree.get(this$.pos.x - B * 6, this$.pos.y - B * 6, this$.pos.x + B * 6, this$.pos.y + B * 6);
+          near_things = tree.get(this$.pos.x - B * 4, this$.pos.y - B * 4, this$.pos.x + B * 4, this$.pos.y + B * 4);
           each(function(it){
             return this$.check_collision(it);
           }, near_things);
@@ -99,7 +112,7 @@ require("viclib")();
         return true;
       },
       ghost: false,
-      floats: true,
+      floats: false,
       solid: false,
       hp: 28,
       col: [200, 200, 200],

@@ -14160,23 +14160,31 @@ require("viclib")();
   global.time_since = function(it){
     return now() - it;
   };
+  global.width = window.innerWidth;
+  global.height = window.innerHeight;
   global.camera = mixin(function(){
     var this$ = this;
     return {
+      width: window.innerWidth,
+      height: window.innerHeight,
       pos: v3(0, 0, 0),
-      scale: 3,
+      scale: height / (16 * 16),
       offset: function(){
         return {
-          x: -this$.pos.x + canvas.width / this$.scale / 2,
+          x: -max(this$.pos.x, this$.width / this$.scale / 2) + this$.width / this$.scale / 2,
           y: 0
         };
+      },
+      tick: function(){
+        var ref$;
+        if (((ref$ = global.hero) != null ? ref$.pos.y : void 8) < this$.y) {
+          return this$.y -= 8 * 16;
+        }
       }
     };
   })();
-  global.width = window.innerWidth;
-  global.height = window.innerHeight;
   last_time = now();
-  global.canvas = processing(window.innerWidth, window.innerHeight, function(){
+  global.canvas = processing(camera.width, camera.height, function(){
     var sprs, i$, len$, spr, this$ = this;
     global.sprite = _.memoize(function(url){
       return this$.loadImage(url + ".png");
@@ -14189,10 +14197,10 @@ require("viclib")();
       sprite(spr);
       sprite(spr + "_r");
     }
-    global.background = this.loadImage("background.png");
-    return camera.scale = height / (16 * 20);
+    return global.background = this.loadImage("background.png");
   }, function(){
     var i$, i, dt, this$ = this;
+    camera.tick();
     this.scale(camera.scale);
     this.background(222, 222, 222);
     this.noStroke();
@@ -14205,7 +14213,6 @@ require("viclib")();
       return it.tick(dt);
     }, things);
     last_time = now();
-    log(global.coln);
     return each(function(it){
       return it.draw(this$);
     }, things);
@@ -20767,6 +20774,19 @@ require("viclib")();
     width: 128,
     height: 128
   });
+  global.get_around = function(x, y){
+    return tree.get(x - B / 2, y - B / 2, x + B / 2, y + B / 2);
+  };
+  global.has_solid = function(x, y){
+    return !empty(filter(function(it){
+      return it.solid;
+    }, get_around(x, y)));
+  };
+  global.has_stair = function(x, y){
+    return !empty(filter(function(it){
+      return it.is_stair;
+    }, get_around(x, y)));
+  };
   global.thing = mixin(function(){
     var this$ = this;
     defer(function(){
@@ -20794,7 +20814,7 @@ require("viclib")();
         }
         this$.is_grounded = just(false);
         if (this$.collides) {
-          near_things = tree.get(this$.pos.x - B * 6, this$.pos.y - B * 6, this$.pos.x + B * 6, this$.pos.y + B * 6);
+          near_things = tree.get(this$.pos.x - B * 4, this$.pos.y - B * 4, this$.pos.x + B * 4, this$.pos.y + B * 4);
           each(function(it){
             return this$.check_collision(it);
           }, near_things);
@@ -20858,7 +20878,7 @@ require("viclib")();
         return true;
       },
       ghost: false,
-      floats: true,
+      floats: false,
       solid: false,
       hp: 28,
       col: [200, 200, 200],
@@ -20995,7 +21015,7 @@ require("viclib")();
     var this$ = this;
     global.hero = this;
     key.press('j', function(){
-      if (this$.is_sliding()) {
+      if (this$.is_sliding() || this$.is_digging()) {
         return;
       }
       if (this$.is_grounded() && key.down('s')) {
@@ -21026,6 +21046,7 @@ require("viclib")();
       is_sliding: just(false),
       is_shooting: just(false),
       is_climbing: just(false),
+      is_digging: just(false),
       just_climbed: just(false),
       is_jumping: function(){
         return this$.vel.y < 0 && !this$.is_climbing();
@@ -21039,22 +21060,16 @@ require("viclib")();
       floats: false,
       collides: true,
       hp: 28,
-      size: v3(22, 25, 0),
+      size: v3(16, 25, 0),
       vel: v3(0, 0, 0),
       climb: function(dir){
         this$.is_climbing = just(true);
         this$.just_climbed = true_for(0.4);
-        this$.ghost = true;
-        this$.floats = true;
+        this$.ghost = this$.floats = true;
         this$.pos.x = floor((this$.pos.x + B / 2) / B) * B;
         return this$.vel.y = B * 4.5 * (dir === 'down'
           ? 1
           : -1);
-      },
-      stop_climbing: function(dir){
-        this$.is_climbing = just(false);
-        this$.ghost = false;
-        return this$.floats = false;
       },
       draw: after(this.draw, function(screen){
         var i$, to$, y, results$ = [];
@@ -21067,12 +21082,14 @@ require("viclib")();
         }
         return results$;
       }),
-      tick: after(this.tick, function(){
+      tick: after(this.tick, function(dt){
         this$.vel.x = (function(){
           switch (false) {
           case !this.is_climbing():
             return 0;
           case !this.is_sliding():
+            return this.dir * 12 * B;
+          case !this.is_digging():
             return this.dir * 12 * B;
           case !key.down('d'):
             return B * 4.4;
@@ -21102,28 +21119,41 @@ require("viclib")();
         if (this$.vel.x < 0) {
           this$.dir = -1;
         }
+        if (this$.is_sliding()) {
+          if (!has_solid(this$.pos.x + this$.dir * B, this$.pos.y) && has_solid(this$.pos.x + this$.dir * B, this$.pos.y - B)) {
+            this$.is_digging = just(true);
+            this$.is_sliding = just(false);
+          }
+        }
+        if (this$.is_digging()) {
+          if (!has_solid(this$.pos.x, this$.pos.y - B) && has_solid(this$.pos.x - this$.dir * 8, this$.pos.y - B)) {
+            this$.is_digging = just(false);
+          }
+        }
+        this$.ghost = this$.floats = this$.is_climbing() || this$.is_digging();
+        log(this$.ghost, this$.vel.x);
         if (!this$.is_climbing() && !this$.is_sliding()) {
           if (key.down('s') && has_stair(this$.pos.x, this$.pos.y + B)) {
             this$.climb('down');
           } else if (key.down('w') && has_stair(this$.pos.x, this$.pos.y - B)) {
             this$.climb('up');
           }
-        } else if (!this$.just_climbed() && !has_stair(this$.pos.x, this$.pos.y + B / 4)) {
-          this$.stop_climbing();
+        } else if (this$.is_climbing() && !this$.just_climbed() && !has_stair(this$.pos.x, this$.pos.y + B / 4)) {
+          this$.is_climbing = just(false);
         }
         this$.sprite = this$.is_climbing()
-          ? (this$.dir = -1 + floor((this$.pos.y / 16) % 2) * 2, !has_stair(this$.pos.x, this$.pos.y - B / 4) ? "mememan/climbed" : "mememan/climbing")
-          : this$.is_grounded()
-            ? this$.is_stopped()
-              ? this$.is_shooting()
-                ? "mememan/standing_shoot"
-                : "mememan/standing" + cycle([0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 4)
-              : this$.is_shooting()
-                ? "mememan/walking_shoot" + cycle([0, 1, 2, 1], 0.5)
-                : this$.is_sliding()
-                  ? "mememan/sliding"
+          ? (this$.dir = -1 + floor((this$.pos.y / 16) % 2) * 2, !has_stair(this$.pos.x, this$.pos.y - B / 4) && has_stair(this$.pos.x, this$.pos.y + B / 4) ? "mememan/climbed" : "mememan/climbing")
+          : this$.is_sliding() || this$.is_digging()
+            ? "mememan/sliding"
+            : this$.is_grounded()
+              ? this$.is_stopped()
+                ? this$.is_shooting()
+                  ? "mememan/standing_shoot"
+                  : "mememan/standing" + cycle([0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 4)
+                : this$.is_shooting()
+                  ? "mememan/walking_shoot" + cycle([0, 1, 2, 1], 0.5)
                   : "mememan/walking" + cycle([0, 1, 2, 1], 0.5)
-            : this$.is_shooting() ? "mememan/jumping_shoot" : "mememan/jumping";
+              : this$.is_shooting() ? "mememan/jumping_shoot" : "mememan/jumping";
         if (this$.dir === 1) {
           this$.sprite += '_r';
         }
@@ -21134,32 +21164,20 @@ require("viclib")();
 }).call(this);
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/mememan.js","/")
-},{"viclib":11,"key":13,"prelude-ls":15,"__browserify_process":1,"__browserify_buffer":2}],7:[function(require,module,exports){
+},{"viclib":11,"key":13,"prelude-ls":15,"__browserify_process":1,"__browserify_buffer":2}],8:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
 require("viclib")();
 (function(){
-  global.shot = mixin(thing, function(){
-    var this$ = this;
+  global.ground = mixin(thing, function(){
     return {
-      tick: after(this.tick, function(){
-        if (time_since(this$.created) > 1.2) {
-          return this$.destroy();
-        }
-      }),
-      created: now(),
-      sprite: "shot/shot",
-      size: v3(4, 4, 0),
-      collides: true,
-      collide: function(it){
-        if (it.solid) {
-          return this$.destroy();
-        }
-      }
+      sprite: "ground/" + this.border_type,
+      floats: true,
+      solid: true
     };
   });
 }).call(this);
 
-})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/shot.js","/")
+})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/ground.js","/")
 },{"viclib":11,"prelude-ls":15,"__browserify_process":1,"__browserify_buffer":2}],9:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
 require("viclib")();
@@ -21167,7 +21185,7 @@ require("viclib")();
   global.level = mixin(function(){
     var this$ = this;
     return {
-      map: ['...........................................................................................................................................................', '...........................................................................................................................................................', '...........................................................................................................................................................', '.............o...o.........................................................................................................................................', '.............o...o.........................................................................................................................................', '.............o...o.....................................ooo.................................................................................................', '..........o.........o..................................ooo.................................................................................................', '...........o.......o.........................oooHooooooooooooooooo.........................................................................................', '............ooooooo..........................oooHooooooooooooooooo.........................................................................................', '.............................................oooHooooooooooooooooo.........................................................................................', '.............................................oooHooooooooooooooooo.........................................................................................', '.............................................oooHooooooooooooooooo.........................................................................................', '.........................M.................................................................................................................................', '........................ooo................................................................................................................................', '......................ooooooo..............................................................................................................................', 'ooooooooooooooooooooooooooooooooo.....ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo'],
+      map: ['...................................................................................oooooooooooooooooooooooooooooooooooooooooooo', '..........o...o..o....ooo......o...o...............................................ooooooooooooHooooooooooooooooooooooooooooooo', '..........o...o......o.........o...o...............................................ooooooooooooHooooooooooooooooooooooooooooooo', '..........o...o..o..o..........o...o................................................oooo.......H.......oooooooooooooooooooooooo', '..........o...o..o..o.......o.........o.............................................oooo...............oooooooooooooooooooooooo', '...........o.o...o...o.......oo.....oo...............................................ooo...............oooooooooooooooooooooooo', '............o....o....ooo......ooooo.................................................ooo.*.............oooooooooooooooooooooooo', '......................................................................................oooox.x.x.ooooooHoooooooooooooooooooooooo', '......................................................................................ooooooooooooooooHoooooooooooooooooooooooo', '..........................................................ooooo........oo...............ooooooooooooooHoooooooooooooooooooooooo', '......................................................ooooooooo......oooo...............ooooooooooooooHoooooooooooooooooooooooo', '.......................................oo............ooooooooooooo...oooooo........ooo....ooooooooo....oooooooooooooooooooooooo', '........M.............................oooo...........oooooooooooooo..oooooox.x.x..oooo.................oooooooooooooooooooooooo', 'ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo'],
       objects: {
         o: ground,
         M: function(a, b){
@@ -21223,33 +21241,10 @@ require("viclib")();
 }).call(this);
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/level.js","/")
-},{"viclib":11,"prelude-ls":15,"__browserify_process":1,"__browserify_buffer":2}],8:[function(require,module,exports){
-(function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
-require("viclib")();
-(function(){
-  global.ground = mixin(thing, function(){
-    return {
-      sprite: "ground/" + this.border_type,
-      solid: true
-    };
-  });
-}).call(this);
-
-})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/ground.js","/")
 },{"viclib":11,"prelude-ls":15,"__browserify_process":1,"__browserify_buffer":2}],10:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
 require("viclib")();
 (function(){
-  global.has_stair = function(x, y){
-    var i$, ref$, len$, obj;
-    for (i$ = 0, len$ = (ref$ = tree.get(x - B / 2, y - B / 2, x + B / 2, y + B / 2)).length; i$ < len$; ++i$) {
-      obj = ref$[i$];
-      if (obj.is_stair) {
-        return true;
-      }
-    }
-    return false;
-  };
   global.stair = mixin(thing, function(){
     return {
       sprite: "stair/stair",
@@ -21261,6 +21256,33 @@ require("viclib")();
 }).call(this);
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/stair.js","/")
+},{"viclib":11,"prelude-ls":15,"__browserify_process":1,"__browserify_buffer":2}],7:[function(require,module,exports){
+(function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
+require("viclib")();
+(function(){
+  global.shot = mixin(thing, function(){
+    var this$ = this;
+    return {
+      tick: after(this.tick, function(){
+        if (time_since(this$.created) > 1.2) {
+          return this$.destroy();
+        }
+      }),
+      floats: true,
+      created: now(),
+      sprite: "shot/shot",
+      size: v3(4, 4, 0),
+      collides: true,
+      collide: function(it){
+        if (it.solid) {
+          return this$.destroy();
+        }
+      }
+    };
+  });
+}).call(this);
+
+})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/shot.js","/")
 },{"viclib":11,"prelude-ls":15,"__browserify_process":1,"__browserify_buffer":2}],17:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){// Uses Node, AMD or browser globals to create a module.
 
@@ -30649,8 +30671,12 @@ require("viclib")();
           y: y
         };
       },
-      get: function(x, y, X, Y){
-        var result, i$, to$, i, j$, to1$, j, index, bucket, k$, len$, it, it_pos, ref$;
+      get: function(xa, ya, xb, yb){
+        var x, X, y, Y, result, i$, to$, i, j$, to1$, j, index, bucket, k$, len$, it, it_pos, ref$;
+        x = xa < xb ? xa : xb;
+        X = xa > xb ? xa : xb;
+        y = ya < yb ? ya : yb;
+        Y = ya > yb ? ya : yb;
         result = [];
         for (i$ = projx(x), to$ = projx(X); i$ <= to$; ++i$) {
           i = i$;

@@ -9,6 +9,7 @@ require("viclib")();
           return this$.destroy();
         }
       }),
+      floats: true,
       created: now(),
       sprite: "shot/shot",
       size: v3(4, 4, 0),
