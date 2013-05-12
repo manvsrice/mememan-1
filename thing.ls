@@ -8,7 +8,7 @@ global.thing = mixin ->
 
 	draw: (screen) ~>
 		img = sprite(@sprite ? "ground/0")
-		screen.image img, @pos.x - img.width/2, @pos.y - img.height/2
+		screen.image img, @pos.x - img.width/2 + camera.offset!.x, @pos.y - img.height/2
 		#screen.fill @col[0], @col[1], @col[2]
 		#screen.rect @pos.x-@size.x/2, @pos.y-@size.y/2, @size.x, @size.y
 	destroy: ~>

@@ -18,7 +18,7 @@ require("viclib")();
       draw: function(screen){
         var img, ref$;
         img = sprite((ref$ = this$.sprite) != null ? ref$ : "ground/0");
-        return screen.image(img, this$.pos.x - img.width / 2, this$.pos.y - img.height / 2);
+        return screen.image(img, this$.pos.x - img.width / 2 + camera.offset().x, this$.pos.y - img.height / 2);
       },
       destroy: function(){
         return defer(function(){

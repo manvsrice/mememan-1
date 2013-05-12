@@ -8,6 +8,7 @@ require("viclib")();
   };
   global.mememan = mixin(thing, function(){
     var this$ = this;
+    global.hero = this;
     key.press('j', function(){
       if (this$.is_sliding()) {
         return;
@@ -140,8 +141,9 @@ require("viclib")();
                   : "mememan/walking" + cycle([0, 1, 2, 1], 0.5)
             : this$.is_shooting() ? "mememan/jumping_shoot" : "mememan/jumping";
         if (this$.dir === 1) {
-          return this$.sprite += '_r';
+          this$.sprite += '_r';
         }
+        return camera.pos = this$.pos.clone();
       })
     };
   });

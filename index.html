@@ -14160,8 +14160,21 @@ require("viclib")();
   global.time_since = function(it){
     return now() - it;
   };
+  global.camera = mixin(function(){
+    var this$ = this;
+    return {
+      pos: v3(0, 0, 0),
+      scale: 3,
+      offset: function(){
+        return {
+          x: -this$.pos.x + canvas.width / this$.scale / 2,
+          y: 0
+        };
+      }
+    };
+  })();
   last_time = now();
-  $("body").append(processing(1200, 800, function(){
+  global.canvas = processing(window.innerWidth, window.innerHeight, function(){
     var sprs, i$, len$, spr, this$ = this, results$ = [];
     global.sprite = _.memoize(function(url){
       return this$.loadImage(url + ".png");
@@ -14171,14 +14184,13 @@ require("viclib")();
     }), ['climbed', 'climbing', 'jumping', 'jumping_shoot', 'sliding', 'standing_shoot', 'standing0', 'standing1', 'walking_shoot0', 'walking_shoot1', 'walking_shoot2', 'walking0', 'walking1', 'walking2']);
     for (i$ = 0, len$ = sprs.length; i$ < len$; ++i$) {
       spr = sprs[i$];
-      log(spr);
       sprite(spr);
       results$.push(sprite(spr + "_r"));
     }
     return results$;
   }, function(){
     var dt, this$ = this;
-    this.scale(1.5);
+    this.scale(camera.scale);
     this.background(240, 240, 240);
     this.noStroke();
     dt = min(now() - last_time, 0.05);
@@ -14189,12 +14201,14 @@ require("viclib")();
     return each(function(it){
       return it.draw(this$);
     }, things);
-  }));
+  });
+  $("body").append(canvas);
+  log(canvas);
   level().create();
 }).call(this);
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/index.js","/")
-},{"./thing":5,"./mememan":6,"./shot":7,"./ground":8,"./level":9,"./stair":10,"viclib":11,"boxes":12,"key":13,"victhree":14,"prelude-ls":15,"lodash":16,"__browserify_process":1,"__browserify_buffer":2}],15:[function(require,module,exports){
+},{"./thing":5,"./mememan":6,"./shot":7,"./ground":8,"./level":9,"./stair":10,"viclib":11,"key":12,"boxes":13,"victhree":14,"prelude-ls":15,"lodash":16,"__browserify_process":1,"__browserify_buffer":2}],15:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){// prelude.ls 0.6.0
 // Copyright (c) 2012 George Zahariev
 // Released under the MIT License
@@ -20374,195 +20388,6 @@ function import$(obj, src){
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/../node_modules/viclib.js","/../node_modules")
 },{"prelude-ls":15,"__browserify_process":1,"__browserify_buffer":2}],12:[function(require,module,exports){
-(function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
-require("viclib")();
-(function(){
-  var $, processingjs, REFRESH_ELEMENTS, was_removed, track, fns, slice$ = [].slice;
-  $ = require('jquery-browserify');
-  processingjs = require('processing');
-  window.requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function(it){
-    return setTimeout(it, 1000 / 60);
-  };
-  REFRESH_ELEMENTS = [];
-  window.body = $("body");
-  window.mousex = 0;
-  window.mousey = 0;
-  window.scrw = window.innerWidth;
-  window.scrh = window.innerHeight;
-  was_removed = function(element){
-    return !$.contains(document.documentElement, element[0]);
-  };
-  track = function(obj){
-    var x$;
-    if (!in$(obj, REFRESH_ELEMENTS)) {
-      x$ = obj;
-      x$.css({
-        position: "fixed"
-      });
-      x$.data("box", {});
-      return REFRESH_ELEMENTS.splice(0, 0, obj);
-    }
-  };
-  $('*').css({
-    margin: 0,
-    padding: 0
-  });
-  $.refresh_boxes = function(){
-    var untrack_indexes, index, ref$, obj, parent, parent_x, ref1$, parent_y, obj_box, box, key, val, results$ = [];
-    untrack_indexes = [];
-    for (index in ref$ = REFRESH_ELEMENTS) {
-      obj = ref$[index];
-      if (was_removed(obj)) {
-        untrack_indexes = untrack_indexes.concat(index);
-      }
-      parent = obj.parent();
-      parent_x = parent != null ? (ref1$ = parent.position()) != null ? ref1$.left : void 8 : void 8;
-      parent_y = parent != null ? (ref1$ = parent.position()) != null ? ref1$.top : void 8 : void 8;
-      obj_box = typeof obj_box === "function"
-        ? obj.data("box").apply(obj)
-        : obj.data("box");
-      box = {};
-      for (key in obj_box) {
-        val = obj_box[key];
-        box[key] = typeof obj_box[key] === "function"
-          ? obj_box[key].apply(obj)
-          : obj_box[key];
-      }
-      if (box.x != null) {
-        obj.css({
-          left: parent_x + box.x
-        });
-      }
-      if (box.X != null) {
-        obj.css({
-          width: parent_x + box.X - obj.x()
-        });
-      }
-      if (box.y != null) {
-        obj.css({
-          top: parent_y + box.y
-        });
-      }
-      if (box.Y != null) {
-        obj.css({
-          height: parent_y + box.Y - obj.y()
-        });
-      }
-      if (box.w != null) {
-        obj.css({
-          width: box.w
-        });
-      }
-      if (box.h != null) {
-        results$.push(obj.css({
-          height: box.h
-        }));
-      }
-    }
-    return results$;
-  };
-  $(window).mousemove(function(it){
-    window.mousex = it.pageX;
-    return window.mousey = it.pageY;
-  });
-  $(window).resize(function(){
-    window.SCRW = window.innerWidth;
-    return window.SCRH = window.innerHeight;
-  });
-  setTimeout($.refresh_boxes, 10);
-  setTimeout($.refresh_boxes, 200);
-  $(window).resize($.refresh_boxes);
-  fns = {
-    x: function(it){
-      return it.offset().left;
-    },
-    X: function(it){
-      return it.offset().left + it.outerWidth();
-    },
-    y: function(it){
-      return it.offset().top;
-    },
-    Y: function(it){
-      return it.offset().top + it.outerHeight();
-    },
-    w: function(it){
-      return it.outerWidth();
-    },
-    h: function(it){
-      return it.outerHeight();
-    }
-  };
-  iter(fns, function(fn, key){
-    return $.fn[key] = function(new_val){
-      track(this);
-      if (new_val == null) {
-        return fn(this);
-      }
-      this.data("box")[key] = new_val;
-      return this;
-    };
-  });
-  each(function(tag){
-    return window[tag] = function(){
-      var children, id, attrs, ret, key, val;
-      children = slice$.call(arguments);
-      id = typeof children[0] === "string" && children[0][0] === "#" ? children.shift().slice(1) : void 8;
-      attrs = children[0].toString() === "[object Object]"
-        ? children.shift()
-        : {};
-      ret = $("<" + tag + ">");
-      for (key in attrs) {
-        val = attrs[key];
-        if (key == 'click' || key == 'keypress' || key == 'mousedown' || key == 'mouseup' || key == 'resize' || key == 'select' || key == 'submit' || key == 'val' || key == 'x' || key == 'X' || key == 'y' || key == 'Y' || key == 'w' || key == 'h' || key == 'addClass' || key == 'html' || key == 'class' || key == 'id' || key == 'href' || key == 'target') {
-          ret[key](val);
-        } else if (in$(key, ['class'])) {
-          ret.addClass(val);
-        } else if (key == 'src' || key == 'id' || key == 'href' || key == 'target') {
-          ret.attr(key, val);
-        } else {
-          ret.css(key, val);
-        }
-      }
-      if (id != null) {
-        ret.attr("id", id);
-      }
-      each(bind$(ret, 'append'), children);
-      return ret;
-    };
-  })(
-  ['div', 'span', 'img', 'canvas']);
-  window.processing = function(w, h, fn_a, fn_b){
-    var canvas;
-    canvas = $("<canvas/>");
-    new Processing(canvas.get(0), function(processing){
-      if (fn_b != null) {
-        processing.setup = function(){
-          processing.size(w, h);
-          return fn_a.call(processing);
-        };
-        return processing.draw = fn_b.bind(processing);
-      } else {
-        processing.setup = function(){
-          return processing.size(w, h);
-        };
-        return processing.draw = fn_a.bind(processing);
-      }
-    });
-    return canvas;
-  };
-  module.exports = $;
-  function in$(x, arr){
-    var i = -1, l = arr.length >>> 0;
-    while (++i < l) if (x === arr[i] && i in arr) return true;
-    return false;
-  }
-  function bind$(obj, key, target){
-    return function(){ return (target || obj)[key].apply(obj, arguments) };
-  }
-}).call(this);
-
-})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/../node_modules/boxes.js","/../node_modules")
-},{"viclib":11,"processing":3,"prelude-ls":15,"jquery-browserify":17,"__browserify_process":1,"__browserify_buffer":2}],13:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){jQuery = require("jquery-browserify");
 module.exports = (function(){
 	var KEYCODES = {
@@ -20755,7 +20580,7 @@ require("viclib")();
       draw: function(screen){
         var img, ref$;
         img = sprite((ref$ = this$.sprite) != null ? ref$ : "ground/0");
-        return screen.image(img, this$.pos.x - img.width / 2, this$.pos.y - img.height / 2);
+        return screen.image(img, this$.pos.x - img.width / 2 + camera.offset().x, this$.pos.y - img.height / 2);
       },
       destroy: function(){
         return defer(function(){
@@ -20847,7 +20672,196 @@ require("viclib")();
 }).call(this);
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/thing.js","/")
-},{"./btree":18,"viclib":11,"prelude-ls":15,"__browserify_process":1,"__browserify_buffer":2}],14:[function(require,module,exports){
+},{"./btree":18,"viclib":11,"prelude-ls":15,"__browserify_process":1,"__browserify_buffer":2}],13:[function(require,module,exports){
+(function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
+require("viclib")();
+(function(){
+  var $, processingjs, REFRESH_ELEMENTS, was_removed, track, fns, slice$ = [].slice;
+  $ = require('jquery-browserify');
+  processingjs = require('processing');
+  window.requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function(it){
+    return setTimeout(it, 1000 / 60);
+  };
+  REFRESH_ELEMENTS = [];
+  window.body = $("body");
+  window.mousex = 0;
+  window.mousey = 0;
+  window.scrw = window.innerWidth;
+  window.scrh = window.innerHeight;
+  was_removed = function(element){
+    return !$.contains(document.documentElement, element[0]);
+  };
+  track = function(obj){
+    var x$;
+    if (!in$(obj, REFRESH_ELEMENTS)) {
+      x$ = obj;
+      x$.css({
+        position: "fixed"
+      });
+      x$.data("box", {});
+      return REFRESH_ELEMENTS.splice(0, 0, obj);
+    }
+  };
+  $('*').css({
+    margin: 0,
+    padding: 0
+  });
+  $.refresh_boxes = function(){
+    var untrack_indexes, index, ref$, obj, parent, parent_x, ref1$, parent_y, obj_box, box, key, val, results$ = [];
+    untrack_indexes = [];
+    for (index in ref$ = REFRESH_ELEMENTS) {
+      obj = ref$[index];
+      if (was_removed(obj)) {
+        untrack_indexes = untrack_indexes.concat(index);
+      }
+      parent = obj.parent();
+      parent_x = parent != null ? (ref1$ = parent.position()) != null ? ref1$.left : void 8 : void 8;
+      parent_y = parent != null ? (ref1$ = parent.position()) != null ? ref1$.top : void 8 : void 8;
+      obj_box = typeof obj_box === "function"
+        ? obj.data("box").apply(obj)
+        : obj.data("box");
+      box = {};
+      for (key in obj_box) {
+        val = obj_box[key];
+        box[key] = typeof obj_box[key] === "function"
+          ? obj_box[key].apply(obj)
+          : obj_box[key];
+      }
+      if (box.x != null) {
+        obj.css({
+          left: parent_x + box.x
+        });
+      }
+      if (box.X != null) {
+        obj.css({
+          width: parent_x + box.X - obj.x()
+        });
+      }
+      if (box.y != null) {
+        obj.css({
+          top: parent_y + box.y
+        });
+      }
+      if (box.Y != null) {
+        obj.css({
+          height: parent_y + box.Y - obj.y()
+        });
+      }
+      if (box.w != null) {
+        obj.css({
+          width: box.w
+        });
+      }
+      if (box.h != null) {
+        results$.push(obj.css({
+          height: box.h
+        }));
+      }
+    }
+    return results$;
+  };
+  $(window).mousemove(function(it){
+    window.mousex = it.pageX;
+    return window.mousey = it.pageY;
+  });
+  $(window).resize(function(){
+    window.SCRW = window.innerWidth;
+    return window.SCRH = window.innerHeight;
+  });
+  setTimeout($.refresh_boxes, 10);
+  setTimeout($.refresh_boxes, 200);
+  $(window).resize($.refresh_boxes);
+  fns = {
+    x: function(it){
+      return it.offset().left;
+    },
+    X: function(it){
+      return it.offset().left + it.outerWidth();
+    },
+    y: function(it){
+      return it.offset().top;
+    },
+    Y: function(it){
+      return it.offset().top + it.outerHeight();
+    },
+    w: function(it){
+      return it.outerWidth();
+    },
+    h: function(it){
+      return it.outerHeight();
+    }
+  };
+  iter(fns, function(fn, key){
+    return $.fn[key] = function(new_val){
+      track(this);
+      if (new_val == null) {
+        return fn(this);
+      }
+      this.data("box")[key] = new_val;
+      return this;
+    };
+  });
+  each(function(tag){
+    return window[tag] = function(){
+      var children, id, attrs, ret, key, val;
+      children = slice$.call(arguments);
+      id = typeof children[0] === "string" && children[0][0] === "#" ? children.shift().slice(1) : void 8;
+      attrs = children[0].toString() === "[object Object]"
+        ? children.shift()
+        : {};
+      ret = $("<" + tag + ">");
+      for (key in attrs) {
+        val = attrs[key];
+        if (key == 'click' || key == 'keypress' || key == 'mousedown' || key == 'mouseup' || key == 'resize' || key == 'select' || key == 'submit' || key == 'val' || key == 'x' || key == 'X' || key == 'y' || key == 'Y' || key == 'w' || key == 'h' || key == 'addClass' || key == 'html' || key == 'class' || key == 'id' || key == 'href' || key == 'target') {
+          ret[key](val);
+        } else if (in$(key, ['class'])) {
+          ret.addClass(val);
+        } else if (key == 'src' || key == 'id' || key == 'href' || key == 'target') {
+          ret.attr(key, val);
+        } else {
+          ret.css(key, val);
+        }
+      }
+      if (id != null) {
+        ret.attr("id", id);
+      }
+      each(bind$(ret, 'append'), children);
+      return ret;
+    };
+  })(
+  ['div', 'span', 'img', 'canvas']);
+  window.processing = function(w, h, fn_a, fn_b){
+    var canvas;
+    canvas = $("<canvas/>");
+    new Processing(canvas.get(0), function(processing){
+      if (fn_b != null) {
+        processing.setup = function(){
+          processing.size(w, h);
+          return fn_a.call(processing);
+        };
+        return processing.draw = fn_b.bind(processing);
+      } else {
+        processing.setup = function(){
+          return processing.size(w, h);
+        };
+        return processing.draw = fn_a.bind(processing);
+      }
+    });
+    return canvas[0];
+  };
+  module.exports = $;
+  function in$(x, arr){
+    var i = -1, l = arr.length >>> 0;
+    while (++i < l) if (x === arr[i] && i in arr) return true;
+    return false;
+  }
+  function bind$(obj, key, target){
+    return function(){ return (target || obj)[key].apply(obj, arguments) };
+  }
+}).call(this);
+
+})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/../node_modules/boxes.js","/../node_modules")
+},{"viclib":11,"processing":3,"prelude-ls":15,"jquery-browserify":17,"__browserify_process":1,"__browserify_buffer":2}],14:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){THREE = require('three');
 
 THREE.Vector3.prototype.obj = function(){
@@ -20958,7 +20972,20 @@ module.exports = {
 };
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/../node_modules/victhree.js","/../node_modules")
-},{"key":13,"three":19,"__browserify_process":1,"__browserify_buffer":2}],6:[function(require,module,exports){
+},{"key":12,"three":19,"__browserify_process":1,"__browserify_buffer":2}],8:[function(require,module,exports){
+(function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
+require("viclib")();
+(function(){
+  global.ground = mixin(thing, function(){
+    return {
+      sprite: "ground/" + this.border_type,
+      solid: true
+    };
+  });
+}).call(this);
+
+})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/ground.js","/")
+},{"viclib":11,"prelude-ls":15,"__browserify_process":1,"__browserify_buffer":2}],6:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
 require("viclib")();
 (function(){
@@ -20969,6 +20996,7 @@ require("viclib")();
   };
   global.mememan = mixin(thing, function(){
     var this$ = this;
+    global.hero = this;
     key.press('j', function(){
       if (this$.is_sliding()) {
         return;
@@ -21101,15 +21129,16 @@ require("viclib")();
                   : "mememan/walking" + cycle([0, 1, 2, 1], 0.5)
             : this$.is_shooting() ? "mememan/jumping_shoot" : "mememan/jumping";
         if (this$.dir === 1) {
-          return this$.sprite += '_r';
+          this$.sprite += '_r';
         }
+        return camera.pos = this$.pos.clone();
       })
     };
   });
 }).call(this);
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/mememan.js","/")
-},{"viclib":11,"key":13,"prelude-ls":15,"__browserify_process":1,"__browserify_buffer":2}],7:[function(require,module,exports){
+},{"viclib":11,"key":12,"prelude-ls":15,"__browserify_process":1,"__browserify_buffer":2}],7:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
 require("viclib")();
 (function(){
@@ -21129,19 +21158,6 @@ require("viclib")();
 }).call(this);
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/shot.js","/")
-},{"viclib":11,"prelude-ls":15,"__browserify_process":1,"__browserify_buffer":2}],8:[function(require,module,exports){
-(function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
-require("viclib")();
-(function(){
-  global.ground = mixin(thing, function(){
-    return {
-      sprite: "ground/" + this.border_type,
-      solid: true
-    };
-  });
-}).call(this);
-
-})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/ground.js","/")
 },{"viclib":11,"prelude-ls":15,"__browserify_process":1,"__browserify_buffer":2}],9:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
 require("viclib")();

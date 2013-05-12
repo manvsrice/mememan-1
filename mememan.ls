@@ -1,8 +1,9 @@
 require! {key}
 
 global.cycle = (arr,interval) -> arr[floor((now!%interval)/interval*arr.length)]
-	
 global.mememan = mixin thing, ->
+	global.hero = @
+
 	key.press \j ~> 
 		return if @is_sliding!
 		if @is_grounded! and (key.down \s) then
@@ -55,7 +56,6 @@ global.mememan = mixin thing, ->
 		screen.fill(255,255,0)
 		for y from 63 til (63-@hp*2) by -2
 			screen.rect 8, y, 6, 1
-		
 	tick: after @tick, ~> 
 		@vel.x = switch
 		| @is_climbing! => 0	
@@ -109,6 +109,7 @@ global.mememan = mixin thing, ->
 					"mememan/jumping"
 
 		@sprite += \_r if @dir == 1
+		camera.pos = @pos.clone()
 			#if @is_stopped! then
 				#if @is_shooting! then 
 					#"mememan/standing_shoot"
