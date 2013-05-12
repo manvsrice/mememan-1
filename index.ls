@@ -13,8 +13,11 @@ global.just = (val) -> -> val
 global.true_for = (secs) -> start = now!; -> (now! - start) < secs
 global.time_since = -> (now! - it)
 global.camera = do mixin -> pos:v3(0,0,0), scale:3, offset: ~> x:-@pos.x + canvas.width/@scale/2, y:0
+global.width = window.innerWidth
+global.height = window.innerHeight
 last_time = now!
 
+global.coln = 0
 global.canvas = processing window.innerWidth, window.innerHeight,
 	-> 
 		global.sprite = _.memoize (url) ~> @loadImage url+".png"
@@ -27,14 +30,23 @@ global.canvas = processing window.innerWidth, window.innerHeight,
 		for spr in sprs
 			sprite(spr)
 			sprite(spr+"_r")
+
+		global.background = @loadImage "background.png"
+		# tamanho original da tela: 320x320
+		camera.scale = height/(16*20)
 	->
 		@scale camera.scale
-		@background 240 240 240
+		@background 222 222 222
 		@noStroke!
 
+		for i from -3 to 3
+			@image background, background.width * i, 0
+
+		global.coln = 0
 		dt = min((now! - last_time),0.05)
 		(.tick dt) `each` things
 		last_time := now!
+		log global.coln
 
 		(~>it.draw @) `each` things
 		#things |> each ~>

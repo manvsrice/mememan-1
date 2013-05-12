@@ -1,6 +1,6 @@
-require! {"./btree"}
+require! {"./quadtree"}
 global.things = []
-global.tree = btree {width:128,height:128}
+global.tree = quadtree {width:128,height:128}
 global.thing = mixin ->
 	defer ~> 
 		things.push @
@@ -22,6 +22,7 @@ global.thing = mixin ->
 			@vel.y += G*dt
 
 		@is_grounded = just false
+
 		(~>@check_collision it) `each` things if @collides
 
 		if (@pos.x != @old_pos.x and @pos.y != @old_pos.y) then
@@ -30,6 +31,7 @@ global.thing = mixin ->
 		@old_pos.x = @pos.x
 		@old_pos.y = @pos.y
 	check_collision: (b) ~>
+		global.coln++
 		a = @; abs = Math.abs;
 		ax=a.pos.x; aw=a.size.x/2; axi=ax - aw; axf=ax+aw;
 		ay=a.pos.y; ah=a.size.y/2; ayi=ay - ah; ayf=ay+ah;

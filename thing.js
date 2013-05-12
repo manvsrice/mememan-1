@@ -1,10 +1,10 @@
 require("prelude-ls").installPrelude(global);
 require("viclib")();
 (function(){
-  var btree;
-  btree = require('./btree');
+  var quadtree;
+  quadtree = require('./quadtree');
   global.things = [];
-  global.tree = btree({
+  global.tree = quadtree({
     width: 128,
     height: 128
   });
@@ -46,6 +46,7 @@ require("viclib")();
       },
       check_collision: function(b){
         var a, abs, ax, aw, axi, axf, ay, ah, ayi, ayf, bx, bw, bxi, bxf, by, bh, byi, byf, dx, dy;
+        global.coln++;
         a = this$;
         abs = Math.abs;
         ax = a.pos.x;

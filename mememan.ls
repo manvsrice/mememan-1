@@ -13,7 +13,7 @@ global.mememan = mixin thing, ->
 
 	key.press \k ~>
 		if @is_walking! or @is_jumping! then
-			shot {} {pos:v3(@pos.x+B*@dir,@pos.y,0),vel:v3(18*B*@dir,0,0)}
+			shot {} {pos:v3(@pos.x+B*@dir,@pos.y,0),vel:v3(22*B*@dir,0,0)}
 			@is_shooting = true_for 0.3s
 
 	key.release \j ~> 
@@ -31,7 +31,7 @@ global.mememan = mixin thing, ->
 	floats: false
 	collides: true
 	hp: 28
-	pos: v3(150,100,0)
+	#pos: @pos ? v3(150,100,0)
 	size: v3(22,25,0)
 	vel: v3(0,0,0)
 	#collide: ~>
@@ -94,7 +94,7 @@ global.mememan = mixin thing, ->
 					if @is_shooting! then
 						"mememan/standing_shoot"
 					else
-						"mememan/standing" + cycle([0,0,0,0,0,0,0,0,0,1],5)
+						"mememan/standing" + cycle([0,0,0,0,0,0,0,0,0,1],4)
 				else
 					if @is_shooting! then
 						"mememan/walking_shoot" + cycle([0,1,2,1],0.5)

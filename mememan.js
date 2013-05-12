@@ -25,7 +25,7 @@ require("viclib")();
       if (this$.is_walking() || this$.is_jumping()) {
         shot({}, {
           pos: v3(this$.pos.x + B * this$.dir, this$.pos.y, 0),
-          vel: v3(18 * B * this$.dir, 0, 0)
+          vel: v3(22 * B * this$.dir, 0, 0)
         });
         return this$.is_shooting = true_for(0.3);
       }
@@ -54,7 +54,6 @@ require("viclib")();
       floats: false,
       collides: true,
       hp: 28,
-      pos: v3(150, 100, 0),
       size: v3(22, 25, 0),
       vel: v3(0, 0, 0),
       climb: function(dir){
@@ -133,7 +132,7 @@ require("viclib")();
             ? this$.is_stopped()
               ? this$.is_shooting()
                 ? "mememan/standing_shoot"
-                : "mememan/standing" + cycle([0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 5)
+                : "mememan/standing" + cycle([0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 4)
               : this$.is_shooting()
                 ? "mememan/walking_shoot" + cycle([0, 1, 2, 1], 0.5)
                 : this$.is_sliding()
