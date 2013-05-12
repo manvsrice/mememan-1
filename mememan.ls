@@ -5,15 +5,16 @@ global.mememan = mixin thing, ->
 	global.hero = @
 
 	key.press \j ~> 
-		return if @is_sliding! or @is_digging!
+		return if @is_sliding!
 		if @is_grounded! and (key.down \s) then
 			@is_sliding = true_for 0.35s
 		else
 			@vel.y = -VI if @is_grounded!
+			@is_climbing = just false if @is_climbing!
 
 	key.press \k ~>
-		if @is_walking! or @is_jumping! then
-			shot {} {pos:v3(@pos.x+B*@dir,@pos.y,0),vel:v3(22*B*@dir,0,0)}
+		if @is_walking! or @is_jumping! or @is_climbing! then
+			shot {} {dmg:2,owner:@,pos:v3(@pos.x+B*@dir,@pos.y,0),vel:v3(22*B*@dir,0,0)}
 			@is_shooting = true_for 0.3s
 
 	key.release \j ~> 
@@ -21,30 +22,16 @@ global.mememan = mixin thing, ->
 
 	sprite: "mememan/standing0"
 	nome: "meme"
-	is_sliding: just false
-	is_shooting: just false
-	is_climbing: just false
-	is_digging: just false
-	just_climbed: just false
-	is_jumping: ~>  @vel.y < 0 and !@is_climbing!
-	is_walking: ~> !@is_jumping! and !@is_climbing! and !@is_shooting!
-	is_stopped: ~> @vel.x == 0 and @vel.y == 0
 	floats: false
 	collides: true
 	hp: 28
-	#pos: @pos ? v3(150,100,0)
+	depth: -1
 	size: v3(16,25,0)
 	vel: v3(0,0,0)
-	#collide: ~>
-		#if it.climbable then
-			#if it.pos.y > @pos.y and key.down \s then
-			#if key.down \s then
-				#log "wow"
 	climb: (dir) ~>
 		@is_climbing = just true
 		@just_climbed = true_for 0.4
 		@ghost = @floats = true
-		@pos.x = floor((@pos.x + B/2)/B)*B
 		@vel.y = B * 4.5 * (if dir==\down then 1 else -1)
 	draw: after @draw, (screen) ~>
 		screen.fill(0,0,0)
@@ -56,7 +43,6 @@ global.mememan = mixin thing, ->
 		@vel.x = switch
 		| @is_climbing! => 0	
 		| @is_sliding!	=> @dir*12*B
-		| @is_digging!	=> @dir*12*B
 		| key.down \d	=> B*4.4
 		| key.down \a	=> -B*4.4
 		| _				=> 0
@@ -71,26 +57,18 @@ global.mememan = mixin thing, ->
 		@dir = 1 if @vel.x > 0
 		@dir = -1 if @vel.x < 0
 
-		if @is_sliding! then
-			if !has_solid(@pos.x + @dir*B, @pos.y) and has_solid(@pos.x + @dir*B, @pos.y - B)  then
-				@is_digging = just true
-				@is_sliding = just false
-		if @is_digging! then
-			if !has_solid(@pos.x, @pos.y - B) and has_solid(@pos.x - @dir*8, @pos.y - B)  then
-				@is_digging = just false
 
-			#if empty(filter (.solid), tree.get(@pos.x, @pos.y - B/2, @pos.x + @dir*B, @pos.y + B/2)) then
-				#@is_sliding = true_for 0.1
-			#else if @ghost and @has_solid(@pos.x, @pos.y - @dir*B/2) then
-				#@ghost = @floats = false
-				#@is_sliding = just false
-				#@vel.y = 0
-				#@pos.y = floor(@pos.y/B)*B+B/2
-				#@vel.x = @dir*12*B
-				#@pos.x += @dir*12*B*dt
-				#@is_sliding = true_for 0.1
+		@ghost = @floats = @is_climbing!
 
-		@ghost = @floats = @is_climbing! or @is_digging!
+		if @is_climbing! then
+			stair = (filter (.is_stair), get_around(@pos.x,@pos.y))[0]
+			@pos.x = stair.pos.x if stair?
+
+		if @is_sliding! and !@has_solid_ahead! and @vel.y == 0 and @has_solid_over! then
+				@ghost = @floats = true
+				@dir = 1 if key.down \d
+				@dir = -1 if key.down \a
+				@is_sliding = true_for 0.04 
 
 		if !@is_climbing! and !@is_sliding! then
 			if key.down \s and has_stair(@pos.x, @pos.y + B) then
@@ -107,7 +85,7 @@ global.mememan = mixin thing, ->
 					"mememan/climbed"
 				else
 					"mememan/climbing"
-			else if @is_sliding! or @is_digging! then
+			else if @is_sliding! then
 				"mememan/sliding"
 			else if @is_grounded! then
 				if @is_stopped! then
@@ -125,9 +103,18 @@ global.mememan = mixin thing, ->
 					"mememan/jumping_shoot"
 				else 
 					"mememan/jumping"
+	dir: 1
+	is_sliding: just false
+	is_shooting: just false
+	is_climbing: just false
+	is_digging: just false
+	just_climbed: just false
+	is_jumping: ~>  @vel.y < 0 and !@is_climbing!
+	is_walking: ~> !@is_jumping! and !@is_climbing! and !@is_shooting!
+	is_stopped: ~> @vel.x == 0 and @vel.y == 0
+	has_solid_ahead: ~>has_solid(@pos.x+@dir*B,@pos.y)
+	has_solid_over: ~>not empty(filter (.solid), tree.get(@pos.x - @dir*B*1.1, @pos.y - B*1.5, @pos.x + @dir*B*1.1, @pos.y - B*0.5))
 
-		@sprite += \_r if @dir == 1
-		camera.pos = @pos.clone()
 			#if @is_stopped! then
 				#if @is_shooting! then 
 					#"mememan/standing_shoot"

@@ -30,8 +30,9 @@ require("viclib")();
     return {
       draw: function(screen){
         var img, ref$;
-        img = sprite((ref$ = this$.sprite) != null ? ref$ : "ground/0");
-        return screen.image(img, this$.pos.x - img.width / 2 + camera.offset().x, this$.pos.y - img.height / 2);
+        global.drw++;
+        img = sprite(((ref$ = this$.sprite) != null ? ref$ : "ground/0") + (this$.dir != null && this$.dir === 1 ? "_r" : ""));
+        return screen.image(img, this$.pos.x - img.width / 2 + camera.offset().x, this$.pos.y - img.height / 2 + camera.offset().y);
       },
       destroy: function(){
         return defer(function(){
@@ -60,7 +61,7 @@ require("viclib")();
         return this$.old_pos.y = this$.pos.y;
       },
       check_collision: function(b){
-        var a, abs, ax, aw, axi, axf, ay, ah, ayi, ayf, bx, bw, bxi, bxf, by, bh, byi, byf, dx, dy;
+        var a, abs, ax, aw, axi, axf, ay, ah, ayi, ayf, bx, bw, bxi, bxf, by, bh, byi, byf, dx, dy, av, avx, avy;
         a = this$;
         abs = Math.abs;
         ax = a.pos.x;
@@ -85,21 +86,24 @@ require("viclib")();
           return false;
         }
         if (!this$.ghost && b.solid) {
+          av = a.vel;
+          avx = av.x;
+          avy = av.y;
           if (dx > dy) {
-            if (bxi < axi && axi < bxf) {
+            if ((bxi < axi && axi < bxf) && avx <= 0) {
               a.pos.x += bxf - axi;
               a.vel.x = 0;
             }
-            if (bxi < axf && axf < bxf) {
+            if ((bxi < axf && axf < bxf) && avx >= 0) {
               a.pos.x += bxi - axf;
               a.vel.x = 0;
             }
           } else {
-            if (byi < ayi && ayi < byf) {
+            if ((byi < ayi && ayi < byf) && avy <= 0) {
               a.pos.y += -dy;
               a.vel.y = 0;
             }
-            if (byi < ayf && ayf < byf) {
+            if ((byi < ayf && ayf < byf) && avy >= 0) {
               a.pos.y += dy;
               a.vel.y = 0;
               this$.is_grounded = just(true);
@@ -114,9 +118,11 @@ require("viclib")();
       ghost: false,
       floats: false,
       solid: false,
+      depth: 0,
       hp: 28,
       col: [200, 200, 200],
       size: v3(B, B, 0),
+      dir: void 8,
       pos: v3(0, 0, 0),
       old_pos: v3(0, 0, 0),
       vel: v3(0, 0, 0)

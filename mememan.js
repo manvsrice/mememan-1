@@ -10,20 +10,25 @@ require("viclib")();
     var this$ = this;
     global.hero = this;
     key.press('j', function(){
-      if (this$.is_sliding() || this$.is_digging()) {
+      if (this$.is_sliding()) {
         return;
       }
       if (this$.is_grounded() && key.down('s')) {
         return this$.is_sliding = true_for(0.35);
       } else {
         if (this$.is_grounded()) {
-          return this$.vel.y = -VI;
+          this$.vel.y = -VI;
+        }
+        if (this$.is_climbing()) {
+          return this$.is_climbing = just(false);
         }
       }
     });
     key.press('k', function(){
-      if (this$.is_walking() || this$.is_jumping()) {
+      if (this$.is_walking() || this$.is_jumping() || this$.is_climbing()) {
         shot({}, {
+          dmg: 2,
+          owner: this$,
           pos: v3(this$.pos.x + B * this$.dir, this$.pos.y, 0),
           vel: v3(22 * B * this$.dir, 0, 0)
         });
@@ -38,30 +43,16 @@ require("viclib")();
     return {
       sprite: "mememan/standing0",
       nome: "meme",
-      is_sliding: just(false),
-      is_shooting: just(false),
-      is_climbing: just(false),
-      is_digging: just(false),
-      just_climbed: just(false),
-      is_jumping: function(){
-        return this$.vel.y < 0 && !this$.is_climbing();
-      },
-      is_walking: function(){
-        return !this$.is_jumping() && !this$.is_climbing() && !this$.is_shooting();
-      },
-      is_stopped: function(){
-        return this$.vel.x === 0 && this$.vel.y === 0;
-      },
       floats: false,
       collides: true,
       hp: 28,
+      depth: -1,
       size: v3(16, 25, 0),
       vel: v3(0, 0, 0),
       climb: function(dir){
         this$.is_climbing = just(true);
         this$.just_climbed = true_for(0.4);
         this$.ghost = this$.floats = true;
-        this$.pos.x = floor((this$.pos.x + B / 2) / B) * B;
         return this$.vel.y = B * 4.5 * (dir === 'down'
           ? 1
           : -1);
@@ -78,13 +69,12 @@ require("viclib")();
         return results$;
       }),
       tick: after(this.tick, function(dt){
+        var stair;
         this$.vel.x = (function(){
           switch (false) {
           case !this.is_climbing():
             return 0;
           case !this.is_sliding():
-            return this.dir * 12 * B;
-          case !this.is_digging():
             return this.dir * 12 * B;
           case !key.down('d'):
             return B * 4.4;
@@ -114,18 +104,25 @@ require("viclib")();
         if (this$.vel.x < 0) {
           this$.dir = -1;
         }
-        if (this$.is_sliding()) {
-          if (!has_solid(this$.pos.x + this$.dir * B, this$.pos.y) && has_solid(this$.pos.x + this$.dir * B, this$.pos.y - B)) {
-            this$.is_digging = just(true);
-            this$.is_sliding = just(false);
+        this$.ghost = this$.floats = this$.is_climbing();
+        if (this$.is_climbing()) {
+          stair = filter(function(it){
+            return it.is_stair;
+          }, get_around(this$.pos.x, this$.pos.y))[0];
+          if (stair != null) {
+            this$.pos.x = stair.pos.x;
           }
         }
-        if (this$.is_digging()) {
-          if (!has_solid(this$.pos.x, this$.pos.y - B) && has_solid(this$.pos.x - this$.dir * 8, this$.pos.y - B)) {
-            this$.is_digging = just(false);
+        if (this$.is_sliding() && !this$.has_solid_ahead() && this$.vel.y === 0 && this$.has_solid_over()) {
+          this$.ghost = this$.floats = true;
+          if (key.down('d')) {
+            this$.dir = 1;
           }
+          if (key.down('a')) {
+            this$.dir = -1;
+          }
+          this$.is_sliding = true_for(0.04);
         }
-        this$.ghost = this$.floats = this$.is_climbing() || this$.is_digging();
         if (!this$.is_climbing() && !this$.is_sliding()) {
           if (key.down('s') && has_stair(this$.pos.x, this$.pos.y + B)) {
             this$.climb('down');
@@ -135,9 +132,9 @@ require("viclib")();
         } else if (this$.is_climbing() && !this$.just_climbed() && !has_stair(this$.pos.x, this$.pos.y + B / 4)) {
           this$.is_climbing = just(false);
         }
-        this$.sprite = this$.is_climbing()
+        return this$.sprite = this$.is_climbing()
           ? (this$.dir = -1 + floor((this$.pos.y / 16) % 2) * 2, !has_stair(this$.pos.x, this$.pos.y - B / 4) && has_stair(this$.pos.x, this$.pos.y + B / 4) ? "mememan/climbed" : "mememan/climbing")
-          : this$.is_sliding() || this$.is_digging()
+          : this$.is_sliding()
             ? "mememan/sliding"
             : this$.is_grounded()
               ? this$.is_stopped()
@@ -148,11 +145,30 @@ require("viclib")();
                   ? "mememan/walking_shoot" + cycle([0, 1, 2, 1], 0.5)
                   : "mememan/walking" + cycle([0, 1, 2, 1], 0.5)
               : this$.is_shooting() ? "mememan/jumping_shoot" : "mememan/jumping";
-        if (this$.dir === 1) {
-          this$.sprite += '_r';
-        }
-        return camera.pos = this$.pos.clone();
-      })
+      }),
+      dir: 1,
+      is_sliding: just(false),
+      is_shooting: just(false),
+      is_climbing: just(false),
+      is_digging: just(false),
+      just_climbed: just(false),
+      is_jumping: function(){
+        return this$.vel.y < 0 && !this$.is_climbing();
+      },
+      is_walking: function(){
+        return !this$.is_jumping() && !this$.is_climbing() && !this$.is_shooting();
+      },
+      is_stopped: function(){
+        return this$.vel.x === 0 && this$.vel.y === 0;
+      },
+      has_solid_ahead: function(){
+        return has_solid(this$.pos.x + this$.dir * B, this$.pos.y);
+      },
+      has_solid_over: function(){
+        return !empty(filter(function(it){
+          return it.solid;
+        }, tree.get(this$.pos.x - this$.dir * B * 1.1, this$.pos.y - B * 1.5, this$.pos.x + this$.dir * B * 1.1, this$.pos.y - B * 0.5)));
+      }
     };
   });
 }).call(this);

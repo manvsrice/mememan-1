@@ -14,7 +14,11 @@ require("viclib")();
       sprite: "shot/shot",
       size: v3(4, 4, 0),
       collides: true,
+      dmg: 2,
       collide: function(it){
+        if (it !== this$.owner) {
+          it.hp -= this$.dmg;
+        }
         if (it.solid) {
           return this$.destroy();
         }

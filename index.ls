@@ -1,6 +1,7 @@
 require! {$:boxes,key:key,_:lodash,v3:victhree.v3}
 require "./thing"
 require "./mememan"
+require "./macer"
 require "./shot"
 require "./ground"
 require "./level"
@@ -12,21 +13,33 @@ global.now = -> Date.now!/1000
 global.just = (val) -> -> val
 global.true_for = (secs) -> start = now!; -> (now! - start) < secs
 global.time_since = -> (now! - it)
-global.width = window.innerWidth
-global.height = window.innerHeight
-global.camera = do mixin -> 
-	width: window.innerWidth
-	height: window.innerHeight
+global.camera = mixin -> 
+	screen_width: window.innerWidth
+	screen_height: window.innerHeight
 	pos:v3(0,0,0),
-	scale:height/(16*16)
-	offset: ~> x:-max(@pos.x,@width/@scale/2) + @width/@scale/2, y:0
-	tick: ~>
-		if global.hero?.pos.y < @y then
-			@y -= 8*16
+	scale:window.innerHeight/(16*16)
+	offset: ~> x:-max(@pos.x,@screen_width/@scale/2) + @screen_width/@scale/2, y:-@pos.y
+	target_y: void
+	tick: (dt) ~>
+		if !@target_y? and global.hero?.pos? then
+			@pos.y = hero.pos.y - 16*16
+			@target_y = floor(global.hero.pos.y/(16*16))*16*16
+		@pos.x = global.hero.pos.x
+		if hero?.pos.y < @target_y then
+			@target_y -= 16*B
+		if hero?.pos.y > @target_y + (16*16) then
+			@target_y += 16*B
+		if abs(@pos.y - @target_y)>2 then
+			@pos.y += (@target_y - @pos.y)/abs(@target_y - @pos.y) * 12*16 * dt
+		else
+			@pos.y = @target_y
 last_time = now!
 
-global.canvas = processing camera.width, camera.height,
+global.canvas = processing window.innerWidth, window.innerHeight,
 	-> 
+		level!.create!
+		global.camera = global.camera!
+
 		global.sprite = _.memoize (url) ~> @loadImage url+".png"
 
 		sprs = map ("mememan/"+), <[
@@ -39,22 +52,27 @@ global.canvas = processing camera.width, camera.height,
 			sprite(spr+"_r")
 
 		global.background = @loadImage "background.png"
+
+
 		# tamanho original da tela: 320x320
 	->
-		camera.tick!
-
 		@scale camera.scale
 		@background 222 222 222
 		@noStroke!
+
+		near_things = tree.get(hero.pos.x - B*16, hero.pos.y - B*16, hero.pos.x + B*16, hero.pos.y + B*16)
 
 		for i from -3 to 3
 			@image background, background.width * i, 0
 
 		dt = min((now! - last_time),0.05)
-		(.tick dt) `each` things
+		camera.tick dt
+		(.tick dt) `each` near_things
 		last_time := now!
 
-		(~>it.draw @) `each` things
+		global.drw = 0
+		(~>it.draw @) `each` near_things
+		log global.drw
 		#things |> each ~>
 			#img = sprite(it.sprite ? "ground/0")
 			#@rect it.pos.x - it.size.x/2, it.pos.y - it.size.y/2, it.size.x, it.size.y #show hitbox (debug)
@@ -63,5 +81,5 @@ global.canvas = processing camera.width, camera.height,
 $("body").append canvas
 log canvas
 
-level!.create!
 		
+

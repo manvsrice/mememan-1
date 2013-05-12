@@ -14135,6 +14135,7 @@ require("viclib")();
   v3 = require('victhree').v3;
   require("./thing");
   require("./mememan");
+  require("./macer");
   require("./shot");
   require("./ground");
   require("./level");
@@ -14160,32 +14161,46 @@ require("viclib")();
   global.time_since = function(it){
     return now() - it;
   };
-  global.width = window.innerWidth;
-  global.height = window.innerHeight;
   global.camera = mixin(function(){
     var this$ = this;
     return {
-      width: window.innerWidth,
-      height: window.innerHeight,
+      screen_width: window.innerWidth,
+      screen_height: window.innerHeight,
       pos: v3(0, 0, 0),
-      scale: height / (16 * 16),
+      scale: window.innerHeight / (16 * 16),
       offset: function(){
         return {
-          x: -max(this$.pos.x, this$.width / this$.scale / 2) + this$.width / this$.scale / 2,
-          y: 0
+          x: -max(this$.pos.x, this$.screen_width / this$.scale / 2) + this$.screen_width / this$.scale / 2,
+          y: -this$.pos.y
         };
       },
-      tick: function(){
+      target_y: void 8,
+      tick: function(dt){
         var ref$;
-        if (((ref$ = global.hero) != null ? ref$.pos.y : void 8) < this$.y) {
-          return this$.y -= 8 * 16;
+        if (this$.target_y == null && ((ref$ = global.hero) != null ? ref$.pos : void 8) != null) {
+          this$.pos.y = hero.pos.y - 16 * 16;
+          this$.target_y = floor(global.hero.pos.y / (16 * 16)) * 16 * 16;
+        }
+        this$.pos.x = global.hero.pos.x;
+        if ((typeof hero != 'undefined' && hero !== null ? hero.pos.y : void 8) < this$.target_y) {
+          this$.target_y -= 16 * B;
+        }
+        if ((typeof hero != 'undefined' && hero !== null ? hero.pos.y : void 8) > this$.target_y + 16 * 16) {
+          this$.target_y += 16 * B;
+        }
+        if (abs(this$.pos.y - this$.target_y) > 2) {
+          return this$.pos.y += (this$.target_y - this$.pos.y) / abs(this$.target_y - this$.pos.y) * 12 * 16 * dt;
+        } else {
+          return this$.pos.y = this$.target_y;
         }
       }
     };
-  })();
+  });
   last_time = now();
-  global.canvas = processing(camera.width, camera.height, function(){
+  global.canvas = processing(window.innerWidth, window.innerHeight, function(){
     var sprs, i$, len$, spr, this$ = this;
+    level().create();
+    global.camera = global.camera();
     global.sprite = _.memoize(function(url){
       return this$.loadImage(url + ".png");
     });
@@ -14199,31 +14214,33 @@ require("viclib")();
     }
     return global.background = this.loadImage("background.png");
   }, function(){
-    var i$, i, dt, this$ = this;
-    camera.tick();
+    var near_things, i$, i, dt, this$ = this;
     this.scale(camera.scale);
     this.background(222, 222, 222);
     this.noStroke();
+    near_things = tree.get(hero.pos.x - B * 16, hero.pos.y - B * 16, hero.pos.x + B * 16, hero.pos.y + B * 16);
     for (i$ = -3; i$ <= 3; ++i$) {
       i = i$;
       this.image(background, background.width * i, 0);
     }
     dt = min(now() - last_time, 0.05);
+    camera.tick(dt);
     each(function(it){
       return it.tick(dt);
-    }, things);
+    }, near_things);
     last_time = now();
-    return each(function(it){
+    global.drw = 0;
+    each(function(it){
       return it.draw(this$);
-    }, things);
+    }, near_things);
+    return log(global.drw);
   });
   $("body").append(canvas);
   log(canvas);
-  level().create();
 }).call(this);
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/index.js","/")
-},{"./thing":5,"./mememan":6,"./shot":7,"./ground":8,"./level":9,"./stair":10,"viclib":11,"boxes":12,"key":13,"victhree":14,"prelude-ls":15,"lodash":16,"__browserify_process":1,"__browserify_buffer":2}],15:[function(require,module,exports){
+},{"./thing":5,"./mememan":6,"./macer":7,"./shot":8,"./ground":9,"./level":10,"./stair":11,"viclib":12,"boxes":13,"key":14,"victhree":15,"prelude-ls":16,"lodash":17,"__browserify_process":1,"__browserify_buffer":2}],16:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){// prelude.ls 0.6.0
 // Copyright (c) 2012 George Zahariev
 // Released under the MIT License
@@ -14990,7 +15007,7 @@ function import$(obj, src){
   return obj;
 }
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/../../node_modules/prelude-ls/prelude.js","/../../node_modules/prelude-ls")
-},{"__browserify_process":1,"__browserify_buffer":2}],16:[function(require,module,exports){
+},{"__browserify_process":1,"__browserify_buffer":2}],17:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){/**
  * @license
  * Lo-Dash 1.1.1 (Custom Build) <http://lodash.com/>
@@ -20210,7 +20227,7 @@ function import$(obj, src){
 }(this));
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/../../node_modules/lodash/dist/lodash.js","/../../node_modules/lodash/dist")
-},{"__browserify_process":1,"__browserify_buffer":2}],11:[function(require,module,exports){
+},{"__browserify_process":1,"__browserify_buffer":2}],12:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
 (function(){
   var viclib, ref$, slice$ = [].slice;
@@ -20402,7 +20419,7 @@ function import$(obj, src){
 }).call(this);
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/../node_modules/viclib.js","/../node_modules")
-},{"prelude-ls":15,"__browserify_process":1,"__browserify_buffer":2}],12:[function(require,module,exports){
+},{"prelude-ls":16,"__browserify_process":1,"__browserify_buffer":2}],13:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
 require("viclib")();
 (function(){
@@ -20591,7 +20608,7 @@ require("viclib")();
 }).call(this);
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/../node_modules/boxes.js","/../node_modules")
-},{"viclib":11,"processing":3,"prelude-ls":15,"jquery-browserify":17,"__browserify_process":1,"__browserify_buffer":2}],13:[function(require,module,exports){
+},{"viclib":12,"processing":3,"prelude-ls":16,"jquery-browserify":18,"__browserify_process":1,"__browserify_buffer":2}],14:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){jQuery = require("jquery-browserify");
 module.exports = (function(){
 	var KEYCODES = {
@@ -20763,135 +20780,7 @@ module.exports = (function(){
 })();
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/../node_modules/key.js","/../node_modules")
-},{"jquery-browserify":17,"__browserify_process":1,"__browserify_buffer":2}],5:[function(require,module,exports){
-(function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
-require("viclib")();
-(function(){
-  var quadtree;
-  quadtree = require('./quadtree');
-  global.things = [];
-  global.tree = quadtree({
-    width: 128,
-    height: 128
-  });
-  global.get_around = function(x, y){
-    return tree.get(x - B / 2, y - B / 2, x + B / 2, y + B / 2);
-  };
-  global.has_solid = function(x, y){
-    return !empty(filter(function(it){
-      return it.solid;
-    }, get_around(x, y)));
-  };
-  global.has_stair = function(x, y){
-    return !empty(filter(function(it){
-      return it.is_stair;
-    }, get_around(x, y)));
-  };
-  global.thing = mixin(function(){
-    var this$ = this;
-    defer(function(){
-      things.push(this$);
-      return tree.add(this$, this$.pos.x, this$.pos.y);
-    });
-    return {
-      draw: function(screen){
-        var img, ref$;
-        img = sprite((ref$ = this$.sprite) != null ? ref$ : "ground/0");
-        return screen.image(img, this$.pos.x - img.width / 2 + camera.offset().x, this$.pos.y - img.height / 2);
-      },
-      destroy: function(){
-        return defer(function(){
-          return remove(things, this$);
-        });
-      },
-      tick: function(dt){
-        var near_things;
-        this$.pos.x += this$.vel.x * dt;
-        this$.pos.y += this$.vel.y * dt;
-        if (!this$.floats) {
-          this$.pos.y += 0.5 * G * dt * dt;
-          this$.vel.y += G * dt;
-        }
-        this$.is_grounded = just(false);
-        if (this$.collides) {
-          near_things = tree.get(this$.pos.x - B * 4, this$.pos.y - B * 4, this$.pos.x + B * 4, this$.pos.y + B * 4);
-          each(function(it){
-            return this$.check_collision(it);
-          }, near_things);
-        }
-        if (this$.pos.x !== this$.old_pos.x && this$.pos.y !== this$.old_pos.y) {
-          tree.add(this$, this$.pos.x, this$.pos.y);
-        }
-        this$.old_pos.x = this$.pos.x;
-        return this$.old_pos.y = this$.pos.y;
-      },
-      check_collision: function(b){
-        var a, abs, ax, aw, axi, axf, ay, ah, ayi, ayf, bx, bw, bxi, bxf, by, bh, byi, byf, dx, dy;
-        a = this$;
-        abs = Math.abs;
-        ax = a.pos.x;
-        aw = a.size.x / 2;
-        axi = ax - aw;
-        axf = ax + aw;
-        ay = a.pos.y;
-        ah = a.size.y / 2;
-        ayi = ay - ah;
-        ayf = ay + ah;
-        bx = b.pos.x;
-        bw = b.size.x / 2;
-        bxi = bx - bw;
-        bxf = bx + bw;
-        by = b.pos.y;
-        bh = b.size.y / 2;
-        byi = by - bh;
-        byf = by + bh;
-        dx = abs(bx - ax) - (aw + bw);
-        dy = abs(by - ay) - (ah + bh);
-        if (dx >= 0 || dy >= 0) {
-          return false;
-        }
-        if (!this$.ghost && b.solid) {
-          if (dx > dy) {
-            if (bxi < axi && axi < bxf) {
-              a.pos.x += bxf - axi;
-              a.vel.x = 0;
-            }
-            if (bxi < axf && axf < bxf) {
-              a.pos.x += bxi - axf;
-              a.vel.x = 0;
-            }
-          } else {
-            if (byi < ayi && ayi < byf) {
-              a.pos.y += -dy;
-              a.vel.y = 0;
-            }
-            if (byi < ayf && ayf < byf) {
-              a.pos.y += dy;
-              a.vel.y = 0;
-              this$.is_grounded = just(true);
-            }
-          }
-        }
-        if (typeof a.collide === 'function') {
-          a.collide(b);
-        }
-        return true;
-      },
-      ghost: false,
-      floats: false,
-      solid: false,
-      hp: 28,
-      col: [200, 200, 200],
-      size: v3(B, B, 0),
-      pos: v3(0, 0, 0),
-      old_pos: v3(0, 0, 0),
-      vel: v3(0, 0, 0)
-    };
-  });
-}).call(this);
-
-})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/thing.js","/")
-},{"./quadtree":18,"viclib":11,"prelude-ls":15,"__browserify_process":1,"__browserify_buffer":2}],14:[function(require,module,exports){
+},{"jquery-browserify":18,"__browserify_process":1,"__browserify_buffer":2}],15:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){THREE = require('three');
 
 THREE.Vector3.prototype.obj = function(){
@@ -21002,7 +20891,141 @@ module.exports = {
 };
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/../node_modules/victhree.js","/../node_modules")
-},{"key":13,"three":19,"__browserify_process":1,"__browserify_buffer":2}],6:[function(require,module,exports){
+},{"key":14,"three":19,"__browserify_process":1,"__browserify_buffer":2}],5:[function(require,module,exports){
+(function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
+require("viclib")();
+(function(){
+  var quadtree;
+  quadtree = require('./quadtree');
+  global.things = [];
+  global.tree = quadtree({
+    width: 128,
+    height: 128
+  });
+  global.get_around = function(x, y){
+    return tree.get(x - B / 2, y - B / 2, x + B / 2, y + B / 2);
+  };
+  global.has_solid = function(x, y){
+    return !empty(filter(function(it){
+      return it.solid;
+    }, get_around(x, y)));
+  };
+  global.has_stair = function(x, y){
+    return !empty(filter(function(it){
+      return it.is_stair;
+    }, get_around(x, y)));
+  };
+  global.thing = mixin(function(){
+    var this$ = this;
+    defer(function(){
+      things.push(this$);
+      return tree.add(this$, this$.pos.x, this$.pos.y);
+    });
+    return {
+      draw: function(screen){
+        var img, ref$;
+        global.drw++;
+        img = sprite(((ref$ = this$.sprite) != null ? ref$ : "ground/0") + (this$.dir != null && this$.dir === 1 ? "_r" : ""));
+        return screen.image(img, this$.pos.x - img.width / 2 + camera.offset().x, this$.pos.y - img.height / 2 + camera.offset().y);
+      },
+      destroy: function(){
+        return defer(function(){
+          return remove(things, this$);
+        });
+      },
+      tick: function(dt){
+        var near_things;
+        this$.pos.x += this$.vel.x * dt;
+        this$.pos.y += this$.vel.y * dt;
+        if (!this$.floats) {
+          this$.pos.y += 0.5 * G * dt * dt;
+          this$.vel.y += G * dt;
+        }
+        this$.is_grounded = just(false);
+        if (this$.collides) {
+          near_things = tree.get(this$.pos.x - B * 4, this$.pos.y - B * 4, this$.pos.x + B * 4, this$.pos.y + B * 4);
+          each(function(it){
+            return this$.check_collision(it);
+          }, near_things);
+        }
+        if (this$.pos.x !== this$.old_pos.x && this$.pos.y !== this$.old_pos.y) {
+          tree.add(this$, this$.pos.x, this$.pos.y);
+        }
+        this$.old_pos.x = this$.pos.x;
+        return this$.old_pos.y = this$.pos.y;
+      },
+      check_collision: function(b){
+        var a, abs, ax, aw, axi, axf, ay, ah, ayi, ayf, bx, bw, bxi, bxf, by, bh, byi, byf, dx, dy, av, avx, avy;
+        a = this$;
+        abs = Math.abs;
+        ax = a.pos.x;
+        aw = a.size.x / 2;
+        axi = ax - aw;
+        axf = ax + aw;
+        ay = a.pos.y;
+        ah = a.size.y / 2;
+        ayi = ay - ah;
+        ayf = ay + ah;
+        bx = b.pos.x;
+        bw = b.size.x / 2;
+        bxi = bx - bw;
+        bxf = bx + bw;
+        by = b.pos.y;
+        bh = b.size.y / 2;
+        byi = by - bh;
+        byf = by + bh;
+        dx = abs(bx - ax) - (aw + bw);
+        dy = abs(by - ay) - (ah + bh);
+        if (dx >= 0 || dy >= 0) {
+          return false;
+        }
+        if (!this$.ghost && b.solid) {
+          av = a.vel;
+          avx = av.x;
+          avy = av.y;
+          if (dx > dy) {
+            if ((bxi < axi && axi < bxf) && avx <= 0) {
+              a.pos.x += bxf - axi;
+              a.vel.x = 0;
+            }
+            if ((bxi < axf && axf < bxf) && avx >= 0) {
+              a.pos.x += bxi - axf;
+              a.vel.x = 0;
+            }
+          } else {
+            if ((byi < ayi && ayi < byf) && avy <= 0) {
+              a.pos.y += -dy;
+              a.vel.y = 0;
+            }
+            if ((byi < ayf && ayf < byf) && avy >= 0) {
+              a.pos.y += dy;
+              a.vel.y = 0;
+              this$.is_grounded = just(true);
+            }
+          }
+        }
+        if (typeof a.collide === 'function') {
+          a.collide(b);
+        }
+        return true;
+      },
+      ghost: false,
+      floats: false,
+      solid: false,
+      depth: 0,
+      hp: 28,
+      col: [200, 200, 200],
+      size: v3(B, B, 0),
+      dir: void 8,
+      pos: v3(0, 0, 0),
+      old_pos: v3(0, 0, 0),
+      vel: v3(0, 0, 0)
+    };
+  });
+}).call(this);
+
+})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/thing.js","/")
+},{"./quadtree":20,"viclib":12,"prelude-ls":16,"__browserify_process":1,"__browserify_buffer":2}],6:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
 require("viclib")();
 (function(){
@@ -21015,20 +21038,25 @@ require("viclib")();
     var this$ = this;
     global.hero = this;
     key.press('j', function(){
-      if (this$.is_sliding() || this$.is_digging()) {
+      if (this$.is_sliding()) {
         return;
       }
       if (this$.is_grounded() && key.down('s')) {
         return this$.is_sliding = true_for(0.35);
       } else {
         if (this$.is_grounded()) {
-          return this$.vel.y = -VI;
+          this$.vel.y = -VI;
+        }
+        if (this$.is_climbing()) {
+          return this$.is_climbing = just(false);
         }
       }
     });
     key.press('k', function(){
-      if (this$.is_walking() || this$.is_jumping()) {
+      if (this$.is_walking() || this$.is_jumping() || this$.is_climbing()) {
         shot({}, {
+          dmg: 2,
+          owner: this$,
           pos: v3(this$.pos.x + B * this$.dir, this$.pos.y, 0),
           vel: v3(22 * B * this$.dir, 0, 0)
         });
@@ -21043,30 +21071,16 @@ require("viclib")();
     return {
       sprite: "mememan/standing0",
       nome: "meme",
-      is_sliding: just(false),
-      is_shooting: just(false),
-      is_climbing: just(false),
-      is_digging: just(false),
-      just_climbed: just(false),
-      is_jumping: function(){
-        return this$.vel.y < 0 && !this$.is_climbing();
-      },
-      is_walking: function(){
-        return !this$.is_jumping() && !this$.is_climbing() && !this$.is_shooting();
-      },
-      is_stopped: function(){
-        return this$.vel.x === 0 && this$.vel.y === 0;
-      },
       floats: false,
       collides: true,
       hp: 28,
+      depth: -1,
       size: v3(16, 25, 0),
       vel: v3(0, 0, 0),
       climb: function(dir){
         this$.is_climbing = just(true);
         this$.just_climbed = true_for(0.4);
         this$.ghost = this$.floats = true;
-        this$.pos.x = floor((this$.pos.x + B / 2) / B) * B;
         return this$.vel.y = B * 4.5 * (dir === 'down'
           ? 1
           : -1);
@@ -21083,13 +21097,12 @@ require("viclib")();
         return results$;
       }),
       tick: after(this.tick, function(dt){
+        var stair;
         this$.vel.x = (function(){
           switch (false) {
           case !this.is_climbing():
             return 0;
           case !this.is_sliding():
-            return this.dir * 12 * B;
-          case !this.is_digging():
             return this.dir * 12 * B;
           case !key.down('d'):
             return B * 4.4;
@@ -21119,19 +21132,25 @@ require("viclib")();
         if (this$.vel.x < 0) {
           this$.dir = -1;
         }
-        if (this$.is_sliding()) {
-          if (!has_solid(this$.pos.x + this$.dir * B, this$.pos.y) && has_solid(this$.pos.x + this$.dir * B, this$.pos.y - B)) {
-            this$.is_digging = just(true);
-            this$.is_sliding = just(false);
+        this$.ghost = this$.floats = this$.is_climbing();
+        if (this$.is_climbing()) {
+          stair = filter(function(it){
+            return it.is_stair;
+          }, get_around(this$.pos.x, this$.pos.y))[0];
+          if (stair != null) {
+            this$.pos.x = stair.pos.x;
           }
         }
-        if (this$.is_digging()) {
-          if (!has_solid(this$.pos.x, this$.pos.y - B) && has_solid(this$.pos.x - this$.dir * 8, this$.pos.y - B)) {
-            this$.is_digging = just(false);
+        if (this$.is_sliding() && !this$.has_solid_ahead() && this$.vel.y === 0 && this$.has_solid_over()) {
+          this$.ghost = this$.floats = true;
+          if (key.down('d')) {
+            this$.dir = 1;
           }
+          if (key.down('a')) {
+            this$.dir = -1;
+          }
+          this$.is_sliding = true_for(0.04);
         }
-        this$.ghost = this$.floats = this$.is_climbing() || this$.is_digging();
-        log(this$.ghost, this$.vel.x);
         if (!this$.is_climbing() && !this$.is_sliding()) {
           if (key.down('s') && has_stair(this$.pos.x, this$.pos.y + B)) {
             this$.climb('down');
@@ -21141,9 +21160,9 @@ require("viclib")();
         } else if (this$.is_climbing() && !this$.just_climbed() && !has_stair(this$.pos.x, this$.pos.y + B / 4)) {
           this$.is_climbing = just(false);
         }
-        this$.sprite = this$.is_climbing()
+        return this$.sprite = this$.is_climbing()
           ? (this$.dir = -1 + floor((this$.pos.y / 16) % 2) * 2, !has_stair(this$.pos.x, this$.pos.y - B / 4) && has_stair(this$.pos.x, this$.pos.y + B / 4) ? "mememan/climbed" : "mememan/climbing")
-          : this$.is_sliding() || this$.is_digging()
+          : this$.is_sliding()
             ? "mememan/sliding"
             : this$.is_grounded()
               ? this$.is_stopped()
@@ -21154,17 +21173,95 @@ require("viclib")();
                   ? "mememan/walking_shoot" + cycle([0, 1, 2, 1], 0.5)
                   : "mememan/walking" + cycle([0, 1, 2, 1], 0.5)
               : this$.is_shooting() ? "mememan/jumping_shoot" : "mememan/jumping";
-        if (this$.dir === 1) {
-          this$.sprite += '_r';
-        }
-        return camera.pos = this$.pos.clone();
-      })
+      }),
+      dir: 1,
+      is_sliding: just(false),
+      is_shooting: just(false),
+      is_climbing: just(false),
+      is_digging: just(false),
+      just_climbed: just(false),
+      is_jumping: function(){
+        return this$.vel.y < 0 && !this$.is_climbing();
+      },
+      is_walking: function(){
+        return !this$.is_jumping() && !this$.is_climbing() && !this$.is_shooting();
+      },
+      is_stopped: function(){
+        return this$.vel.x === 0 && this$.vel.y === 0;
+      },
+      has_solid_ahead: function(){
+        return has_solid(this$.pos.x + this$.dir * B, this$.pos.y);
+      },
+      has_solid_over: function(){
+        return !empty(filter(function(it){
+          return it.solid;
+        }, tree.get(this$.pos.x - this$.dir * B * 1.1, this$.pos.y - B * 1.5, this$.pos.x + this$.dir * B * 1.1, this$.pos.y - B * 0.5)));
+      }
     };
   });
 }).call(this);
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/mememan.js","/")
-},{"viclib":11,"key":13,"prelude-ls":15,"__browserify_process":1,"__browserify_buffer":2}],8:[function(require,module,exports){
+},{"viclib":12,"key":14,"prelude-ls":16,"__browserify_process":1,"__browserify_buffer":2}],7:[function(require,module,exports){
+(function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
+require("viclib")();
+(function(){
+  global.macer = mixin(thing, function(){
+    var this$ = this;
+    return {
+      sprite: "mememan/standing0",
+      floats: false,
+      collides: true,
+      tick: after(this.tick, function(dt){
+        this$.dir = hero.pos.x > this$.pos.x
+          ? 1
+          : -1;
+        if (Math.random() < 0.1) {
+          return shot({}, {
+            dmg: 2,
+            owner: this$,
+            pos: v3(this$.pos.x + B * this$.dir, this$.pos.y, 0),
+            vel: v3(22 * B * this$.dir, 0, 0)
+          });
+        }
+      })
+    };
+  });
+}).call(this);
+
+})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/macer.js","/")
+},{"viclib":12,"prelude-ls":16,"__browserify_process":1,"__browserify_buffer":2}],8:[function(require,module,exports){
+(function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
+require("viclib")();
+(function(){
+  global.shot = mixin(thing, function(){
+    var this$ = this;
+    return {
+      tick: after(this.tick, function(){
+        if (time_since(this$.created) > 1.2) {
+          return this$.destroy();
+        }
+      }),
+      floats: true,
+      created: now(),
+      sprite: "shot/shot",
+      size: v3(4, 4, 0),
+      collides: true,
+      dmg: 2,
+      collide: function(it){
+        if (it !== this$.owner) {
+          it.hp -= this$.dmg;
+        }
+        if (it.solid) {
+          return this$.destroy();
+        }
+      }
+    };
+  });
+}).call(this);
+
+})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/shot.js","/")
+},{"viclib":12,"prelude-ls":16,"__browserify_process":1,"__browserify_buffer":2}],9:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
 require("viclib")();
 (function(){
@@ -21178,21 +21275,21 @@ require("viclib")();
 }).call(this);
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/ground.js","/")
-},{"viclib":11,"prelude-ls":15,"__browserify_process":1,"__browserify_buffer":2}],9:[function(require,module,exports){
+},{"viclib":12,"prelude-ls":16,"__browserify_process":1,"__browserify_buffer":2}],10:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
 require("viclib")();
 (function(){
   global.level = mixin(function(){
     var this$ = this;
+    defer(function(){
+      return this$.width = this$.map[0].length * B;
+    });
     return {
-      map: ['...................................................................................oooooooooooooooooooooooooooooooooooooooooooo', '..........o...o..o....ooo......o...o...............................................ooooooooooooHooooooooooooooooooooooooooooooo', '..........o...o......o.........o...o...............................................ooooooooooooHooooooooooooooooooooooooooooooo', '..........o...o..o..o..........o...o................................................oooo.......H.......oooooooooooooooooooooooo', '..........o...o..o..o.......o.........o.............................................oooo...............oooooooooooooooooooooooo', '...........o.o...o...o.......oo.....oo...............................................ooo...............oooooooooooooooooooooooo', '............o....o....ooo......ooooo.................................................ooo.*.............oooooooooooooooooooooooo', '......................................................................................oooox.x.x.ooooooHoooooooooooooooooooooooo', '......................................................................................ooooooooooooooooHoooooooooooooooooooooooo', '..........................................................ooooo........oo...............ooooooooooooooHoooooooooooooooooooooooo', '......................................................ooooooooo......oooo...............ooooooooooooooHoooooooooooooooooooooooo', '.......................................oo............ooooooooooooo...oooooo........ooo....ooooooooo....oooooooooooooooooooooooo', '........M.............................oooo...........oooooooooooooo..oooooox.x.x..oooo.................oooooooooooooooooooooooo', 'ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo'],
+      map: ['.............................................................................................................................................................................................oo.............................oo...........................................................', '.............................................................................................................................................................................................oo.............................oo...........................................................', '.............................................................................................................................................................................................oo.............................oo...........................................................', '.............................................................................................................................................................................................oo.............................oo...........................................................', '.............................................................................................................................................................................................oo.............................oo...........................................................', '.............................................................................................................................................................................................oo.............................oo...........................................................', '.............................................................................................................................................................................................oo.............................oo...........................................................', '.............................................................................................................................................................................................oo.............................oo...........................................................', '.............................................................................................................................................................................................oo.............................oo...........................................................', '.............................................................................................................................................................................................oo.............................oo...........................................................', '.............................................................................................................................................................................................oo.............................oo...........................................................', '.............................................................................................................................................................................................oo.............................oo...........................................................', '.............................................................................................................................................................................................oo..x.x.x.x.x.....x.x...x......oo............................................................', '.............................................................................................................................................................................................ooHooooooooooooo..oooox.oooooo.oo...........................................................', '.............................................................................................................................................................................................ooHooooooooooooox.oooooooooooo.oo...........................................................', '.............................................................................................................................................................................................ooHooooooooooooooooooooooooooo.oo...........................................................', '.............................................................................................................................................................................................ooH.ooooooooooooooo............oo', '.............................................................................................................................................................................................ooH.ooo.........ooo............oo', '.............................................................................................................................................................................................ooH.............ooo............oo', '.............................................................................................................................................................................................ooH.oooooooooXoHooo............oo', '.............................................................................................................................................................................................ooH.oooooooooXoHooo............oo', '.............................................................................................................................................................................................ooH.oooooooooXoHooo............oo', '.............................................................................................................................................................................................ooH.oooooooooXoHooo............oo', '.............................................................................................................................................................................................oo..........oXoHooo............oo', '.............................................................................................................................................................................................oo..........oXoHooo............oo', '.............................................................................................................................................................................................oo..........oXoHooo............oo', '.............................................................................................................................................................................................oooooooooooHoXoHooo............oo', '.............................................................................................................................................................................................oooooooooooHoXoHooo............oo', '.............................................................................................................................................................................................oooooooooooHoXoHooo....oooo....oo', '.............................................................................................................................................................................................oooooooooooHoXoHooo..ooo..ooo..oo', '.............................................................................................................................................................................................oooooooooooHoXoHooooooooooooooooo', '.............................................................................................................................................................................................oooooooooooHoXoHooooooooooooooooo', '............................................................................................................................oooooo....XX..........ooooooooooooooooooooooooooooooooooooooooooooooooooooooHoX.Hooo', '............................................................................................................................oo........XX...............ooooooooooooooooooooo.............................oX.Hooo', '............................................................................................................................oo........XX................oooooooooooooooooooo.............................oX.Hooo', '............................................................................................................................oo........XX................oooooooooooooooooooo.............................oX.Hooo', '............................................................................................................................oo........XX................oooooooooooooooooooo.............................oX.Hooo', '............................................................................................................................ooHooo....XX................oooooooooooooooooooo...........oooooooooooooooooooX.Hooo', '............................................................................................................................ooHooo....XX................oooooooooooooooooooo...........oooooooooooooooooooX.Hooo', '............................................................................................................................ooHooo....XX...............................................oooooooooooooooooooX.Hooo', '............................................................................................................................ooHooo....XX............................................ooooooooooooooooooooooX..ooo', '............................................................................................................................ooHooo....XX.........................................oooooooooooooooooooooooooX..ooo', '............................................................................................................................ooHooo....XX...oooooooooooo..........................oooooooooooooooooooooooooX..ooo', '............................................................................................................................ooHooo.........ooooooooooooo.....................................................ooo', '............................................................................................................................ooHooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '............................................................................................................................ooHooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '............................................................................................................................ooHooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '............................................................................................................................ooHooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '............................................................................................................................ooHooooooooooooo', '............................................................................................................................ooHooooooooooooo', '............................................................................................................................ooHooooooooooooo', '............................................................................................................................ooHooooooooooooo', '............................................................................................................................ooH...........oo', '............................................................................................................................ooH...........oo', '............................................................................................................................ooH...........oo', '............................................................................................................................ooH...........oo', '............................................................................................................................ooH...........oo', '............................................................................................................................ooH...........oo', '............................................................................................................................oo............oo', '............................................................................................................................oo............oo', '............................................................................................................................oo............oo', '............................................................................................................................oo............oo', '............................................................................................................................ooXoooooXoooH.oo', '............................................................................................................................ooXoooooXoooH.oo', '............................................................................................................................ooXoooooXoooH.oo', '............................................................................................................................ooXoooooXoooH.oo', '............................................................................................................................ooXoooooXoooH.oo', '............................................................................................................................ooXoooooXoooH.oo', '............................................................................................................................ooXoooooXoooH.oo', '............................................................................................................................ooXoooooXoooH.oo', '............................................................................................................................ooXoooooXoooH.oo', '............................................................................................................................oo..........H.oo', '............................................................................................................................oo..........H.oo', '............................................................................................................................oo..........H.oo', '............................................................................................................................oo..........H.oo', '............................................................................................................................ooooooooooooH.oo', '............................................................................................................................ooooooooooooH.oo', '............................................................................................................................ooooooooooooH.oo', '............................................................................................................................ooooooooooooH.oo', '............................................................................................................................ooooooooooooH.oo', '......................................................................................ooooooooooooooooooooooooooooooooooooooooooooooooooH.oo', '......................................................................................ooooooooooooooooooooooooooooooooooooooooooooooooooH.oo', '......................................................................................ooooooooooooooooooooooooooooooooooooooooooooooooooH.oo', '......................................................................................ooo..........oooooooooooooooo..ooooooooooooooo..ooH.oo', '......................................................................................ooo..........ooooooooooo................oooo......H.oo', '......................................................................................ooo...............oo......................oo......H.oo', '......................................................................................oooHoooo............................................oo', '......................................................................................oooHooooo...........................................oo', '......................................................................................oooHoooooo..........................................oo', '......................................................................................oooHoooooooo........................................oo', '......................................................................................oooHooooooooo........................ooooooooooooooooo', '......................................................................................oooHoooooooooo...................ooooooooooooooooooooo', '......................................................................................oooHoooooooooooooooooooooooooooooooooooooooooooooooooo', '......................................................................................oooHoooooooooooooooooooooooooooooooooooooooooooooooooo', '......................................................................................oooHoooooooooooooooooooooooooooooooooooooooooooooooooo', '......................................................................................oooHoooooooooooooooooooooooooooooooooooooooooooooooooo', '.....................................................................................|oooHoooooooooooo|', '.....................................................................................|oooHoooooooooooo|', '.....................................................................................|oooH...........o|', '.....................................................................................|oooH...........o|', '.....................................................................................|oooH...........o|', '.....................................................................................|oooH...........o|', '.....................................................................................|oooH....M......o|', '.....................................................................................|oooH..oooooH...o|', '.....................................................................................|oooH..oooooH...o|', '.....................................................................................|ooo...oooooH...o|', '.....................................................................................|ooo...oooooH...o|', '.....................................................................................|ooo...ooo......o|', '.....................................................................................|ooo...ooo......o|', '.....................................................................................|oooooooooHoooooo|', '.....................................................................................|oooooooooHoooooo|', '.....................................................................................|oooooooooHoooooo|', '...................................................................................ooooooooooooHoooooo|', '..........o...o..o....ooo......o...o...............................................ooooooooooooHoooooo|', '..........o...o......o.........o...o...............................................ooooo.......H....oo|', '..........o...o..o..o..........o...o................................................oooo............oo|', '..........o...o..o..o.......o.........o.............................................oooo............oo|', '...........o.o...o...o.......oo.....oo...............................................ooo............oo|', '............o....o....ooo......ooooo.................................................ooo.*..........oo|', '......................................................................................oooox.x.x.oooHoo|', '......................................................................................oooooooooooooHoo|', '..........................................................ooooo........oo...............oooooooooooHoo|', '......................................................ooooooooo......oooo...............oooooooooooHoo|', '...........m...........................oo............ooooooooooooo...oooooo........ooo....oooooo....oo|', '....o......o..........................oooo...........oooooooooooooo..oooooox.x.x..oooo..............oo|', 'oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo|', 'oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo|', 'oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo|', 'oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo|'],
       objects: {
         o: ground,
-        M: function(a, b){
-          return defer(function(){
-            return mememan(a, b);
-          });
-        },
+        M: mememan,
+        m: macer,
         H: stair
       },
       create: function(){
@@ -21241,14 +21338,20 @@ require("viclib")();
 }).call(this);
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/level.js","/")
-},{"viclib":11,"prelude-ls":15,"__browserify_process":1,"__browserify_buffer":2}],10:[function(require,module,exports){
+},{"viclib":12,"prelude-ls":16,"__browserify_process":1,"__browserify_buffer":2}],11:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
 require("viclib")();
 (function(){
   global.stair = mixin(thing, function(){
+    var this$ = this;
+    defer(function(){
+      if (!has_stair(this$.pos.x, this$.pos.y - B)) {
+        return this$.solid = true;
+      }
+    });
     return {
       sprite: "stair/stair",
-      solid: true,
+      solid: false,
       floats: true,
       is_stair: true
     };
@@ -21256,34 +21359,7 @@ require("viclib")();
 }).call(this);
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/stair.js","/")
-},{"viclib":11,"prelude-ls":15,"__browserify_process":1,"__browserify_buffer":2}],7:[function(require,module,exports){
-(function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
-require("viclib")();
-(function(){
-  global.shot = mixin(thing, function(){
-    var this$ = this;
-    return {
-      tick: after(this.tick, function(){
-        if (time_since(this$.created) > 1.2) {
-          return this$.destroy();
-        }
-      }),
-      floats: true,
-      created: now(),
-      sprite: "shot/shot",
-      size: v3(4, 4, 0),
-      collides: true,
-      collide: function(it){
-        if (it.solid) {
-          return this$.destroy();
-        }
-      }
-    };
-  });
-}).call(this);
-
-})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/shot.js","/")
-},{"viclib":11,"prelude-ls":15,"__browserify_process":1,"__browserify_buffer":2}],17:[function(require,module,exports){
+},{"viclib":12,"prelude-ls":16,"__browserify_process":1,"__browserify_buffer":2}],18:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){// Uses Node, AMD or browser globals to create a module.
 
 // If you want something that will work in other stricter CommonJS environments,
@@ -30618,7 +30694,7 @@ return jQuery;
 })( window ); }));
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/../../node_modules/jquery-browserify/lib/jquery.js","/../../node_modules/jquery-browserify/lib")
-},{"__browserify_process":1,"__browserify_buffer":2}],18:[function(require,module,exports){
+},{"__browserify_process":1,"__browserify_buffer":2}],20:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
 require("viclib")();
 (function(){
@@ -30704,7 +30780,7 @@ require("viclib")();
 }).call(this);
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/quadtree.js","/")
-},{"viclib":11,"prelude-ls":15,"__browserify_process":1,"__browserify_buffer":2}],19:[function(require,module,exports){
+},{"viclib":12,"prelude-ls":16,"__browserify_process":1,"__browserify_buffer":2}],19:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){
 var window = window || {};
 var self = self || {};
