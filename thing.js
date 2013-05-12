@@ -26,6 +26,7 @@ require("viclib")();
         });
       },
       tick: function(dt){
+        var near_things;
         this$.pos.x += this$.vel.x * dt;
         this$.pos.y += this$.vel.y * dt;
         if (!this$.floats) {
@@ -34,9 +35,10 @@ require("viclib")();
         }
         this$.is_grounded = just(false);
         if (this$.collides) {
+          near_things = tree.get(this$.pos.x - B * 6, this$.pos.y - B * 6, this$.pos.x + B * 6, this$.pos.y + B * 6);
           each(function(it){
             return this$.check_collision(it);
-          }, things);
+          }, near_things);
         }
         if (this$.pos.x !== this$.old_pos.x && this$.pos.y !== this$.old_pos.y) {
           tree.add(this$, this$.pos.x, this$.pos.y);
@@ -46,7 +48,6 @@ require("viclib")();
       },
       check_collision: function(b){
         var a, abs, ax, aw, axi, axf, ay, ah, ayi, ayf, bx, bw, bxi, bxf, by, bh, byi, byf, dx, dy;
-        global.coln++;
         a = this$;
         abs = Math.abs;
         ax = a.pos.x;

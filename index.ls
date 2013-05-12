@@ -17,7 +17,6 @@ global.width = window.innerWidth
 global.height = window.innerHeight
 last_time = now!
 
-global.coln = 0
 global.canvas = processing window.innerWidth, window.innerHeight,
 	-> 
 		global.sprite = _.memoize (url) ~> @loadImage url+".png"
@@ -42,7 +41,6 @@ global.canvas = processing window.innerWidth, window.innerHeight,
 		for i from -3 to 3
 			@image background, background.width * i, 0
 
-		global.coln = 0
 		dt = min((now! - last_time),0.05)
 		(.tick dt) `each` things
 		last_time := now!

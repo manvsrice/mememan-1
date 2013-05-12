@@ -23,7 +23,9 @@ global.thing = mixin ->
 
 		@is_grounded = just false
 
-		(~>@check_collision it) `each` things if @collides
+		if @collides
+			near_things = tree.get(@pos.x - B*6, @pos.y - B*6, @pos.x + B*6, @pos.y + B*6)
+			(~>@check_collision it) `each` near_things
 
 		if (@pos.x != @old_pos.x and @pos.y != @old_pos.y) then
 			tree.add(@,@pos.x,@pos.y)
@@ -31,7 +33,6 @@ global.thing = mixin ->
 		@old_pos.x = @pos.x
 		@old_pos.y = @pos.y
 	check_collision: (b) ~>
-		global.coln++
 		a = @; abs = Math.abs;
 		ax=a.pos.x; aw=a.size.x/2; axi=ax - aw; axf=ax+aw;
 		ay=a.pos.y; ah=a.size.y/2; ayi=ay - ah; ayf=ay+ah;

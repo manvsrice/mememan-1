@@ -14176,7 +14176,6 @@ require("viclib")();
   global.width = window.innerWidth;
   global.height = window.innerHeight;
   last_time = now();
-  global.coln = 0;
   global.canvas = processing(window.innerWidth, window.innerHeight, function(){
     var sprs, i$, len$, spr, this$ = this;
     global.sprite = _.memoize(function(url){
@@ -14201,7 +14200,6 @@ require("viclib")();
       i = i$;
       this.image(background, background.width * i, 0);
     }
-    global.coln = 0;
     dt = min(now() - last_time, 0.05);
     each(function(it){
       return it.tick(dt);
@@ -20758,7 +20756,122 @@ module.exports = (function(){
 })();
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/../node_modules/key.js","/../node_modules")
-},{"jquery-browserify":17,"__browserify_process":1,"__browserify_buffer":2}],14:[function(require,module,exports){
+},{"jquery-browserify":17,"__browserify_process":1,"__browserify_buffer":2}],5:[function(require,module,exports){
+(function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
+require("viclib")();
+(function(){
+  var quadtree;
+  quadtree = require('./quadtree');
+  global.things = [];
+  global.tree = quadtree({
+    width: 128,
+    height: 128
+  });
+  global.thing = mixin(function(){
+    var this$ = this;
+    defer(function(){
+      things.push(this$);
+      return tree.add(this$, this$.pos.x, this$.pos.y);
+    });
+    return {
+      draw: function(screen){
+        var img, ref$;
+        img = sprite((ref$ = this$.sprite) != null ? ref$ : "ground/0");
+        return screen.image(img, this$.pos.x - img.width / 2 + camera.offset().x, this$.pos.y - img.height / 2);
+      },
+      destroy: function(){
+        return defer(function(){
+          return remove(things, this$);
+        });
+      },
+      tick: function(dt){
+        var near_things;
+        this$.pos.x += this$.vel.x * dt;
+        this$.pos.y += this$.vel.y * dt;
+        if (!this$.floats) {
+          this$.pos.y += 0.5 * G * dt * dt;
+          this$.vel.y += G * dt;
+        }
+        this$.is_grounded = just(false);
+        if (this$.collides) {
+          near_things = tree.get(this$.pos.x - B * 6, this$.pos.y - B * 6, this$.pos.x + B * 6, this$.pos.y + B * 6);
+          each(function(it){
+            return this$.check_collision(it);
+          }, near_things);
+        }
+        if (this$.pos.x !== this$.old_pos.x && this$.pos.y !== this$.old_pos.y) {
+          tree.add(this$, this$.pos.x, this$.pos.y);
+        }
+        this$.old_pos.x = this$.pos.x;
+        return this$.old_pos.y = this$.pos.y;
+      },
+      check_collision: function(b){
+        var a, abs, ax, aw, axi, axf, ay, ah, ayi, ayf, bx, bw, bxi, bxf, by, bh, byi, byf, dx, dy;
+        a = this$;
+        abs = Math.abs;
+        ax = a.pos.x;
+        aw = a.size.x / 2;
+        axi = ax - aw;
+        axf = ax + aw;
+        ay = a.pos.y;
+        ah = a.size.y / 2;
+        ayi = ay - ah;
+        ayf = ay + ah;
+        bx = b.pos.x;
+        bw = b.size.x / 2;
+        bxi = bx - bw;
+        bxf = bx + bw;
+        by = b.pos.y;
+        bh = b.size.y / 2;
+        byi = by - bh;
+        byf = by + bh;
+        dx = abs(bx - ax) - (aw + bw);
+        dy = abs(by - ay) - (ah + bh);
+        if (dx >= 0 || dy >= 0) {
+          return false;
+        }
+        if (!this$.ghost && b.solid) {
+          if (dx > dy) {
+            if (bxi < axi && axi < bxf) {
+              a.pos.x += bxf - axi;
+              a.vel.x = 0;
+            }
+            if (bxi < axf && axf < bxf) {
+              a.pos.x += bxi - axf;
+              a.vel.x = 0;
+            }
+          } else {
+            if (byi < ayi && ayi < byf) {
+              a.pos.y += -dy;
+              a.vel.y = 0;
+            }
+            if (byi < ayf && ayf < byf) {
+              a.pos.y += dy;
+              a.vel.y = 0;
+              this$.is_grounded = just(true);
+            }
+          }
+        }
+        if (typeof a.collide === 'function') {
+          a.collide(b);
+        }
+        return true;
+      },
+      ghost: false,
+      floats: true,
+      solid: false,
+      hp: 28,
+      col: [200, 200, 200],
+      size: v3(B, B, 0),
+      pos: v3(0, 0, 0),
+      old_pos: v3(0, 0, 0),
+      vel: v3(0, 0, 0)
+    };
+  });
+}).call(this);
+
+})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/thing.js","/")
+},{"./quadtree":18,"viclib":11,"prelude-ls":15,"__browserify_process":1,"__browserify_buffer":2}],14:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){THREE = require('three');
 
 THREE.Vector3.prototype.obj = function(){
@@ -20869,147 +20982,7 @@ module.exports = {
 };
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/../node_modules/victhree.js","/../node_modules")
-},{"key":13,"three":18,"__browserify_process":1,"__browserify_buffer":2}],5:[function(require,module,exports){
-(function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
-require("viclib")();
-(function(){
-  var quadtree;
-  quadtree = require('./quadtree');
-  global.things = [];
-  global.tree = quadtree({
-    width: 128,
-    height: 128
-  });
-  global.thing = mixin(function(){
-    var this$ = this;
-    defer(function(){
-      things.push(this$);
-      return tree.add(this$, this$.pos.x, this$.pos.y);
-    });
-    return {
-      draw: function(screen){
-        var img, ref$;
-        img = sprite((ref$ = this$.sprite) != null ? ref$ : "ground/0");
-        return screen.image(img, this$.pos.x - img.width / 2 + camera.offset().x, this$.pos.y - img.height / 2);
-      },
-      destroy: function(){
-        return defer(function(){
-          return remove(things, this$);
-        });
-      },
-      tick: function(dt){
-        this$.pos.x += this$.vel.x * dt;
-        this$.pos.y += this$.vel.y * dt;
-        if (!this$.floats) {
-          this$.pos.y += 0.5 * G * dt * dt;
-          this$.vel.y += G * dt;
-        }
-        this$.is_grounded = just(false);
-        if (this$.collides) {
-          each(function(it){
-            return this$.check_collision(it);
-          }, things);
-        }
-        if (this$.pos.x !== this$.old_pos.x && this$.pos.y !== this$.old_pos.y) {
-          tree.add(this$, this$.pos.x, this$.pos.y);
-        }
-        this$.old_pos.x = this$.pos.x;
-        return this$.old_pos.y = this$.pos.y;
-      },
-      check_collision: function(b){
-        var a, abs, ax, aw, axi, axf, ay, ah, ayi, ayf, bx, bw, bxi, bxf, by, bh, byi, byf, dx, dy;
-        global.coln++;
-        a = this$;
-        abs = Math.abs;
-        ax = a.pos.x;
-        aw = a.size.x / 2;
-        axi = ax - aw;
-        axf = ax + aw;
-        ay = a.pos.y;
-        ah = a.size.y / 2;
-        ayi = ay - ah;
-        ayf = ay + ah;
-        bx = b.pos.x;
-        bw = b.size.x / 2;
-        bxi = bx - bw;
-        bxf = bx + bw;
-        by = b.pos.y;
-        bh = b.size.y / 2;
-        byi = by - bh;
-        byf = by + bh;
-        dx = abs(bx - ax) - (aw + bw);
-        dy = abs(by - ay) - (ah + bh);
-        if (dx >= 0 || dy >= 0) {
-          return false;
-        }
-        if (!this$.ghost && b.solid) {
-          if (dx > dy) {
-            if (bxi < axi && axi < bxf) {
-              a.pos.x += bxf - axi;
-              a.vel.x = 0;
-            }
-            if (bxi < axf && axf < bxf) {
-              a.pos.x += bxi - axf;
-              a.vel.x = 0;
-            }
-          } else {
-            if (byi < ayi && ayi < byf) {
-              a.pos.y += -dy;
-              a.vel.y = 0;
-            }
-            if (byi < ayf && ayf < byf) {
-              a.pos.y += dy;
-              a.vel.y = 0;
-              this$.is_grounded = just(true);
-            }
-          }
-        }
-        if (typeof a.collide === 'function') {
-          a.collide(b);
-        }
-        return true;
-      },
-      ghost: false,
-      floats: true,
-      solid: false,
-      hp: 28,
-      col: [200, 200, 200],
-      size: v3(B, B, 0),
-      pos: v3(0, 0, 0),
-      old_pos: v3(0, 0, 0),
-      vel: v3(0, 0, 0)
-    };
-  });
-}).call(this);
-
-})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/thing.js","/")
-},{"./quadtree":19,"viclib":11,"prelude-ls":15,"__browserify_process":1,"__browserify_buffer":2}],7:[function(require,module,exports){
-(function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
-require("viclib")();
-(function(){
-  global.shot = mixin(thing, function(){
-    var this$ = this;
-    return {
-      tick: after(this.tick, function(){
-        if (time_since(this$.created) > 1.2) {
-          return this$.destroy();
-        }
-      }),
-      created: now(),
-      sprite: "shot/shot",
-      size: v3(4, 4, 0),
-      collides: true,
-      collide: function(it){
-        if (it.solid) {
-          return this$.destroy();
-        }
-      }
-    };
-  });
-}).call(this);
-
-})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/shot.js","/")
-},{"viclib":11,"prelude-ls":15,"__browserify_process":1,"__browserify_buffer":2}],6:[function(require,module,exports){
+},{"key":13,"three":19,"__browserify_process":1,"__browserify_buffer":2}],6:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
 require("viclib")();
 (function(){
@@ -21161,19 +21134,32 @@ require("viclib")();
 }).call(this);
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/mememan.js","/")
-},{"viclib":11,"key":13,"prelude-ls":15,"__browserify_process":1,"__browserify_buffer":2}],8:[function(require,module,exports){
+},{"viclib":11,"key":13,"prelude-ls":15,"__browserify_process":1,"__browserify_buffer":2}],7:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
 require("viclib")();
 (function(){
-  global.ground = mixin(thing, function(){
+  global.shot = mixin(thing, function(){
+    var this$ = this;
     return {
-      sprite: "ground/" + this.border_type,
-      solid: true
+      tick: after(this.tick, function(){
+        if (time_since(this$.created) > 1.2) {
+          return this$.destroy();
+        }
+      }),
+      created: now(),
+      sprite: "shot/shot",
+      size: v3(4, 4, 0),
+      collides: true,
+      collide: function(it){
+        if (it.solid) {
+          return this$.destroy();
+        }
+      }
     };
   });
 }).call(this);
 
-})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/ground.js","/")
+})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/shot.js","/")
 },{"viclib":11,"prelude-ls":15,"__browserify_process":1,"__browserify_buffer":2}],9:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
 require("viclib")();
@@ -21237,6 +21223,19 @@ require("viclib")();
 }).call(this);
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/level.js","/")
+},{"viclib":11,"prelude-ls":15,"__browserify_process":1,"__browserify_buffer":2}],8:[function(require,module,exports){
+(function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
+require("viclib")();
+(function(){
+  global.ground = mixin(thing, function(){
+    return {
+      sprite: "ground/" + this.border_type,
+      solid: true
+    };
+  });
+}).call(this);
+
+})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/ground.js","/")
 },{"viclib":11,"prelude-ls":15,"__browserify_process":1,"__browserify_buffer":2}],10:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
 require("viclib")();
@@ -30597,7 +30596,7 @@ return jQuery;
 })( window ); }));
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/../../node_modules/jquery-browserify/lib/jquery.js","/../../node_modules/jquery-browserify/lib")
-},{"__browserify_process":1,"__browserify_buffer":2}],19:[function(require,module,exports){
+},{"__browserify_process":1,"__browserify_buffer":2}],18:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
 require("viclib")();
 (function(){
@@ -30679,7 +30678,7 @@ require("viclib")();
 }).call(this);
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/quadtree.js","/")
-},{"viclib":11,"prelude-ls":15,"__browserify_process":1,"__browserify_buffer":2}],18:[function(require,module,exports){
+},{"viclib":11,"prelude-ls":15,"__browserify_process":1,"__browserify_buffer":2}],19:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){
 var window = window || {};
 var self = self || {};
