@@ -96,10 +96,10 @@ require("viclib")();
         }
         return true;
       },
-      ticks: true,
       ghost: false,
       floats: true,
       solid: false,
+      hp: 28,
       col: [200, 200, 200],
       size: v3(B, B, 0),
       pos: v3(0, 0, 0),

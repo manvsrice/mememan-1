@@ -52,6 +52,7 @@ require("viclib")();
       },
       floats: false,
       collides: true,
+      hp: 28,
       pos: v3(150, 100, 0),
       size: v3(22, 25, 0),
       vel: v3(0, 0, 0),
@@ -70,6 +71,17 @@ require("viclib")();
         this$.ghost = false;
         return this$.floats = false;
       },
+      draw: after(this.draw, function(screen){
+        var i$, to$, y, results$ = [];
+        screen.fill(0, 0, 0);
+        screen.rect(7, 8, 8, 57);
+        screen.fill(255, 255, 0);
+        for (i$ = 63, to$ = 63 - this$.hp * 2; i$ > to$; i$ -= 2) {
+          y = i$;
+          results$.push(screen.rect(8, y, 6, 1));
+        }
+        return results$;
+      }),
       tick: after(this.tick, function(){
         this$.vel.x = (function(){
           switch (false) {

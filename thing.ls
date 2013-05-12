@@ -48,10 +48,10 @@ global.thing = mixin ->
 				if (byi < ayf < byf) then a.pos.y += dy; a.vel.y = 0; @is_grounded = just true
 		a.collide? b
 		true
-	ticks: true
 	ghost: false
 	floats: true
 	solid: false
+	hp: 28
 	col: [200,200,200]
 	size: v3(B,B,0)
 	pos: v3(0,0,0)

@@ -17,10 +17,19 @@ last_time = now!
 $("body").append processing 1200, 800,
 	-> 
 		global.sprite = _.memoize (url) ~> @loadImage url+".png"
+
+		sprs = map ("mememan/"+), <[climbed climbing jumping jumping_shoot sliding 
+			standing_shoot standing0 standing1 walking_shoot0 
+			walking_shoot1 walking_shoot2 walking0 walking1 walking2]>
+
+		for spr in sprs
+			log spr
+			sprite(spr)
+			sprite(spr+"_r")
 	->
 		@scale 1.5
 		@background 240 240 240
-		@strokeWeight 3
+		@noStroke!
 
 		dt = min((now! - last_time),0.05)
 		(.tick dt) `each` things

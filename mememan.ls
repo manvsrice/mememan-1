@@ -9,6 +9,7 @@ global.mememan = mixin thing, ->
 			@is_sliding = true_for 0.35s
 		else
 			@vel.y = -VI if @is_grounded!
+
 	key.press \k ~>
 		if @is_walking! or @is_jumping! then
 			shot {} {pos:v3(@pos.x+B*@dir,@pos.y,0),vel:v3(18*B*@dir,0,0)}
@@ -28,6 +29,7 @@ global.mememan = mixin thing, ->
 	is_stopped: ~> @vel.x == 0 and @vel.y == 0
 	floats: false
 	collides: true
+	hp: 28
 	pos: v3(150,100,0)
 	size: v3(22,25,0)
 	vel: v3(0,0,0)
@@ -47,6 +49,13 @@ global.mememan = mixin thing, ->
 		@is_climbing = just false
 		@ghost = false
 		@floats = false
+	draw: after @draw, (screen) ~>
+		screen.fill(0,0,0)
+		screen.rect 7, 8, 8, 57
+		screen.fill(255,255,0)
+		for y from 63 til (63-@hp*2) by -2
+			screen.rect 8, y, 6, 1
+		
 	tick: after @tick, ~> 
 		@vel.x = switch
 		| @is_climbing! => 0	
