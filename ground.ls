@@ -1,3 +1,4 @@
 global.ground = mixin thing, ->
-	sprite: "ground/0"
+	ticks: false
+	sprite: "ground/"+@border_type
 	solid: true

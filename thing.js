@@ -1,18 +1,28 @@
 require("prelude-ls").installPrelude(global);
 require("viclib")();
 (function(){
+  var btree;
+  btree = require('./btree');
   global.things = [];
+  global.tree = btree({
+    width: 128,
+    height: 128
+  });
   global.thing = mixin(function(){
     var this$ = this;
-    things.push(this);
+    defer(function(){
+      things.push(this$);
+      return tree.add(this$, this$.pos.x, this$.pos.y);
+    });
     return {
       draw: function(screen){
-        screen.fill(this.col[0], this.col[1], this.col[2]);
-        return screen.rect(this.pos.x - this.size.x / 2, this.pos.y - this.size.y / 2, this.size.x, this.size.y);
+        var img, ref$;
+        img = sprite((ref$ = this$.sprite) != null ? ref$ : "ground/0");
+        return screen.image(img, this$.pos.x - img.width / 2, this$.pos.y - img.height / 2);
       },
       destroy: function(){
         return defer(function(){
-          return things.splice(things.indexOf(this$), 1);
+          return remove(things, this$);
         });
       },
       tick: function(dt){
@@ -23,13 +33,20 @@ require("viclib")();
           this$.vel.y += G * dt;
         }
         this$.is_grounded = just(false);
-        return each(function(it){
-          return this$.check_collision(it);
-        }, things);
+        if (this$.collides) {
+          each(function(it){
+            return this$.check_collision(it);
+          }, things);
+        }
+        if (this$.pos.x !== this$.old_pos.x && this$.pos.y !== this$.old_pos.y) {
+          tree.add(this$, this$.pos.x, this$.pos.y);
+        }
+        this$.old_pos.x = this$.pos.x;
+        return this$.old_pos.y = this$.pos.y;
       },
       check_collision: function(b){
         var a, abs, ax, aw, axi, axf, ay, ah, ayi, ayf, bx, bw, bxi, bxf, by, bh, byi, byf, dx, dy;
-        a = this;
+        a = this$;
         abs = Math.abs;
         ax = a.pos.x;
         aw = a.size.x / 2;
@@ -52,7 +69,7 @@ require("viclib")();
         if (dx >= 0 || dy >= 0) {
           return false;
         }
-        if (b.solid) {
+        if (!this$.ghost && b.solid) {
           if (dx > dy) {
             if (bxi < axi && axi < bxf) {
               a.pos.x += bxf - axi;
@@ -70,7 +87,7 @@ require("viclib")();
             if (byi < ayf && ayf < byf) {
               a.pos.y += dy;
               a.vel.y = 0;
-              this.is_grounded = just(true);
+              this$.is_grounded = just(true);
             }
           }
         }
@@ -79,11 +96,14 @@ require("viclib")();
         }
         return true;
       },
+      ticks: true,
+      ghost: false,
       floats: true,
       solid: false,
       col: [200, 200, 200],
       size: v3(B, B, 0),
       pos: v3(0, 0, 0),
+      old_pos: v3(0, 0, 0),
       vel: v3(0, 0, 0)
     };
   });

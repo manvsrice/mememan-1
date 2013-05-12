@@ -3,7 +3,8 @@ require("viclib")();
 (function(){
   global.ground = mixin(thing, function(){
     return {
-      sprite: "ground/0",
+      ticks: false,
+      sprite: "ground/" + this.border_type,
       solid: true
     };
   });
