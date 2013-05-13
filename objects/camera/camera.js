@@ -7,10 +7,12 @@ require("viclib")();
       pos: v3(0, 0, 0),
       scale: window.innerHeight / (16 * 16),
       target_y: void 8,
+      width: 16 * 16 * window.innerWidth / window.innerHeight,
+      height: 16 * 16,
       tick: function(dt){
         var ref$;
+        this$.scale = window.innerHeight / (16 * 16);
         this$.width = window.innerWidth / this$.scale;
-        this$.height = 16 * 16;
         this$.offset = {
           x: -max(this$.pos.x, window.innerWidth / this$.scale / 2) + window.innerWidth / this$.scale / 2,
           y: -this$.pos.y

@@ -1,10 +1,12 @@
 global.camera = do mixin -> 
-	pos:v3(0,0,0),
-	scale:window.innerHeight/(16*16)
+	pos: v3(0,0,0),
+	scale: window.innerHeight / (16*16)
 	target_y: void
+	width: 16 * 16 * window.innerWidth / window.innerHeight
+	height: 16*16
 	tick: (dt) ~>
+		@scale = window.innerHeight / (16*16)
 		@width = window.innerWidth / @scale
-		@height = 16*16
 		@offset = 
 			x:-max(@pos.x,window.innerWidth/@scale/2) + window.innerWidth/@scale/2, 
 			y:-@pos.y

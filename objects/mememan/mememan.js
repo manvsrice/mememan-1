@@ -6,7 +6,7 @@ require("viclib")();
   global.mememan = mixin(object, function(){
     var this$ = this;
     global.hero = this;
-    key.press('j', function(){
+    key.press(key_a, function(){
       if (this$.is_sliding()) {
         return;
       }
@@ -21,9 +21,10 @@ require("viclib")();
         }
       }
     });
-    key.press('k', function(){
-      if (this$.is_walking() || this$.is_jumping() || this$.is_climbing()) {
-        shot({}, {
+    key.press(key_b, function(){
+      if (this$.is_walking() || this$.is_jumping() || this$.is_climbing() || this$.is_shooting()) {
+        global.play("shoot");
+        shot({
           dmg: 2,
           side: this$.side,
           pos: v3(this$.pos.x + B * this$.dir, this$.pos.y, 0),
@@ -32,7 +33,7 @@ require("viclib")();
         return this$.is_shooting = true_for(0.3);
       }
     });
-    key.release('j', function(){
+    key.release(key_a, function(){
       if (this$.is_jumping()) {
         return this$.vel.y = 0;
       }
@@ -65,10 +66,11 @@ require("viclib")();
         }
         return results$;
       }),
-      hit: after(this.hit, function(){
+      hurt: after(this.hurt, function(){
         if (this$.is_immune()) {
           return;
         }
+        play("hurt");
         this$.vel.y += 3 * B;
         this$.just_hurt = true_for(0.5);
         return this$.is_immune = true_for(1.2);
@@ -83,9 +85,9 @@ require("viclib")();
             return 0;
           case !this.is_sliding():
             return this.dir * 12 * B;
-          case !key.down('d'):
+          case !key.down(key_right):
             return B * 4.4;
-          case !key.down('a'):
+          case !key.down(key_left):
             return -B * 4.4;
           default:
             return 0;
@@ -97,9 +99,9 @@ require("viclib")();
             return this.vel.y;
           case !this.just_climbed():
             return this.vel.y;
-          case !key.down('s'):
+          case !key.down(key_down):
             return B * 3;
-          case !key.down('w'):
+          case !key.down(key_up):
             return -B * 3;
           default:
             return 0;

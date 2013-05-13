@@ -65,7 +65,7 @@ global.object = mixin ->
 		a.collide? b
 		true
 	collide: ~> 
-		@hit it.dmg if it.dmg? and it.side!=@side
+		@hurt it.dmg if it.dmg? and it.side!=@side and it.dmg > 0
 	ghost: false
 	floats: false
 	solid: false
@@ -73,7 +73,9 @@ global.object = mixin ->
 	depth: 0
 	hp: @hp ? 28
 	is_immune: just false
-	hit: (dmg) ~> @hp -= dmg if !@is_immune!
+	hurt: (dmg) ~> 
+		@hp -= dmg if !@is_immune!
+		play "enemy_hit" if @ !=hero
 	size: @size ? v3(B,B,0)
 	dir: void
 	pos: @pos ? v3(0,0,0)

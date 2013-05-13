@@ -131,8 +131,8 @@ require("viclib")();
         return true;
       },
       collide: function(it){
-        if (it.dmg != null && it.side !== this$.side) {
-          return this$.hit(it.dmg);
+        if (it.dmg != null && it.side !== this$.side && it.dmg > 0) {
+          return this$.hurt(it.dmg);
         }
       },
       ghost: false,
@@ -142,9 +142,12 @@ require("viclib")();
       depth: 0,
       hp: (ref$ = this.hp) != null ? ref$ : 28,
       is_immune: just(false),
-      hit: function(dmg){
+      hurt: function(dmg){
         if (!this$.is_immune()) {
-          return this$.hp -= dmg;
+          this$.hp -= dmg;
+        }
+        if (this$ !== hero) {
+          return play("enemy_hit");
         }
       },
       size: (ref$ = this.size) != null

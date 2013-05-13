@@ -3,7 +3,7 @@ require! {key}
 global.mememan = mixin object, ->
 	global.hero = @
 
-	key.press \j ~> 
+	key.press key_a, ~> 
 		return if @is_sliding!
 		if @is_grounded! and (key.down \s) then
 			@is_sliding = true_for 0.35s
@@ -11,12 +11,13 @@ global.mememan = mixin object, ->
 			@vel.y = -23*B if @is_grounded!
 			@is_climbing = just false if @is_climbing!
 
-	key.press \k ~>
-		if @is_walking! or @is_jumping! or @is_climbing! then
-			shot {} {dmg:2,side:@side,pos:v3(@pos.x+B*@dir,@pos.y,0),vel:v3(22*B*@dir,0,0)}
+	key.press key_b, ~>
+		if @is_walking! or @is_jumping! or @is_climbing! or @is_shooting! then
+			global.play "shoot"
+			shot {dmg:2, side:@side, pos:v3(@pos.x+B*@dir,@pos.y,0), vel:v3(22*B*@dir,0,0)}
 			@is_shooting = true_for 0.3s
 
-	key.release \j ~> 
+	key.release key_a, ~> 
 		@vel.y = 0 if @is_jumping!
 
 	type: "mememan"
@@ -38,26 +39,27 @@ global.mememan = mixin object, ->
 		screen.fill(255,255,0)
 		for y from 63 til (63-@hp*2) by -2
 			screen.rect 8, y, 6, 1
-	hit: after @hit, ~> 
+	hurt: after @hurt, ~> 
 		return if @is_immune!
+		play "hurt"
 		@vel.y += 3*B
 		@just_hurt = true_for 0.5s
 		@is_immune = true_for 1.2s
 	tick: after @tick, (dt)  ~> 
 		@vel.x = switch
-		| @just_hurt! 	=> -@dir*2*B
-		| @is_climbing! => 0	
-		| @is_sliding!	=> @dir*12*B
-		| key.down \d	=> B*4.4
-		| key.down \a	=> -B*4.4
-		| _				=> 0
+		| @just_hurt! 		 => -@dir*2*B
+		| @is_climbing! 	 => 0	
+		| @is_sliding!		 => @dir*12*B
+		| key.down key_right => B*4.4
+		| key.down key_left	 => -B*4.4
+		| _					 => 0
 
 		@vel.y = switch
-		| !@is_climbing! => @vel.y
-		| @just_climbed! => @vel.y
-		| key.down \s	 => B*3
-		| key.down \w 	 => -B*3
-		| _ 			 => 0
+		| !@is_climbing!	 => @vel.y
+		| @just_climbed!	 => @vel.y
+		| key.down key_down	 => B*3
+		| key.down key_up	 => -B*3
+		| _ 				 => 0
 
 		@dir = 1 if @vel.x > 0 and !@just_hurt!
 		@dir = -1 if @vel.x < 0 and !@just_hurt!
