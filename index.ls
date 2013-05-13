@@ -1,79 +1,68 @@
 require! {$:boxes,key:key,_:lodash,v3:victhree.v3}
-require "./thing"
-require "./mememan"
-require "./macer"
-require "./shot"
-require "./ground"
-require "./level"
-require "./stair"
+require "./objects/camera/camera"
+require "./objects/object"
+require "./objects/mememan/mememan"
+require "./objects/macer/macer"
+require "./objects/shot/shot"
+require "./objects/ground/ground"
+require "./stages/stage"
+require "./objects/stair/stair"
 global.B = 16 #length of the tile of the game - only change this if you are going to remake the entire game using a different sprite size!
-global.VI = 23*B #initial velocity of jump (shouldn't be global, yea, but I'm adjusting that)
 global.G = 84*B #gravity
 global.now = -> Date.now!/1000
 global.just = (val) -> -> val
 global.true_for = (secs) -> start = now!; -> (now! - start) < secs
 global.time_since = -> (now! - it)
-global.camera = mixin -> 
-	screen_width: window.innerWidth
-	screen_height: window.innerHeight
-	pos:v3(0,0,0),
-	scale:window.innerHeight/(16*16)
-	offset: ~> x:-max(@pos.x,@screen_width/@scale/2) + @screen_width/@scale/2, y:-@pos.y
-	target_y: void
-	tick: (dt) ~>
-		if !@target_y? and global.hero?.pos? then
-			@pos.y = hero.pos.y - 16*16
-			@target_y = floor(global.hero.pos.y/(16*16))*16*16
-		@pos.x = global.hero.pos.x
-		if hero?.pos.y < @target_y then
-			@target_y -= 16*B
-		if hero?.pos.y > @target_y + (16*16) then
-			@target_y += 16*B
-		if abs(@pos.y - @target_y)>2 then
-			@pos.y += (@target_y - @pos.y)/abs(@target_y - @pos.y) * 12*16 * dt
-		else
-			@pos.y = @target_y
+global.cycle = (arr,interval) -> arr[floor((now!%interval)/interval*arr.length)]
+global.paused = false
 last_time = now!
 
 global.canvas = processing window.innerWidth, window.innerHeight,
-	-> 
-		level!.create!
-		global.camera = global.camera!
+	setup: -> 
+		stage!.create!
+		global.sprite = _.memoize (url) ~> @loadImage url
+		#(->sprite(it); sprite(it+"_r")) `each` map ("objects/mememan/sprites/"+), <[
+			#climbed climbing jumping jumping_shoot sliding 
+			#standing_shoot standing0 standing1 walking_shoot0 
+			#walking_shoot1 walking_shoot2 walking0 walking1 walking2]>
 
-		global.sprite = _.memoize (url) ~> @loadImage url+".png"
-
-		sprs = map ("mememan/"+), <[
-			climbed climbing jumping jumping_shoot sliding 
-			standing_shoot standing0 standing1 walking_shoot0 
-			walking_shoot1 walking_shoot2 walking0 walking1 walking2]>
-
-		for spr in sprs
-			sprite(spr)
-			sprite(spr+"_r")
-
-		global.background = @loadImage "background.png"
-
-
-		# tamanho original da tela: 320x320
-	->
-		@scale camera.scale
-		@background 222 222 222
+		global.background = @loadImage "sprites/background.png"
 		@noStroke!
+	draw: ->
+			
+		
+		#@translate -camera.offset!.x, -camera.offset!.y
+		@scale camera.scale
 
-		near_things = tree.get(hero.pos.x - B*16, hero.pos.y - B*16, hero.pos.x + B*16, hero.pos.y + B*16)
+
+		key.press \l -> global.paused=true
+		if global.paused then
+			@fill 107, 8, 0
+			@rect 0, camera.height * 3/4, camera.width, camera.height*1/4
+			return
+
+		@background 222 222 222
+
+		global.near_objects = tree.get(hero.pos.x - B*16, hero.pos.y - B*16, hero.pos.x + B*16, hero.pos.y + B*16)
+
+		remove near_objects, hero
+		near_objects.push hero
 
 		for i from -3 to 3
 			@image background, background.width * i, 0
 
 		dt = min((now! - last_time),0.05)
 		camera.tick dt
-		(.tick dt) `each` near_things
+		(.tick dt) `each` near_objects
 		last_time := now!
 
-		global.drw = 0
-		(~>it.draw @) `each` near_things
-		log global.drw
-		#things |> each ~>
+		(~>it.draw @) `each` near_objects
+
+
+
+		#log hero.pos.x, hero.pos.y
+		#log global.drw
+		#objects |> each ~>
 			#img = sprite(it.sprite ? "ground/0")
 			#@rect it.pos.x - it.size.x/2, it.pos.y - it.size.y/2, it.size.x, it.size.y #show hitbox (debug)
 			#@image img, it.pos.x - img.width/2, it.pos.y - img.height/2
