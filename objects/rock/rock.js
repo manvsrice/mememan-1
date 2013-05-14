@@ -5,8 +5,8 @@ require("viclib")();
     return {
       type: "rock",
       sprite: "rock",
-      floats: true,
-      solid: true
+      dynamic: false,
+      solid: false
     };
   });
 }).call(this);

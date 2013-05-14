@@ -12,9 +12,12 @@ require "./objects/rock/rock"
 require "./objects/shot/shot"
 require "./objects/ground/ground"
 require "./objects/bar/bar"
-require "./stages/stage"
 require "./objects/stair/stair"
-require "./modes/stage_select"
+require "./stages/stage"
+require "./stages/hardstage/hardstage"
+require "./modes/stage_select_mode/stage_select_mode"
+require "./modes/game_mode/game_mode"
+require "./modes/title_mode/title_mode"
 global.B = 16 #length of the tile of the game - only change this if you are going to remake the entire game using a different sprite size!
 global.G = 84*B #gravity
 global.now = -> Date.now!/1000
@@ -32,44 +35,25 @@ global.key_a = \j
 global.key_b = \k
 global.key_start = \l
 global.last_tick = now!
-global.title_mode = mixin ->
-	global.mode = @
-	key.press key_down,	 ~> @option = "password" if global.mode == @
-	key.press key_up,	 ~> @option = "gamestart" if global.mode == @
-	key.press key_start, ~> stage_select_mode! if global.mode == @
-	draw: (screen) ~>
-		screen.background 0 0 0
-		screen.image title, camera.width/2 - title.width/2, 0
-global.game_mode = mixin ->
-	global.mode = @
-	stage!.create!
-	key.press key_start, ~> 
-		return if mode != @
-		play "pause"
-		@paused = !@paused
-	paused: false
-	draw: (screen) ~>
-		if @paused then
-			screen.fill 107, 8, 0
-			screen.rect 0, camera.height * 3/4, camera.width, camera.height*1/4
-			return
-		screen.background 222 222 222
-		near_objects = tree.get(hero.pos.x - B*24, hero.pos.y - B*24, hero.pos.x + B*24, hero.pos.y + B*24)
-		near_objects.sort (a,b)->b.depth - a.depth
-		#remove near_objects, hero
-		#near_objects.push hero
-		for i from -3 to 3
-			screen.image background, background.width * i, 0
-		dt = min((now! - global.last_tick),0.04)
-		camera.tick dt
-		(.tick dt) `each` near_objects
-		global.last_tick := now!
-		(~>it.draw screen) `each` near_objects
 global.canvas = processing window.innerWidth, window.innerHeight,
 	setup: -> 
 		global.sprite = _.memoize (url) ~> @loadImage url
 		global.title = @loadImage "sprites/title.png"
-		global.background = @loadImage "sprites/background.png"
+
+		preload = map ("modes/stage_select_mode/sprites/"+), 
+			<[look_00 look_01 look_02 look_10 look_11 look_12 look_20 look_21 look_22]>
+		preload ++= map ("objects/mememan/sprites/"+),
+			<[climbed climbed_shooting climbing hurt jumping jumping_shoot sliding
+			standing_shoot standing0 standing1 standing2 walking_shoot0 walking_shoot1 walking_shoot2
+			walking0 walking1 walking2]>
+		preload ++= map ("objects/ground/sprites/"+),
+			<[Bottom0 Bottom1 BottomLeft BottomRight Center0 Center1
+			Center2 Center3 Left0 Left1 Right0 Right1 Top0 Top1 TopLeft TopRight]>
+		for spr in preload
+			sprite(spr+".png")
+			sprite(spr+"_r.png")
+
+
 		@noStroke!
 		@scale camera.scale
 		title_mode!

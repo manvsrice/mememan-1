@@ -10,13 +10,12 @@ require("viclib")();
           return this$.destroy();
         }
       }),
-      floats: true,
       created: now(),
       sprite: "shot",
       side: (ref$ = this.side) != null ? ref$ : "bad",
       size: v3(4, 4, 0),
+      floats: true,
       shot: true,
-      collides: true,
       collide: function(it){
         if (!it.shot) {
           return this$.hp = 0;

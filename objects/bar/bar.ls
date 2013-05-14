@@ -1,5 +1,5 @@
 global.bar = mixin object, ->
 	type: "bar"
 	sprite: "bar"
-	floats: true
+	dynamic: false
 	solid: true

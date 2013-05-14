@@ -2,7 +2,6 @@ global.macer = mixin object, ->
 	type: "macer"
 	sprite: "standing0"
 	floats: false
-	collides: true
 	size: v3(24,24,0)
 	hp: 8
 	dmg: 4

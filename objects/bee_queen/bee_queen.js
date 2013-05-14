@@ -7,7 +7,6 @@ require("viclib")();
       type: "bee_queen",
       sprite: "holding",
       floats: true,
-      collides: true,
       deploy_x: void 8,
       size: v3(24, 24, 0),
       hp: 32,

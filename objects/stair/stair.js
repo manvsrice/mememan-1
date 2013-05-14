@@ -12,7 +12,7 @@ require("viclib")();
       type: "stair",
       sprite: "stair",
       solid: false,
-      floats: true,
+      dynamic: false,
       is_stair: true
     };
   });

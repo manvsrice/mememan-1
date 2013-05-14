@@ -42,7 +42,7 @@ require("viclib")();
       type: "mememan",
       sprite: "standing0",
       floats: false,
-      collides: true,
+      dynamic: true,
       hp: 28,
       depth: -1,
       size: v3(16, 25, 0),

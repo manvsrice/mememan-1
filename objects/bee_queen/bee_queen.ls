@@ -2,7 +2,6 @@ global.bee_queen = mixin object, ->
 	type: "bee_queen"
 	sprite: "holding"
 	floats: true
-	collides: true
 	deploy_x: void 
 	size: v3(24,24,0)
 	hp: 32

@@ -28,6 +28,22 @@ require("viclib")();
       return tree.add(this$, this$.pos.x, this$.pos.y);
     });
     return {
+      dir: void 8,
+      size: (ref$ = this.size) != null
+        ? ref$
+        : v3(B, B, 0),
+      pos: (ref$ = this.pos) != null
+        ? ref$
+        : v3(0, 0, 0),
+      vel: (ref$ = this.vel) != null
+        ? ref$
+        : v3(0, 0, 0),
+      hp: (ref$ = this.hp) != null ? ref$ : 28,
+      dynamic: true,
+      solid: false,
+      ghost: false,
+      floats: false,
+      is_immune: just(false),
       type: "missingty",
       draw: function(screen){
         var spr;
@@ -50,7 +66,7 @@ require("viclib")();
         });
       },
       tick: function(dt){
-        var near_objects;
+        var near_objects, i$, len$, near;
         if (this$.hp <= 0) {
           return this$.destroy();
         }
@@ -61,13 +77,12 @@ require("viclib")();
           this$.vel.y += G * dt;
         }
         this$.is_grounded = just(false);
-        if (this$.collides) {
-          near_objects = tree.get(this$.pos.x - B * 4, this$.pos.y - B * 4, this$.pos.x + B * 4, this$.pos.y + B * 4);
-          each(function(it){
-            if (it !== this$) {
-              return this$.check_collision(it);
-            }
-          }, near_objects);
+        near_objects = tree.get(this$.pos.x - B * 2, this$.pos.y - B * 2, this$.pos.x + B * 2, this$.pos.y + B * 2);
+        for (i$ = 0, len$ = near_objects.length; i$ < len$; ++i$) {
+          near = near_objects[i$];
+          if (near !== this$ && (near.dynamic || near.solid)) {
+            this$.check_collision(near);
+          }
         }
         if (this$.pos.x !== this$.old_pos.x || this$.pos.y !== this$.old_pos.y) {
           tree.add(this$, this$.pos.x, this$.pos.y);
@@ -135,13 +150,6 @@ require("viclib")();
           return this$.hurt(it.dmg);
         }
       },
-      ghost: false,
-      floats: false,
-      solid: false,
-      shot: false,
-      depth: 0,
-      hp: (ref$ = this.hp) != null ? ref$ : 28,
-      is_immune: just(false),
       hurt: function(dmg){
         if (!this$.is_immune()) {
           this$.hp -= dmg;
@@ -150,17 +158,7 @@ require("viclib")();
           return play("enemy_hit");
         }
       },
-      size: (ref$ = this.size) != null
-        ? ref$
-        : v3(B, B, 0),
-      dir: void 8,
-      pos: (ref$ = this.pos) != null
-        ? ref$
-        : v3(0, 0, 0),
-      old_pos: v3(0, 0, 0),
-      vel: (ref$ = this.vel) != null
-        ? ref$
-        : v3(0, 0, 0)
+      old_pos: v3(0, 0, 0)
     };
   });
 }).call(this);

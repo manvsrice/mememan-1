@@ -10,7 +10,6 @@ require("viclib")();
       type: "trapdoor",
       sprite: "trapdoor",
       floats: true,
-      collides: false,
       solid: true,
       size: v3(2 * B, B, 0),
       hp: 999,

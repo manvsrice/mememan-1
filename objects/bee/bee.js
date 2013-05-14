@@ -1,26 +1,19 @@
 require("prelude-ls").installPrelude(global);
 require("viclib")();
 (function(){
-  global.traphouse = mixin(object, function(){
+  global.bee = mixin(object, function(){
     var this$ = this;
     return {
-      type: "traphouse",
-      sprite: "traphosue",
+      type: "bee",
+      sprite: "bee",
       floats: true,
-      collides: false,
-      solid: true,
-      size: v3(2 * B, B, 0),
-      hp: 999,
-      dmg: 0,
-      exhausted: just(false),
+      deploy_x: void 8,
+      size: v3(12, 8, 0),
+      hp: 2,
+      dmg: 3,
       tick: after(this.tick, function(dt){
-        if (abs(hero.pos.x - this$.pos.x) < B) {
-          shot({
-            pos: pos.clone().add(v3(0, -B * 2, 0)),
-            vel: v3(0, 0, 4 * B)
-          });
-          return this$.exhausted = true_for(1);
-        }
+        this$.vel.add(global.hero.pos.clone().sub(this$.pos).multiplyScalar(0.1));
+        return this$.vel.normalize().multiplyScalar(6 * B);
       })
     };
   });

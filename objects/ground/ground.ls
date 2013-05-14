@@ -3,3 +3,4 @@ global.ground = mixin object, ->
 	sprite: @border_type
 	floats: true
 	solid: true
+	dynamic: false

@@ -44,15 +44,15 @@ require("viclib")();
         screen.background(44, 101, 248);
         screen.background(0, 0, 0);
         color = now() % 0.25 < 0.125 ? "red" : "blue";
-        screen.image(sprite("modes/stage_select/sprites/background.png"), this$.pos.x, this$.pos.y);
-        screen.image(sprite("modes/stage_select/sprites/" + color + "_cursor.png"), this$.cursor_pos.x, this$.cursor_pos.y);
-        screen.image(sprite("modes/stage_select/sprites/look_" + this$.cursor.x + this$.cursor.y + ".png"), this$.pos.x + 18 + 10 + 80 * 1, this$.pos.y + 8 + 32 + 64 * 1);
+        screen.image(sprite("modes/stage_select_mode/sprites/background.png"), this$.pos.x, this$.pos.y);
+        screen.image(sprite("modes/stage_select_mode/sprites/" + color + "_cursor.png"), this$.cursor_pos.x, this$.cursor_pos.y);
+        screen.image(sprite("modes/stage_select_mode/sprites/look_" + this$.cursor.x + this$.cursor.y + ".png"), this$.pos.x + 18 + 10 + 80 * 1, this$.pos.y + 8 + 32 + 64 * 1);
         for (i$ = 0; i$ <= 2; ++i$) {
           x = i$;
           lresult$ = [];
           for (j$ = 0; j$ <= 2; ++j$) {
             y = j$;
-            lresult$.push(screen.image(sprite("modes/stage_select/sprites/" + this$.stages["" + x + y] + ".png"), this$.pos.x + 18 + 10 + 80 * x, this$.pos.y + 8 + 32 + 64 * y));
+            lresult$.push(screen.image(sprite("modes/stage_select_mode/sprites/" + this$.stages["" + x + y] + ".png"), this$.pos.x + 18 + 10 + 80 * x, this$.pos.y + 8 + 32 + 64 * y));
           }
           results$.push(lresult$);
         }

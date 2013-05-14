@@ -6,7 +6,8 @@ require("viclib")();
       type: "ground",
       sprite: this.border_type,
       floats: true,
-      solid: true
+      solid: true,
+      dynamic: false
     };
   });
 }).call(this);

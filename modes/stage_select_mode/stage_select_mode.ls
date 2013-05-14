@@ -27,12 +27,10 @@ global.stage_select_mode = mixin ->
 		screen.background 44 101 248
 		screen.background 0 0 0
 		color = if (now! % 0.25) < 0.125 then "red" else "blue"
-		screen.image sprite("modes/stage_select/sprites/background.png"), @pos.x, @pos.y
-		screen.image sprite("modes/stage_select/sprites/"+color+"_cursor.png"), @cursor_pos.x, @cursor_pos.y
-
-		screen.image sprite("modes/stage_select/sprites/look_"+@cursor.x+@cursor.y+".png"), @pos.x + 18+10+80*1, @pos.y + 8+32+64*1
-
+		screen.image sprite("modes/stage_select_mode/sprites/background.png"), @pos.x, @pos.y
+		screen.image sprite("modes/stage_select_mode/sprites/"+color+"_cursor.png"), @cursor_pos.x, @cursor_pos.y
+		screen.image sprite("modes/stage_select_mode/sprites/look_"+@cursor.x+@cursor.y+".png"), @pos.x + 18+10+80*1, @pos.y + 8+32+64*1
 		for x from 0 to 2
 			for y from 0 to 2
-				screen.image sprite("modes/stage_select/sprites/"+@stages[""+x+y]+".png"), @pos.x + 18 + 10 + 80*x, @pos.y + 8 + 32 + 64*y
+				screen.image sprite("modes/stage_select_mode/sprites/"+@stages[""+x+y]+".png"), @pos.x + 18 + 10 + 80*x, @pos.y + 8 + 32 + 64*y
 

@@ -6,10 +6,9 @@
 	#false
 			
 global.stair = mixin object, ->
-	defer ~>
-		@solid = true if !has_stair(@pos.x,@pos.y - B)
+	defer ~> @solid = true if !has_stair(@pos.x,@pos.y - B)
 	type:"stair"
 	sprite:"stair"
 	solid: false
-	floats: true
+	dynamic: false
 	is_stair:true

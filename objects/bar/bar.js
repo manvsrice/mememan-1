@@ -5,7 +5,7 @@ require("viclib")();
     return {
       type: "bar",
       sprite: "bar",
-      floats: true,
+      dynamic: false,
       solid: true
     };
   });
