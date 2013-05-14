@@ -1,6 +1,7 @@
 global.game_mode = mixin ->
 	global.mode = @
-	hardstage.create!
+
+	stage.create!
 
 	key.press key_start, ~> 
 		return if mode != @
@@ -16,7 +17,7 @@ global.game_mode = mixin ->
 			return
 
 		screen.background 222 222 222
-		bg = hardstage.background!
+		bg = stage.background!
 		for i from -4 to 4
 			for j from -4 to 4
 				screen.image bg, 

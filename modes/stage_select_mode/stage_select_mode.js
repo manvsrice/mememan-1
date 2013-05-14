@@ -4,34 +4,74 @@ require("viclib")();
   global.stage_select_mode = mixin(function(){
     var this$ = this;
     global.mode = this;
+    bg_music("stage_select");
     key.press(key_a, function(){
-      if (global.mode === this$) {
-        return game_mode();
+      var stage_info;
+      if (global.mode !== this$) {
+        return;
       }
+      stage_info = this$.stages["" + this$.cursor.x + this$.cursor.y];
+      global.stage = stage_info.stage;
+      return game_mode();
     });
     key.press(key_down, function(){
-      return log("af", this$.cursor.y++);
+      if (global.mode === this$) {
+        return log("af", this$.cursor.y++);
+      }
     });
     key.press(key_up, function(){
-      return this$.cursor.y--;
+      if (global.mode === this$) {
+        return this$.cursor.y--;
+      }
     });
     key.press(key_left, function(){
-      return this$.cursor.x--;
+      if (global.mode === this$) {
+        return this$.cursor.x--;
+      }
     });
     key.press(key_right, function(){
-      return this$.cursor.x++;
+      if (global.mode === this$) {
+        return this$.cursor.x++;
+      }
     });
     return {
       stages: {
-        "00": "sparkman",
-        "10": "snakeman",
-        "20": "needleman",
-        "01": "hardman",
-        "11": "",
-        "21": "topman",
-        "02": "geminiman",
-        "12": "magnetman",
-        "22": "shadowman"
+        "00": {
+          name: "sparkman",
+          stage: hardstage
+        },
+        "10": {
+          name: "snakeman",
+          stage: hardstage
+        },
+        "20": {
+          name: "needleman",
+          stage: hardstage
+        },
+        "01": {
+          name: "hardman",
+          stage: hardstage
+        },
+        "11": {
+          name: "",
+          stage: hardstage
+        },
+        "21": {
+          name: "topman",
+          stage: hardstage
+        },
+        "02": {
+          name: "geminiman",
+          stage: hardstage
+        },
+        "12": {
+          name: "magnetman",
+          stage: hardstage
+        },
+        "22": {
+          name: "shadowman",
+          stage: hardstage
+        }
       },
       cursor: v3(1, 1, 0),
       cursor_pos: v3(0, 0, 0),
@@ -52,7 +92,7 @@ require("viclib")();
           lresult$ = [];
           for (j$ = 0; j$ <= 2; ++j$) {
             y = j$;
-            lresult$.push(screen.image(sprite("modes/stage_select_mode/sprites/" + this$.stages["" + x + y] + ".png"), this$.pos.x + 18 + 10 + 80 * x, this$.pos.y + 8 + 32 + 64 * y));
+            lresult$.push(screen.image(sprite("modes/stage_select_mode/sprites/" + this$.stages["" + x + y].name + ".png"), this$.pos.x + 18 + 10 + 80 * x, this$.pos.y + 8 + 32 + 64 * y));
           }
           results$.push(lresult$);
         }

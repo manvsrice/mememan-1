@@ -5,6 +5,7 @@ require("viclib")();
     var this$ = this;
     return {
       stage_map: ['................................................', '..........o...o..o....ooo......o...o............', '..........o...o......o.........o...o............', '..........o...o..o..o..........o...o............', '..........o...o..o..o.......o.........o.........', '...........o.o...o...o.......oo.....oo..........', '............o....o....ooo......ooooo............', '................................................', '................................................', '................................................', '................................................', '................................................', '......................M.........................', 'oooooooooooooooooooooooooooooooooooooooooooooooo', 'oooooooooooooooooooooooooooooooooooooooooooooooo', 'oooooooooooooooooooooooooooooooooooooooooooooooo', 'oooooooooooooooooooooooooooooooooooooooooooooooo'],
+      music: "hardman",
       objects: {
         o: ground,
         M: mememan,
@@ -18,6 +19,7 @@ require("viclib")();
       create: function(){
         var stage_map, objects_at, has_at, i$, to$, y, lresult$, j$, to1$, x, lresult1$, k$, ref$, len$, obj, border_type, results$ = [];
         log(this$);
+        bg_music(this$.music);
         stage_map = map(function(it){
           return it.split("");
         }, this$.stage_map);

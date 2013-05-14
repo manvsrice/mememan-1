@@ -4,7 +4,7 @@ require("viclib")();
   global.game_mode = mixin(function(){
     var this$ = this;
     global.mode = this;
-    hardstage.create();
+    stage.create();
     key.press(key_start, function(){
       if (mode !== this$) {
         return;
@@ -22,7 +22,7 @@ require("viclib")();
           return;
         }
         screen.background(222, 222, 222);
-        bg = hardstage.background();
+        bg = stage.background();
         for (i$ = -4; i$ <= 4; ++i$) {
           i = i$;
           for (j$ = -4; j$ <= 4; ++j$) {

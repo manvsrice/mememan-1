@@ -1,10 +1,10 @@
 global.hardstage = do mixin stage, ~>
+	music: "hardman"
 	background: ~> 
 		if 100 < camera.pos.y < 1700 then
 			sprite("stages/hardstage/sprites/cavern.png")
 		else
 			sprite("stages/hardstage/sprites/mountains.png")
-		
 	objects:
 		o: ground
 		M: mememan
@@ -136,7 +136,7 @@ global.hardstage = do mixin stage, ~>
 		ooooooooooooooooooooooo.............................................ooooooooooooooooooooooooooooooooooooooooHooooooooooooooooooooooooooooooooooooooo
 		ooooooooooooooooooooooo.............................................ooooooooooooooooooooooooooooooooooooooooHooooooooooooooooooooooooooooooooooooooo
 
-		oooooooooooooooooooooooX.X.........................................ooooooooooooooooooooooooooooooooooooooooHooooooooooooooooooooooooooooooooooooooo
+		oooooooooooooooooooooooX.X..........................................ooooooooooooooooooooooooooooooooooooooooHooooooooooooooooooooooooooooooooooooooo
 		oooooooooooooooooooooooX.X..........................................ooooooooooooooooooooooooooooooooooooooooHooooooooooooooooooooooooooooooooooooooo
 		oooooooooooooooooooooooX.X....................................................................ooooooo,,,,,,,H,,,,ooooooooooooooooooooooooooooooooooo
 		ooooooooooooooooooooooooX........................................................................oooo,,,,,,,,,,,,ooooooooooooooooooooooooooooooooooo
@@ -154,3 +154,4 @@ global.hardstage = do mixin stage, ~>
 		oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
 		oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
 	]>
+

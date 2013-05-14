@@ -18,6 +18,7 @@ global.stage = mixin ->
 		oooooooooooooooooooooooooooooooooooooooooooooooo
 		oooooooooooooooooooooooooooooooooooooooooooooooo
 	]>
+	music: "hardman" 
 	objects:
 		o: ground
 		M: mememan
@@ -29,6 +30,7 @@ global.stage = mixin ->
 		H: stair
 	create: ~>
 		log @
+		bg_music @music
 		stage_map = map (.split("")), @stage_map
 		objects_at = (x,y) ~> 
 			obj = @objects[stage_map[y]?[x]]
