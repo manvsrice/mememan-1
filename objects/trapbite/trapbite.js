@@ -16,7 +16,7 @@ require("viclib")();
         }
       }),
       vel: v3(0, -8 * B, 0),
-      size: v3(12, 6, 0),
+      size: v3(12, 10, 0),
       floats: true,
       ghost: true,
       collides: true,

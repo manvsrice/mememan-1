@@ -14,24 +14,25 @@ global.bee_queen = mixin object, ->
 			if global.hero? then
 				@deploy_x = global.hero.pos.x + 8*B
 				@state = "positioning"
+				@state_time = chronometer!
 		| \positioning =>
 			@sprite = "holding"
 			@vel.x = signum(@deploy_x - @pos.x) * 8*B
 			@dir = signum @vel.x
-			if abs(@deploy_x - @pos.x)<4 then
+			if abs(@deploy_x - @pos.x)<4 or @state_time! > 2.2 then
 				@state = "laying"
 				setTimeout (~> @destroy!), 2500
-			@state_time = chronometer!
+				@state_time = chronometer!
 		| \laying =>
 			@sprite = "holding"
 			@vel.x = 0
 			if @state_time! > 1.5 then
 				@state = "layed"
-				bee pos:v3(@pos.x, @pos.y, 0)
-				bee pos:v3(@pos.x - B, @pos.y, 0)
-				bee pos:v3(@pos.x + B, @pos.y, 0)
-				bee pos:v3(@pos.x, @pos.y - B, 0)
-				bee pos:v3(@pos.x, @pos.y + B, 0)
+				bee pos:v3(@pos.x, @pos.y, 0), side:@side
+				bee pos:v3(@pos.x - B, @pos.y, 0), side:@side
+				bee pos:v3(@pos.x + B, @pos.y, 0), side:@side
+				bee pos:v3(@pos.x, @pos.y - B, 0), side:@side
+				bee pos:v3(@pos.x, @pos.y + B, 0), side:@side
 				@state_time = chronometer!
 			@dir = -1
 		| \layed =>

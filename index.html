@@ -32613,7 +32613,8 @@ require("viclib")();
       }, {
         name: "poke",
         tag: "PM",
-        charge: 28,
+        charge: 24,
+        cost: 1,
         shot: function(){
           this$.shot(pokeball, {
             pokemon: this$.pokemon,
@@ -32641,7 +32642,7 @@ require("viclib")();
       floats: false,
       dynamic: true,
       lives: 3,
-      hp: 28,
+      hp: 24,
       depth: -1,
       size: v3(16, 25, 0),
       vel: v3(0, 0, 0),
@@ -32654,15 +32655,15 @@ require("viclib")();
           ? 1
           : -1);
       },
-      draw: after(this.draw, function(screen){
-        if (this$.pokemon) {
-          return screen.image(sprite("objects/pokeball/sprites/pokeball.png"), this$.pos.x * this$.dir + camera.offset.x, this$.pos.y + camera.offset.y);
-        }
-      }),
       fire_weapon: function(){
         if (this$.is_walking() || this$.is_jumping() || this$.is_climbing() || this$.is_shooting()) {
           global.play("shoot");
-          this$.weapon.shot();
+          if (!this$.weapon.cost || this$.weapon.charge >= this$.weapon.cost) {
+            this$.weapon.shot();
+            if (this$.weapon.charge != null) {
+              this$.weapon.charge -= this$.weapon.cost;
+            }
+          }
           return this$.is_shooting = true_for(0.3);
         }
       },
@@ -32823,7 +32824,7 @@ require("viclib")();
       sprite: "standing0",
       floats: false,
       size: v3(24, 24, 0),
-      hp: 8,
+      hp: 18,
       dmg: 4,
       tick: after(this.tick, function(dt){
         this$.dir = hero.pos.x > this$.pos.x
@@ -32864,39 +32865,46 @@ require("viclib")();
         case 'waiting_hero':
           if (global.hero != null) {
             this$.deploy_x = global.hero.pos.x + 8 * B;
-            return this$.state = "positioning";
+            this$.state = "positioning";
+            return this$.state_time = chronometer();
           }
           break;
         case 'positioning':
           this$.sprite = "holding";
           this$.vel.x = signum(this$.deploy_x - this$.pos.x) * 8 * B;
           this$.dir = signum(this$.vel.x);
-          if (abs(this$.deploy_x - this$.pos.x) < 4) {
+          if (abs(this$.deploy_x - this$.pos.x) < 4 || this$.state_time() > 2.2) {
             this$.state = "laying";
             setTimeout(function(){
               return this$.destroy();
             }, 2500);
+            return this$.state_time = chronometer();
           }
-          return this$.state_time = chronometer();
+          break;
         case 'laying':
           this$.sprite = "holding";
           this$.vel.x = 0;
           if (this$.state_time() > 1.5) {
             this$.state = "layed";
             bee({
-              pos: v3(this$.pos.x, this$.pos.y, 0)
+              pos: v3(this$.pos.x, this$.pos.y, 0),
+              side: this$.side
             });
             bee({
-              pos: v3(this$.pos.x - B, this$.pos.y, 0)
+              pos: v3(this$.pos.x - B, this$.pos.y, 0),
+              side: this$.side
             });
             bee({
-              pos: v3(this$.pos.x + B, this$.pos.y, 0)
+              pos: v3(this$.pos.x + B, this$.pos.y, 0),
+              side: this$.side
             });
             bee({
-              pos: v3(this$.pos.x, this$.pos.y - B, 0)
+              pos: v3(this$.pos.x, this$.pos.y - B, 0),
+              side: this$.side
             });
             bee({
-              pos: v3(this$.pos.x, this$.pos.y + B, 0)
+              pos: v3(this$.pos.x, this$.pos.y + B, 0),
+              side: this$.side
             });
             this$.state_time = chronometer();
           }
@@ -32988,7 +32996,7 @@ require("viclib")();
         }
       }),
       vel: v3(0, -8 * B, 0),
-      size: v3(12, 6, 0),
+      size: v3(12, 10, 0),
       floats: true,
       ghost: true,
       collides: true,
@@ -33034,7 +33042,7 @@ require("viclib")();
       size: v3(4, 4, 0),
       floats: true,
       collide: function(it){
-        if (!it.is_shot) {
+        if (!it.is_shot && it.side !== this$.side) {
           this$.hp = 0;
         }
         return log(this$.hp);
@@ -33072,7 +33080,7 @@ require("viclib")();
             return this$.destroy();
           } else if (!this$.locked) {
             (typeof global[key$ = this$.pokemon] === 'function' ? global[key$]({
-              pos: this$.pos.clone().add(v3(0, -B, 0))
+              pos: this$.pos.clone().add(v3(0, 0, 0))
             }) : void 8).side = "good";
             this$.pokemon = void 8;
             return this$.destroy();
@@ -33283,97 +33291,6 @@ require("viclib")();
 }).call(this);
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/modes/stage_select_mode/stage_select_mode.js","/modes/stage_select_mode")
-},{"viclib":27,"prelude-ls":30,"__browserify_process":1,"__browserify_buffer":2}],26:[function(require,module,exports){
-(function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
-require("viclib")();
-(function(){
-  global.title_mode = mixin(function(){
-    var preload, i$, ref$, len$, wpn, spr, this$ = this;
-    global.mode = this;
-    bg_music("title");
-    key.press(key_down, function(){
-      if (global.mode === this$) {
-        return this$.option = "password";
-      }
-    });
-    key.press(key_up, function(){
-      if (global.mode === this$) {
-        return this$.option = "gamestart";
-      }
-    });
-    key.press(key_start, function(){
-      if (global.mode === this$) {
-        return stage_select_mode();
-      }
-    });
-    log("Loading sprites...");
-    preload = map((function(it){
-      return "modes/stage_select_mode/sprites/" + it;
-    }), ['look_00', 'look_01', 'look_02', 'look_10', 'look_11', 'look_12', 'look_20', 'look_21', 'look_22']);
-    for (i$ = 0, len$ = (ref$ = ['normal', 'poke']).length; i$ < len$; ++i$) {
-      wpn = ref$[i$];
-      preload = preload.concat(map((fn$), ['climbed', 'climbed_shooting', 'climbing', 'hurt', 'jumping', 'jumping_shoot', 'sliding', 'standing_shoot', 'standing0', 'standing1', 'walking_shoot0', 'walking_shoot1', 'walking_shoot2', 'walking0', 'walking1', 'walking2']));
-    }
-    preload = preload.concat(map((function(it){
-      return "objects/trapbite/sprites/" + it;
-    }), ['closed', 'open']));
-    preload = preload.concat(map((function(it){
-      return "objects/trapdoor/sprites/" + it;
-    }), ['trapdoor']));
-    preload = preload.concat(map((function(it){
-      return "objects/ground/sprites/" + it;
-    }), ['Bottom0', 'Bottom1', 'BottomLeft', 'BottomRight', 'Center0', 'Center1', 'Center2', 'Center3', 'Left0', 'Left1', 'Right0', 'Right1', 'Top0', 'Top1', 'TopLeft', 'TopRight']));
-    preload = preload.concat(map((function(it){
-      return "objects/bar/sprites/" + it;
-    }), ['bar']));
-    preload = preload.concat(map((function(it){
-      return "objects/bee/sprites/" + it;
-    }), ['bee']));
-    preload = preload.concat(map((function(it){
-      return "objects/bee/sprites/" + it;
-    }), ['free', 'holding']));
-    preload = preload.concat(map((function(it){
-      return "objects/macer/sprites/" + it;
-    }), ['standing0', 'standing1', 'standing2', 'standing3', 'throwing']));
-    preload = preload.concat(map((function(it){
-      return "objects/macer/sprites/" + it;
-    }), ['standing0', 'standing1', 'standing2', 'standing3', 'throwing']));
-    preload = preload.concat(map((function(it){
-      return "objects/rock/sprites/" + it;
-    }), ['rock']));
-    preload = preload.concat(map((function(it){
-      return "objects/shot/sprites/" + it;
-    }), ['shot']));
-    preload = preload.concat(map((function(it){
-      return "objects/stair/sprites/" + it;
-    }), ['stair']));
-    preload = preload.concat(map((function(it){
-      return "modes/stage_select_mode/sprites/" + it;
-    }), ['background', 'look_00', 'look_01', 'look_02', 'look_10', 'look_11', 'look_12', 'look_20', 'look_21', 'look_22', 'geminiman', 'hardman', 'magnetman', 'needleman', 'shadowman', 'snakeman', 'sparkman', 'topman', 'wtfisdisguy']));
-    for (i$ = 0, len$ = preload.length; i$ < len$; ++i$) {
-      spr = preload[i$];
-      sprite(spr + ".png");
-      sprite(spr + "_r.png");
-    }
-    return {
-      draw: function(screen){
-        screen.background(0, 0, 0);
-        global.title = sprite("modes/title_mode/sprites/background.png");
-        screen.image(title, camera.width / 2 - title.width / 2, 0);
-        screen.fill(255, 255, 255);
-        screen.textFont(courier_new);
-        screen.textSize(4);
-        screen.text("Loading prototype. Press start when the main screen shows up.", 0, 5);
-        return screen.text("Keys: A/S/D/W = directions, J = jump/select, K = slide, L = start", 0, 10);
-      }
-    };
-    function fn$(it){
-      return "objects/mememan/sprites/" + wpn + "/" + it;
-    }
-  });
-}).call(this);
-
-})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/modes/title_mode/title_mode.js","/modes/title_mode")
 },{"viclib":27,"prelude-ls":30,"__browserify_process":1,"__browserify_buffer":2}],25:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
 require("viclib")();
@@ -33385,7 +33302,6 @@ require("viclib")();
     global.draw_healthbar = function(screen, bars, max, x, y, dir){
       var bar_w, bar_h, w, h, sx, sy, addx, addy, i$, i, results$ = [];
       dir == null && (dir = "down");
-      dir = "right";
       switch (dir) {
       case 'down':
         bar_w = 6;
@@ -33501,14 +33417,13 @@ require("viclib")();
           screen.text("Stuff: " + 0, X - 44, y + 20);
           for (i$ = 0, to$ = hero.weapons.length; i$ < to$; ++i$) {
             i = i$;
-            log(i);
             wpn = hero.weapons[i];
             wpn_x = x + 10 + 80 * floor(i / 3);
             wpn_y = y + 20 + 14 * (i % 3);
             if (this$.cursor !== i || blink(0.5)) {
               draw_healthbar(screen, (ref$ = wpn.charge) != null
                 ? ref$
-                : hero.hp, 28, wpn_x + 12, wpn_y, "right");
+                : hero.hp, 24, wpn_x + 12, wpn_y, "right");
               screen.fill(255, 255, 255);
               screen.text(wpn.tag, wpn_x, wpn_y + 7);
             }
@@ -33550,13 +33465,107 @@ require("viclib")();
           obj = dynamic_objects[i$];
           obj.draw(screen);
         }
-        return draw_healthbar(screen, hero.hp, 28, 8, 8, "down");
+        draw_healthbar(screen, hero.hp, 24, 8, 8, "down");
+        if (hero.weapon.charge != null) {
+          return draw_healthbar(screen, hero.weapon.charge, 24, 18, 8, "down");
+        }
       }
     };
   });
 }).call(this);
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/modes/game_mode/game_mode.js","/modes/game_mode")
+},{"viclib":27,"prelude-ls":30,"__browserify_process":1,"__browserify_buffer":2}],26:[function(require,module,exports){
+(function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
+require("viclib")();
+(function(){
+  global.title_mode = mixin(function(){
+    var preload, i$, ref$, len$, wpn, spr, this$ = this;
+    global.mode = this;
+    bg_music("title");
+    key.press(key_down, function(){
+      if (global.mode === this$) {
+        return this$.option = "password";
+      }
+    });
+    key.press(key_up, function(){
+      if (global.mode === this$) {
+        return this$.option = "gamestart";
+      }
+    });
+    key.press(key_start, function(){
+      if (global.mode === this$) {
+        return stage_select_mode();
+      }
+    });
+    log("Loading sprites...");
+    preload = map((function(it){
+      return "modes/stage_select_mode/sprites/" + it;
+    }), ['look_00', 'look_01', 'look_02', 'look_10', 'look_11', 'look_12', 'look_20', 'look_21', 'look_22']);
+    for (i$ = 0, len$ = (ref$ = ['normal', 'poke']).length; i$ < len$; ++i$) {
+      wpn = ref$[i$];
+      preload = preload.concat(map((fn$), ['climbed', 'climbed_shooting', 'climbing', 'hurt', 'jumping', 'jumping_shoot', 'sliding', 'standing_shoot', 'standing0', 'standing1', 'walking_shoot0', 'walking_shoot1', 'walking_shoot2', 'walking0', 'walking1', 'walking2']));
+    }
+    preload = preload.concat(map((function(it){
+      return "objects/trapbite/sprites/" + it;
+    }), ['closed', 'open']));
+    preload = preload.concat(map((function(it){
+      return "objects/trapdoor/sprites/" + it;
+    }), ['trapdoor']));
+    preload = preload.concat(map((function(it){
+      return "objects/ground/sprites/" + it;
+    }), ['Bottom0', 'Bottom1', 'BottomLeft', 'BottomRight', 'Center0', 'Center1', 'Center2', 'Center3', 'Left0', 'Left1', 'Right0', 'Right1', 'Top0', 'Top1', 'TopLeft', 'TopRight']));
+    preload = preload.concat(map((function(it){
+      return "objects/bar/sprites/" + it;
+    }), ['bar']));
+    preload = preload.concat(map((function(it){
+      return "objects/bee/sprites/" + it;
+    }), ['bee']));
+    preload = preload.concat(map((function(it){
+      return "objects/bee/sprites/" + it;
+    }), ['free', 'holding']));
+    preload = preload.concat(map((function(it){
+      return "objects/macer/sprites/" + it;
+    }), ['standing0', 'standing1', 'standing2', 'standing3', 'throwing']));
+    preload = preload.concat(map((function(it){
+      return "objects/macer/sprites/" + it;
+    }), ['standing0', 'standing1', 'standing2', 'standing3', 'throwing']));
+    preload = preload.concat(map((function(it){
+      return "objects/rock/sprites/" + it;
+    }), ['rock']));
+    preload = preload.concat(map((function(it){
+      return "objects/shot/sprites/" + it;
+    }), ['shot']));
+    preload = preload.concat(map((function(it){
+      return "objects/stair/sprites/" + it;
+    }), ['stair']));
+    preload = preload.concat(map((function(it){
+      return "modes/stage_select_mode/sprites/" + it;
+    }), ['background', 'look_00', 'look_01', 'look_02', 'look_10', 'look_11', 'look_12', 'look_20', 'look_21', 'look_22', 'geminiman', 'hardman', 'magnetman', 'needleman', 'shadowman', 'snakeman', 'sparkman', 'topman', 'wtfisdisguy']));
+    for (i$ = 0, len$ = preload.length; i$ < len$; ++i$) {
+      spr = preload[i$];
+      sprite(spr + ".png");
+      sprite(spr + "_r.png");
+    }
+    return {
+      draw: function(screen){
+        screen.background(0, 0, 0);
+        global.title = sprite("modes/title_mode/sprites/background.png");
+        screen.image(title, camera.width / 2 - title.width / 2, 0);
+        screen.fill(255, 255, 255);
+        screen.textFont(courier_new);
+        screen.textSize(4);
+        screen.text("Loading prototype. Press start when the main screen shows up.", 0, 5);
+        return screen.text("Keys: A/S/D/W = directions, J = jump/select, K = slide, L = start", 0, 10);
+      }
+    };
+    function fn$(it){
+      return "objects/mememan/sprites/" + wpn + "/" + it;
+    }
+  });
+}).call(this);
+
+})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/modes/title_mode/title_mode.js","/modes/title_mode")
 },{"viclib":27,"prelude-ls":30,"__browserify_process":1,"__browserify_buffer":2}],33:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
 require("viclib")();

@@ -21,7 +21,8 @@ require("viclib")();
       }, {
         name: "poke",
         tag: "PM",
-        charge: 28,
+        charge: 24,
+        cost: 1,
         shot: function(){
           this$.shot(pokeball, {
             pokemon: this$.pokemon,
@@ -49,7 +50,7 @@ require("viclib")();
       floats: false,
       dynamic: true,
       lives: 3,
-      hp: 28,
+      hp: 24,
       depth: -1,
       size: v3(16, 25, 0),
       vel: v3(0, 0, 0),
@@ -62,15 +63,15 @@ require("viclib")();
           ? 1
           : -1);
       },
-      draw: after(this.draw, function(screen){
-        if (this$.pokemon) {
-          return screen.image(sprite("objects/pokeball/sprites/pokeball.png"), this$.pos.x * this$.dir + camera.offset.x, this$.pos.y + camera.offset.y);
-        }
-      }),
       fire_weapon: function(){
         if (this$.is_walking() || this$.is_jumping() || this$.is_climbing() || this$.is_shooting()) {
           global.play("shoot");
-          this$.weapon.shot();
+          if (!this$.weapon.cost || this$.weapon.charge >= this$.weapon.cost) {
+            this$.weapon.shot();
+            if (this$.weapon.charge != null) {
+              this$.weapon.charge -= this$.weapon.cost;
+            }
+          }
           return this$.is_shooting = true_for(0.3);
         }
       },

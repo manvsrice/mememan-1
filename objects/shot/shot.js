@@ -16,7 +16,7 @@ require("viclib")();
       size: v3(4, 4, 0),
       floats: true,
       collide: function(it){
-        if (!it.is_shot) {
+        if (!it.is_shot && it.side !== this$.side) {
           this$.hp = 0;
         }
         return log(this$.hp);

@@ -8,7 +8,8 @@ global.mememan = mixin object, ->
 		shot: ~> @shot shot, {dmg:2, side: @side, pos:v3(@pos.x+B*@dir,@pos.y,0), vel:v3(22*B*@dir,0,0)}},
 		{name: "poke"
 		tag: "PM"
-		charge: 28
+		charge: 24
+		cost: 1
 		shot: ~> 
 			@shot pokeball, {
 				pokemon: @pokemon
@@ -32,7 +33,7 @@ global.mememan = mixin object, ->
 	floats: false
 	dynamic: true
 	lives: 3
-	hp: 28
+	hp: 24
 	depth: -1
 	size: v3(16,25,0)
 	vel: v3(0,0,0)
@@ -42,9 +43,9 @@ global.mememan = mixin object, ->
 		@just_climbed = true_for 0.4
 		@ghost = @floats = true
 		@vel.y = B * 4.5 * (if dir==\down then 1 else -1)
-	draw: after @draw, (screen) ~>
-		if @pokemon then
-			screen.image sprite("objects/pokeball/sprites/pokeball.png"), @pos.x*@dir+camera.offset.x, @pos.y+camera.offset.y
+	#draw: after @draw, (screen) ~>
+		#if @pokemon then
+			#screen.image sprite("objects/pokeball/sprites/pokeball.png"), @pos.x*@dir+camera.offset.x, @pos.y+camera.offset.y
 	#draw: after @draw, (screen) ~>
 		#screen.fill(0,0,0)
 		#screen.rect 7, 8, 8, 57
@@ -54,7 +55,9 @@ global.mememan = mixin object, ->
 	fire_weapon: ~>
 		if @is_walking! or @is_jumping! or @is_climbing! or @is_shooting! then
 			global.play "shoot"
-			@weapon.shot!
+			if not @weapon.cost or @weapon.charge >= @weapon.cost then
+				@weapon.shot!
+				@weapon.charge -= @weapon.cost if @weapon.charge?
 			@is_shooting = true_for 0.3s
 
 	stop_jump: ~> @vel.y = 0 if @is_jumping!

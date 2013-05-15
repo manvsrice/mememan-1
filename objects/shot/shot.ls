@@ -7,7 +7,7 @@ global.shot = mixin object, ->
 	size: v3(4,4,0)
 	floats: true
 	collide: ~> 
-		@hp = 0 if !it.is_shot
+		@hp = 0 if !it.is_shot and it.side!=@side
 		log @hp
 	hp: 1
 	dmg: @dmg ? 2

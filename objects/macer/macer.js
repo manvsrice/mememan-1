@@ -8,7 +8,7 @@ require("viclib")();
       sprite: "standing0",
       floats: false,
       size: v3(24, 24, 0),
-      hp: 8,
+      hp: 18,
       dmg: 4,
       tick: after(this.tick, function(dt){
         this$.dir = hero.pos.x > this$.pos.x

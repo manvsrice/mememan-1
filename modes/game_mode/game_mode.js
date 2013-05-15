@@ -8,7 +8,6 @@ require("viclib")();
     global.draw_healthbar = function(screen, bars, max, x, y, dir){
       var bar_w, bar_h, w, h, sx, sy, addx, addy, i$, i, results$ = [];
       dir == null && (dir = "down");
-      dir = "right";
       switch (dir) {
       case 'down':
         bar_w = 6;
@@ -124,14 +123,13 @@ require("viclib")();
           screen.text("Stuff: " + 0, X - 44, y + 20);
           for (i$ = 0, to$ = hero.weapons.length; i$ < to$; ++i$) {
             i = i$;
-            log(i);
             wpn = hero.weapons[i];
             wpn_x = x + 10 + 80 * floor(i / 3);
             wpn_y = y + 20 + 14 * (i % 3);
             if (this$.cursor !== i || blink(0.5)) {
               draw_healthbar(screen, (ref$ = wpn.charge) != null
                 ? ref$
-                : hero.hp, 28, wpn_x + 12, wpn_y, "right");
+                : hero.hp, 24, wpn_x + 12, wpn_y, "right");
               screen.fill(255, 255, 255);
               screen.text(wpn.tag, wpn_x, wpn_y + 7);
             }
@@ -173,7 +171,10 @@ require("viclib")();
           obj = dynamic_objects[i$];
           obj.draw(screen);
         }
-        return draw_healthbar(screen, hero.hp, 28, 8, 8, "down");
+        draw_healthbar(screen, hero.hp, 24, 8, 8, "down");
+        if (hero.weapon.charge != null) {
+          return draw_healthbar(screen, hero.weapon.charge, 24, 18, 8, "down");
+        }
       }
     };
   });

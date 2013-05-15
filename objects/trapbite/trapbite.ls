@@ -6,7 +6,7 @@ global.trapbite = mixin object, ->
 		@sprite = "closed" if @life_time! > 0.1
 		@destroy! if @life_time! > 0.2
 	vel: v3(0,-8*B,0)
-	size: v3(12,6,0)
+	size: v3(12,10,0)
 	floats: true
 	ghost: true
 	collides: true

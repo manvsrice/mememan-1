@@ -18,39 +18,46 @@ require("viclib")();
         case 'waiting_hero':
           if (global.hero != null) {
             this$.deploy_x = global.hero.pos.x + 8 * B;
-            return this$.state = "positioning";
+            this$.state = "positioning";
+            return this$.state_time = chronometer();
           }
           break;
         case 'positioning':
           this$.sprite = "holding";
           this$.vel.x = signum(this$.deploy_x - this$.pos.x) * 8 * B;
           this$.dir = signum(this$.vel.x);
-          if (abs(this$.deploy_x - this$.pos.x) < 4) {
+          if (abs(this$.deploy_x - this$.pos.x) < 4 || this$.state_time() > 2.2) {
             this$.state = "laying";
             setTimeout(function(){
               return this$.destroy();
             }, 2500);
+            return this$.state_time = chronometer();
           }
-          return this$.state_time = chronometer();
+          break;
         case 'laying':
           this$.sprite = "holding";
           this$.vel.x = 0;
           if (this$.state_time() > 1.5) {
             this$.state = "layed";
             bee({
-              pos: v3(this$.pos.x, this$.pos.y, 0)
+              pos: v3(this$.pos.x, this$.pos.y, 0),
+              side: this$.side
             });
             bee({
-              pos: v3(this$.pos.x - B, this$.pos.y, 0)
+              pos: v3(this$.pos.x - B, this$.pos.y, 0),
+              side: this$.side
             });
             bee({
-              pos: v3(this$.pos.x + B, this$.pos.y, 0)
+              pos: v3(this$.pos.x + B, this$.pos.y, 0),
+              side: this$.side
             });
             bee({
-              pos: v3(this$.pos.x, this$.pos.y - B, 0)
+              pos: v3(this$.pos.x, this$.pos.y - B, 0),
+              side: this$.side
             });
             bee({
-              pos: v3(this$.pos.x, this$.pos.y + B, 0)
+              pos: v3(this$.pos.x, this$.pos.y + B, 0),
+              side: this$.side
             });
             this$.state_time = chronometer();
           }
