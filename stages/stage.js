@@ -8,7 +8,7 @@ require("viclib")();
       music: "hardman",
       objects: {
         o: ground,
-        M: hero,
+        M: mememan,
         B: bee_queen,
         X: bar,
         h: stair,
@@ -60,15 +60,11 @@ require("viclib")();
                             : !has_at(obj, x, y + 1)
                               ? "Bottom" + x % 2
                               : "Center" + (x % 2 + y % 2 * 2);
-              if (obj === hero) {
-                lresult1$.push(hero.pos = v3(x * B, y * B, 0));
-              } else {
-                lresult1$.push(obj({
-                  border_type: border_type
-                }, {
-                  pos: v3(x * B, y * B, 0)
-                }));
-              }
+              lresult1$.push(typeof obj === 'function' ? obj({
+                border_type: border_type
+              }, {
+                pos: v3(x * B, y * B, 0)
+              }) : void 8);
             }
             lresult$.push(lresult1$);
           }

@@ -7,7 +7,7 @@ global.hardstage = do mixin stage, ~>
 			sprite("stages/hardstage/sprites/mountains.png")
 	objects:
 		o: ground
-		M: hero
+		M: mememan
 		b: bee_queen
 		X: bar
 		h: stair
@@ -25,8 +25,8 @@ global.hardstage = do mixin stage, ~>
 		...........................................................................................................................................................................ooooooooooooooooooooooooooooooooo..............................................ooooooooooooooooooooooooooooooooooo
 		...........................................................................................................................................................................ooooooooooooooooooooooooooooooooo..............................................ooooooooooooooooooooooooooooooooooo
 		...........................................................................................................................................................................ooooooooooooooooooooooooooooooooo..............................................ooooooooooooooooooooooooooooooooooo
-		...........................................................................................................................................................................ooooooooooooooooooooooooooooooooo..........b.........b.........b...............ooooooooooooooooooooooooooooooooooo
-		...........................................................................................................................................................................ooooooooooooooooooooooooooooooooo...b...........b..............................ooooooooooooooooooooooooooooooooooo
+		...........................................................................................................................................................................ooooooooooooooooooooooooooooooooo..............................................ooooooooooooooooooooooooooooooooooo
+		...........................................................................................................................................................................ooooooooooooooooooooooooooooooooo........................b.....................ooooooooooooooooooooooooooooooooooo
 		...........................................................................................................................................................................ooooooooooooooooooooooooooooooooo..............................................ooooooooooooooooooooooooooooooooooo
 		...........................................................................................................................................................................ooooooooooooooooooooooooooooooooo..............................................ooooooooooooooooooooooooooooooooooo
 		...........................................................................................................................................................................ooooooooooooooooooooooooooooooooo..T.T.T.T.T.....T.T...T.......T.T......m......oooooooooooooooooooooooooooooooooo
@@ -47,7 +47,7 @@ global.hardstage = do mixin stage, ~>
 		...........................................................................................................................................................................ooooooooooooooooooooooooooooooooooooooooooHoXoHoooooooooooooooooooo,,,,,,,,,,,,,,,,,,oooooooooooooooooooooooooooooooooo
 		...........................................................................................................................................................................ooooooooooooooooooooooooooooooooooooooooooHoXoHoooooooooooooooooooo,,,,,,,,,,,,,,,,,,oooooooooooooooooooooooooooooooooo
 		...........................................................................................................................................................................ooooooooooooooooooooooooooooooooooooooooooHoXoHoooooooooooooooooooo,,,,,,,,,,,,,,,,,,oooooooooooooooooooooooooooooooooo
-		...........................................................................................................................................................................ooooooooooooooooooooooooooooooooooooooooooHoXoHoooooooooooooooooooo,,B,,,,,,,,,,,,,M,oooooooooooooooooooooooooooooooooo
+		...........................................................................................................................................................................ooooooooooooooooooooooooooooooooooooooooooHoXoHoooooooooooooooooooo,,B,,,,,,,,,,,,,,,oooooooooooooooooooooooooooooooooo
 		...........................................................................................................................................................................ooooooooooooooooooooooooooooooooooooooooooHoXoHoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
 		...........................................................................................................................................................................ooooooooooooooooooooooooooooooooooooooooooHoXoHoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
 
@@ -149,7 +149,7 @@ global.hardstage = do mixin stage, ~>
 		ooooooooooooooooooooooooXX.................................b............ooooo........oo..............oooooooooooHooooooooooooooooooooooooooooooooooo
 		ooooooooooooooooooooooooX...........................................ooooooooo......oooo..............oooooooooooHooooooooooooooooooooooooooooooooooo
 		ooooooooooooooooooooooooXX..........................oo.............ooooooooooooo...oooooo.......ooo....oooooo....ooooooooooooooooooooooooooooooooooo
-		ooooooooooooooooooooooooxx.......................T.oooo............oooooooooooooo..ooooooT.T.T.oooo..............ooooooooooooooooooooooooooooooooooo
+		ooooooooooooooooooooooooxx...M...................T.oooo............oooooooooooooo..ooooooT.T.T.oooo..............ooooooooooooooooooooooooooooooooooo
 		oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
 		oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
 		oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo

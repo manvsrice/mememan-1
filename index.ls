@@ -19,7 +19,7 @@ global.blink = (interval) ~> (now! % interval)<(interval/2)
 require "./sound/sound"
 require "./objects/camera/camera"
 require "./objects/object"
-require "./objects/hero/hero"
+require "./objects/mememan/mememan"
 require "./objects/macer/macer"
 require "./objects/bee_queen/bee_queen"
 require "./objects/bee/bee"
@@ -38,6 +38,7 @@ require "./stages/hardstage/hardstage"
 require "./modes/stage_select_mode/stage_select_mode"
 require "./modes/game_mode/game_mode"
 require "./modes/title_mode/title_mode"
+
 global.canvas = processing window.innerWidth, window.innerHeight,
 	setup: -> 
 		global.sprite = _.memoize (url) ~> @loadImage url

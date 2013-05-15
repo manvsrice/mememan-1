@@ -3,8 +3,8 @@ global.hardman = mixin object, ->
 	sprite: "holding"
 	deploy_x: void 
 	size: v3(26,36,0)
-	hp: 220
-	maxhp: 220
+	hp: 22
+	maxhp: 22
 	dmg: 12
 	state_time: chronometer!
 	state: \standing
@@ -13,6 +13,10 @@ global.hardman = mixin object, ->
 	draw: after @draw, ~> draw_healthbar @hp/@maxhp, 30, 8, "down", [255,0,0]
 	tick: after @tick, (dt) ~>
 		@dir = signum (hero.pos.x - @pos.x)
+
+		if @hp <= 0 then
+			enabled_weapons.push \punch
+			stage_select_mode!
 
 		switch (@state)
 		| \standing => 
@@ -27,7 +31,7 @@ global.hardman = mixin object, ->
 			@sprite = "shooting" + cycle [0 1 2 3 4] 0.6s
 			if not @exhausted! then
 				@shot punch, vel:(@dir_to hero.pos).multiplyScalar(12*B)
-				@exhausted = true_for 1s
+				@exhausted = true_for 1.2s
 			if Math.random! < 0.005 or @state_time! > 4 then
 				@set_state \standing
 		| \soaring =>

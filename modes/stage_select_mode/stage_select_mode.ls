@@ -2,6 +2,8 @@ global.stage_select_mode = mixin ->
 	global.mode = @
 	bg_music "stage_select"
 
+	@hero = void
+
 	select = ~> 
 		return if global.mode != @
 		stage_info = @stages[""+@cursor.x+@cursor.y]

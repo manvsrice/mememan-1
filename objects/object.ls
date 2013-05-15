@@ -1,5 +1,3 @@
-require! {quadtree}
-global.tree = quadtree {width:128,height:128}
 global.get_around = (x,y) -> tree.get(x - 16/2, y - 16/2, x + 16/2, y + 16/2)
 global.has_solid = (x,y) -> not empty(filter (.solid), get_around(x,y))
 global.has_stair = (x,y) -> not empty(filter (.is_stair), get_around(x,y))

@@ -1,5 +1,6 @@
 require! {key}
-global.hero = do mixin object, ->
+global.enabled_weapons = ["normal","poke"]
+global.mememan = mixin object, ->
 	global.hero = @
 	
 	@weapons =
@@ -11,23 +12,24 @@ global.hero = do mixin object, ->
 		charge: 24
 		cost: 1
 		shot: ~> 
-			@shot pokeball, {
+			@shot pokeball,
 				pokemon: @pokemon
 				dmg: 3
-				vel: v3(
-					12*16*(Number(@dir) + Number(key.down(key_right)) - Number(key.down(key_left))),
-					12*16*(-1 + Number(key.down(key_down)) - Number(key.down(key_up))),
-					0)}
+				vel: v3(12*16*(@dir+@pad.x), 12*16*(-1+@pad.y*1.5), 0)
 			@pokemon = void
 		},
-		{name: ""
-		tag: "-"},
+		{name: "punch",
+		tag: "HM",
+		charge: 24,
+		cost: 3,
+		shot: ~>@shot punch, vel: v3(8*16*@dir, 6*16*@pad.y, 0)
+		},
 		{name: ""
 		tag: "-"},
 		{name: ""
 		tag: "-"}
 	weapon: @weapons[0]
-	type: "hero"
+	type: "mememan"
 	sprite: "standing0"
 	floats: false
 	dynamic: true

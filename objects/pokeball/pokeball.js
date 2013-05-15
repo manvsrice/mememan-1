@@ -18,17 +18,18 @@ require("viclib")();
       collide: function(it){
         var key$;
         if (this$.pokemon != null) {
-          if (it === hero) {
+          if (it === this$.owner) {
             it.pokemon = this$.pokemon;
             return this$.destroy();
           } else if (!this$.locked) {
             (typeof global[key$ = this$.pokemon] === 'function' ? global[key$]({
-              pos: this$.pos.clone().add(v3(0, 0, 0))
+              pos: this$.pos.clone().add(v3(0, 0, 0)),
+              owner: this$.owner
             }) : void 8).side = "good";
             this$.pokemon = void 8;
             return this$.destroy();
           }
-        } else if (it.dynamic && !it.is_shot && it !== hero) {
+        } else if (it.dynamic && !it.is_shot && it !== this$.owner) {
           it.destroy();
           this$.pokemon = it.type;
           this$.locked = true;

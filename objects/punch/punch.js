@@ -7,28 +7,21 @@ require("viclib")();
       type: "punch",
       sprite: "punch",
       tick: after(this.tick, function(){
-        if (this$.age() > 1.6) {
+        if (this$.age() > 1.1) {
           this$.vel = this$.dir_to(this$.owner.pos).multiplyScalar(8 * B);
-          if (abs(this$.pos.x - this$.owner.pos.x) < B) {
+          if (abs(this$.pos.x - this$.owner.pos.x) < 8) {
             this$.destroy();
           }
         }
-        if (this$.age() > 5) {
+        if (this$.age() > 8) {
           this$.destroy();
         }
         return this$.dir = signum(this$.vel.x);
       }),
-      is_shot: true,
       side: (ref$ = this.side) != null ? ref$ : "bad",
       size: v3(6, 6, 0),
       floats: true,
-      collide: function(it){
-        if (!it.is_shot && it.side !== this$.side) {
-          this$.hp = 0;
-        }
-        return log(this$.hp);
-      },
-      hp: 4,
+      hp: 5,
       dmg: (ref$ = this.dmg) != null ? ref$ : 3
     };
   });

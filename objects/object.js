@@ -1,12 +1,6 @@
 require("prelude-ls").installPrelude(global);
 require("viclib")();
 (function(){
-  var quadtree;
-  quadtree = require('quadtree');
-  global.tree = quadtree({
-    width: 128,
-    height: 128
-  });
   global.get_around = function(x, y){
     return tree.get(x - 16 / 2, y - 16 / 2, x + 16 / 2, y + 16 / 2);
   };

@@ -5,6 +5,7 @@ require("viclib")();
     var select, this$ = this;
     global.mode = this;
     bg_music("stage_select");
+    this.hero = void 8;
     select = function(){
       var stage_info;
       if (global.mode !== this$) {

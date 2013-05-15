@@ -1,6 +1,8 @@
+require! {quadtree}
 global.game_mode = mixin ->
 	global.mode = @
 
+	global.tree = quadtree {width:128,height:128}
 	stage.create!
 
 	key.press key_down, ~> if mode == @
@@ -21,15 +23,15 @@ global.game_mode = mixin ->
 			x: (if key.down key_right then 1 else 0) + (if key.down key_left then -1 else 0)
 			y: (if key.down key_down then 1 else 0) + (if key.down key_up then -1 else 0)
 	each (~>
-		key.press it, ~> defer refresh_pad if mode == @
-		key.release it, ~> defer refresh_pad if mode == @),
+		key.press it, ~> defer refresh_pad if mode == @ and not @paused
+		key.release it, ~> defer refresh_pad if mode == @ and not @paused),
 		[key_right, key_left, key_down, key_up]
 	
 	key.release key_a, ~> if mode == @
-		hero.stop_jump!
+		hero.stop_jump! if not @paused
 
 	key.press key_b, ~> if mode == @
-		hero.fire_weapon!
+		hero.fire_weapon! if not @paused
 
 	key.press key_up, ~> if mode == @
 		@move_cursor -1 if @paused
@@ -55,8 +57,8 @@ global.game_mode = mixin ->
 			screen.text "Lives: " + hero.lives, X - 44, y+10
 			screen.text "Stuff: " + 0, X - 44, y+20
 
-			for i from 0 til hero.weapons.length
-				wpn = hero.weapons[i]
+			i = 0
+			for wpn in hero.weapons when wpn.name in enabled_weapons
 				wpn_x = x + 10 + 80 * floor(i / 3)
 				wpn_y = y + 20 + 14 * (i % 3)
 				if @cursor!=i or blink(0.5s) then
@@ -65,6 +67,7 @@ global.game_mode = mixin ->
 					screen.text wpn.tag, wpn_x , wpn_y + 7
 				if @cursor==i then
 					hero.weapon = wpn
+				++i
 			return
 
 		screen.background 222 222 222
@@ -93,4 +96,4 @@ global.game_mode = mixin ->
 			obj.draw screen
 
 		draw_healthbar hero.hp/hero.maxhp, 8, 8, "down"
-		draw_healthbar hero.weapon.charge/hero.maxhp, 18, 8, "down" if hero.weapon.charge?
+		draw_healthbar hero.weapon.charge/hero.maxhp, 18, 8, "down", [0 0 255] if hero.weapon.charge?

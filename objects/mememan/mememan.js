@@ -3,7 +3,8 @@ require("viclib")();
 (function(){
   var key;
   key = require('key');
-  global.hero = mixin(object, function(){
+  global.enabled_weapons = ["normal", "poke"];
+  global.mememan = mixin(object, function(){
     var this$ = this;
     global.hero = this;
     this.weapons = [
@@ -26,13 +27,20 @@ require("viclib")();
           this$.shot(pokeball, {
             pokemon: this$.pokemon,
             dmg: 3,
-            vel: v3(12 * 16 * (Number(this$.dir) + Number(key.down(key_right)) - Number(key.down(key_left))), 12 * 16 * (-1 + Number(key.down(key_down)) - Number(key.down(key_up))), 0)
+            vel: v3(12 * 16 * (this$.dir + this$.pad.x), 12 * 16 * (-1 + this$.pad.y * 1.5), 0)
           });
           return this$.pokemon = void 8;
         }
       }, {
-        name: "",
-        tag: "-"
+        name: "punch",
+        tag: "HM",
+        charge: 24,
+        cost: 3,
+        shot: function(){
+          return this$.shot(punch, {
+            vel: v3(8 * 16 * this$.dir, 6 * 16 * this$.pad.y, 0)
+          });
+        }
       }, {
         name: "",
         tag: "-"
@@ -43,7 +51,7 @@ require("viclib")();
     ];
     return {
       weapon: this.weapons[0],
-      type: "hero",
+      type: "mememan",
       sprite: "standing0",
       floats: false,
       dynamic: true,
@@ -216,5 +224,5 @@ require("viclib")();
         }, tree.get(this$.pos.x - this$.dir * 16 * 1.1, this$.pos.y - 16 * 1.5, this$.pos.x + this$.dir * 16 * 1.1, this$.pos.y - 16 * 0.5)));
       }
     };
-  })();
+  });
 }).call(this);

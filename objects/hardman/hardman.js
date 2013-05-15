@@ -8,8 +8,8 @@ require("viclib")();
       sprite: "holding",
       deploy_x: void 8,
       size: v3(26, 36, 0),
-      hp: 220,
-      maxhp: 220,
+      hp: 22,
+      maxhp: 22,
       dmg: 12,
       state_time: chronometer(),
       state: 'standing',
@@ -24,6 +24,10 @@ require("viclib")();
       tick: after(this.tick, function(dt){
         var rnd;
         this$.dir = signum(hero.pos.x - this$.pos.x);
+        if (this$.hp <= 0) {
+          enabled_weapons.push('punch');
+          stage_select_mode();
+        }
         switch (this$.state) {
         case 'standing':
           this$.sprite = "standing" + cycle([0, 1, 2], 0.6);
@@ -42,7 +46,7 @@ require("viclib")();
             this$.shot(punch, {
               vel: this$.dir_to(hero.pos).multiplyScalar(12 * B)
             });
-            this$.exhausted = true_for(1);
+            this$.exhausted = true_for(1.2);
           }
           if (Math.random() < 0.005 || this$.state_time() > 4) {
             return this$.set_state('standing');

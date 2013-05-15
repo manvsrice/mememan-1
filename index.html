@@ -16285,7 +16285,7 @@ require("viclib")();
   require("./sound/sound");
   require("./objects/camera/camera");
   require("./objects/object");
-  require("./objects/hero/hero");
+  require("./objects/mememan/mememan");
   require("./objects/macer/macer");
   require("./objects/bee_queen/bee_queen");
   require("./objects/bee/bee");
@@ -16421,7 +16421,7 @@ require("viclib")();
 }).call(this);
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/index.js","/")
-},{"buzz":3,"./sound/sound":7,"./objects/camera/camera":8,"./objects/object":9,"./objects/hero/hero":10,"./objects/macer/macer":11,"./objects/bee_queen/bee_queen":12,"./objects/bee/bee":13,"./objects/trapdoor/trapdoor":14,"./objects/trapbite/trapbite":15,"./objects/hardman/hardman":16,"./objects/rock/rock":17,"./objects/shot/shot":18,"./objects/pokeball/pokeball":19,"./objects/ground/ground":20,"./objects/bar/bar":21,"./objects/stair/stair":22,"./objects/punch/punch":23,"./stages/stage":24,"./stages/hardstage/hardstage":25,"./modes/stage_select_mode/stage_select_mode":26,"./modes/game_mode/game_mode":27,"./modes/title_mode/title_mode":28,"viclib":29,"boxes":30,"key":31,"three_vector3":4,"prelude-ls":32,"lodash":33,"__browserify_process":1,"__browserify_buffer":2}],32:[function(require,module,exports){
+},{"buzz":3,"./sound/sound":7,"./objects/camera/camera":8,"./objects/object":9,"./objects/mememan/mememan":10,"./objects/macer/macer":11,"./objects/bee_queen/bee_queen":12,"./objects/bee/bee":13,"./objects/trapdoor/trapdoor":14,"./objects/trapbite/trapbite":15,"./objects/hardman/hardman":16,"./objects/rock/rock":17,"./objects/shot/shot":18,"./objects/pokeball/pokeball":19,"./objects/ground/ground":20,"./objects/bar/bar":21,"./objects/stair/stair":22,"./objects/punch/punch":23,"./stages/stage":24,"./stages/hardstage/hardstage":25,"./modes/stage_select_mode/stage_select_mode":26,"./modes/game_mode/game_mode":27,"./modes/title_mode/title_mode":28,"boxes":29,"viclib":30,"key":31,"three_vector3":4,"prelude-ls":32,"lodash":33,"__browserify_process":1,"__browserify_buffer":2}],32:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){// prelude.ls 0.6.0
 // Copyright (c) 2012 George Zahariev
 // Released under the MIT License
@@ -22408,7 +22408,7 @@ function import$(obj, src){
 }(this));
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/../../node_modules/lodash/dist/lodash.js","/../../node_modules/lodash/dist")
-},{"__browserify_process":1,"__browserify_buffer":2}],29:[function(require,module,exports){
+},{"__browserify_process":1,"__browserify_buffer":2}],30:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
 (function(){
   var viclib, ref$, slice$ = [].slice;
@@ -22600,7 +22600,179 @@ function import$(obj, src){
 }).call(this);
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/../node_modules/viclib.js","/../node_modules")
-},{"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],30:[function(require,module,exports){
+},{"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],31:[function(require,module,exports){
+(function(process,Buffer,global,__filename,__dirname){jQuery = require("jquery-browserify");
+global.key = module.exports = (function(){
+	var KEYCODES = {
+		'backspace' : 8,
+		'tab' : 9,
+		'enter' : 13,
+		'shift' : 16,
+		'ctrl' : 17,
+		'alt' : 18,
+		'pause_break' : 19,
+		'caps_lock' : 20,
+		'escape' : 27,
+		'space' : 32,
+		'page_up' : 33,
+		'page down' : 34,
+		'end' : 35,
+		'home' : 36,
+		'left_arrow' : 37,
+		'up_arrow' : 38,
+		'right_arrow' : 39,
+		'down_arrow' : 40,
+		'insert' : 45,
+		'delete' : 46,
+		'0' : 48,
+		'1' : 49,
+		'2' : 50,
+		'3' : 51,
+		'4' : 52,
+		'5' : 53,
+		'6' : 54,
+		'7' : 55,
+		'8' : 56,
+		'9' : 57,
+		'a' : 65,
+		'b' : 66,
+		'c' : 67,
+		'd' : 68,
+		'e' : 69,
+		'f' : 70,
+		'g' : 71,
+		'h' : 72,
+		'i' : 73,
+		'j' : 74,
+		'k' : 75,
+		'l' : 76,
+		'm' : 77,
+		'n' : 78,
+		'o' : 79,
+		'p' : 80,
+		'q' : 81,
+		'r' : 82,
+		's' : 83,
+		't' : 84,
+		'u' : 85,
+		'v' : 86,
+		'w' : 87,
+		'x' : 88,
+		'y' : 89,
+		'z' : 90,
+		'left_window key' : 91,
+		'right_window key' : 92,
+		'select_key' : 93,
+		'numpad 0' : 96,
+		'numpad 1' : 97,
+		'numpad 2' : 98,
+		'numpad 3' : 99,
+		'numpad 4' : 100,
+		'numpad 5' : 101,
+		'numpad 6' : 102,
+		'numpad 7' : 103,
+		'numpad 8' : 104,
+		'numpad 9' : 105,
+		'multiply' : 106,
+		'add' : 107,
+		'subtract' : 109,
+		'decimal point' : 110,
+		'divide' : 111,
+		'f1' : 112,
+		'f2' : 113,
+		'f3' : 114,
+		'f4' : 115,
+		'f5' : 116,
+		'f6' : 117,
+		'f7' : 118,
+		'f8' : 119,
+		'f9' : 120,
+		'f10' : 121,
+		'f11' : 122,
+		'f12' : 123,
+		'num_lock' : 144,
+		'scroll_lock' : 145,
+		'semi_colon' : 186,
+		'equal_sign' : 187,
+		'comma' : 188,
+		'dash' : 189,
+		'period' : 190,
+		'forward_slash' : 191,
+		'grave_accent' : 192,
+		'open_bracket' : 219,
+		'backslash' : 220,
+		'closebracket' : 221,
+		'single_quote' : 222,
+		'mouse1': 'mouse1',
+		'mouse2': 'mouse2',
+		'mouse3': 'mouse3'
+	};
+	var KEYSTRINGS = {};
+	for (key in KEYCODES)
+		KEYSTRINGS[KEYCODES[key]] = key;
+
+	var keydown = {};
+	var keypressEvents = {};
+	var keyreleaseEvents = {};
+	var keydownEvents = {};
+	jQuery(document).keydown(function(e){ pressKeyProcedure(e); });
+	jQuery(document).keyup(function(e){ releaseKeyProcedure(e); });
+	jQuery(document).mousedown(function(e){
+		pressKeyProcedure({keyCode:"mouse"+e.which});
+	});
+	jQuery(document).mouseup(function(e){
+		releaseKeyProcedure({keyCode:"mouse"+e.which});
+	});
+	function releaseKeyProcedure(e){
+		if (keydown[e.keyCode])
+			if (typeof(keyreleaseEvents[e.keyCode])!="undefined")
+				keyreleaseEvents[e.keyCode].forEach(function(releaseEvent){ releaseEvent(e); });
+		keydown[e.keyCode]=false;
+	}
+	function pressKeyProcedure(e){
+		if (!keydown[e.keyCode])
+			if (typeof(keypressEvents[e.keyCode])!="undefined")
+				keypressEvents[e.keyCode].forEach(function(pressEvent){ pressEvent(e); });
+		keydown[e.keyCode]=true;
+	}
+
+	var mouse_pos = [0,0];
+	jQuery(document).mousemove(function(e){
+		mouse_pos = [e.pageX,e.pageY];
+	});
+
+	function press(keyCode_or_keyString,callback){
+		var keyCode = keyCode_or_keyString;
+		if (typeof(keyCode_or_keyString)=="string")
+			keyCode = KEYCODES[keyCode_or_keyString];
+		
+		if (typeof(keypressEvents[keyCode])=="undefined")
+			keypressEvents[keyCode]=[];
+		keypressEvents[keyCode].push(callback);
+	};
+	function release(keyCode_or_keyString,callback){
+		var keyCode = keyCode_or_keyString;
+		if (typeof(keyCode_or_keyString)=="string")
+			keyCode = KEYCODES[keyCode_or_keyString];
+			
+		if (typeof(keyreleaseEvents[keyCode])=="undefined")
+			keyreleaseEvents[keyCode]=[];
+		keyreleaseEvents[keyCode].push(callback);
+	};
+
+	return {
+		release:release,
+		press:press,
+		down:function(key){return keydown[KEYCODES[key]]},
+		up:function(key){return !keydown[KEYCODES[key]]},
+		mouse_pos:function(){return mouse_pos},
+		mouse_x:function(){return mouse_pos[0]},
+		mouse_y:function(){return mouse_pos[1]}
+	};
+})();
+
+})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/../node_modules/key.js","/../node_modules")
+},{"jquery-browserify":34,"__browserify_process":1,"__browserify_buffer":2}],29:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
 require("viclib")();
 (function(){
@@ -22785,179 +22957,7 @@ require("viclib")();
 }).call(this);
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/../node_modules/boxes.js","/../node_modules")
-},{"viclib":29,"processing":5,"prelude-ls":32,"jquery-browserify":34,"__browserify_process":1,"__browserify_buffer":2}],31:[function(require,module,exports){
-(function(process,Buffer,global,__filename,__dirname){jQuery = require("jquery-browserify");
-global.key = module.exports = (function(){
-	var KEYCODES = {
-		'backspace' : 8,
-		'tab' : 9,
-		'enter' : 13,
-		'shift' : 16,
-		'ctrl' : 17,
-		'alt' : 18,
-		'pause_break' : 19,
-		'caps_lock' : 20,
-		'escape' : 27,
-		'space' : 32,
-		'page_up' : 33,
-		'page down' : 34,
-		'end' : 35,
-		'home' : 36,
-		'left_arrow' : 37,
-		'up_arrow' : 38,
-		'right_arrow' : 39,
-		'down_arrow' : 40,
-		'insert' : 45,
-		'delete' : 46,
-		'0' : 48,
-		'1' : 49,
-		'2' : 50,
-		'3' : 51,
-		'4' : 52,
-		'5' : 53,
-		'6' : 54,
-		'7' : 55,
-		'8' : 56,
-		'9' : 57,
-		'a' : 65,
-		'b' : 66,
-		'c' : 67,
-		'd' : 68,
-		'e' : 69,
-		'f' : 70,
-		'g' : 71,
-		'h' : 72,
-		'i' : 73,
-		'j' : 74,
-		'k' : 75,
-		'l' : 76,
-		'm' : 77,
-		'n' : 78,
-		'o' : 79,
-		'p' : 80,
-		'q' : 81,
-		'r' : 82,
-		's' : 83,
-		't' : 84,
-		'u' : 85,
-		'v' : 86,
-		'w' : 87,
-		'x' : 88,
-		'y' : 89,
-		'z' : 90,
-		'left_window key' : 91,
-		'right_window key' : 92,
-		'select_key' : 93,
-		'numpad 0' : 96,
-		'numpad 1' : 97,
-		'numpad 2' : 98,
-		'numpad 3' : 99,
-		'numpad 4' : 100,
-		'numpad 5' : 101,
-		'numpad 6' : 102,
-		'numpad 7' : 103,
-		'numpad 8' : 104,
-		'numpad 9' : 105,
-		'multiply' : 106,
-		'add' : 107,
-		'subtract' : 109,
-		'decimal point' : 110,
-		'divide' : 111,
-		'f1' : 112,
-		'f2' : 113,
-		'f3' : 114,
-		'f4' : 115,
-		'f5' : 116,
-		'f6' : 117,
-		'f7' : 118,
-		'f8' : 119,
-		'f9' : 120,
-		'f10' : 121,
-		'f11' : 122,
-		'f12' : 123,
-		'num_lock' : 144,
-		'scroll_lock' : 145,
-		'semi_colon' : 186,
-		'equal_sign' : 187,
-		'comma' : 188,
-		'dash' : 189,
-		'period' : 190,
-		'forward_slash' : 191,
-		'grave_accent' : 192,
-		'open_bracket' : 219,
-		'backslash' : 220,
-		'closebracket' : 221,
-		'single_quote' : 222,
-		'mouse1': 'mouse1',
-		'mouse2': 'mouse2',
-		'mouse3': 'mouse3'
-	};
-	var KEYSTRINGS = {};
-	for (key in KEYCODES)
-		KEYSTRINGS[KEYCODES[key]] = key;
-
-	var keydown = {};
-	var keypressEvents = {};
-	var keyreleaseEvents = {};
-	var keydownEvents = {};
-	jQuery(document).keydown(function(e){ pressKeyProcedure(e); });
-	jQuery(document).keyup(function(e){ releaseKeyProcedure(e); });
-	jQuery(document).mousedown(function(e){
-		pressKeyProcedure({keyCode:"mouse"+e.which});
-	});
-	jQuery(document).mouseup(function(e){
-		releaseKeyProcedure({keyCode:"mouse"+e.which});
-	});
-	function releaseKeyProcedure(e){
-		if (keydown[e.keyCode])
-			if (typeof(keyreleaseEvents[e.keyCode])!="undefined")
-				keyreleaseEvents[e.keyCode].forEach(function(releaseEvent){ releaseEvent(e); });
-		keydown[e.keyCode]=false;
-	}
-	function pressKeyProcedure(e){
-		if (!keydown[e.keyCode])
-			if (typeof(keypressEvents[e.keyCode])!="undefined")
-				keypressEvents[e.keyCode].forEach(function(pressEvent){ pressEvent(e); });
-		keydown[e.keyCode]=true;
-	}
-
-	var mouse_pos = [0,0];
-	jQuery(document).mousemove(function(e){
-		mouse_pos = [e.pageX,e.pageY];
-	});
-
-	function press(keyCode_or_keyString,callback){
-		var keyCode = keyCode_or_keyString;
-		if (typeof(keyCode_or_keyString)=="string")
-			keyCode = KEYCODES[keyCode_or_keyString];
-		
-		if (typeof(keypressEvents[keyCode])=="undefined")
-			keypressEvents[keyCode]=[];
-		keypressEvents[keyCode].push(callback);
-	};
-	function release(keyCode_or_keyString,callback){
-		var keyCode = keyCode_or_keyString;
-		if (typeof(keyCode_or_keyString)=="string")
-			keyCode = KEYCODES[keyCode_or_keyString];
-			
-		if (typeof(keyreleaseEvents[keyCode])=="undefined")
-			keyreleaseEvents[keyCode]=[];
-		keyreleaseEvents[keyCode].push(callback);
-	};
-
-	return {
-		release:release,
-		press:press,
-		down:function(key){return keydown[KEYCODES[key]]},
-		up:function(key){return !keydown[KEYCODES[key]]},
-		mouse_pos:function(){return mouse_pos},
-		mouse_x:function(){return mouse_pos[0]},
-		mouse_y:function(){return mouse_pos[1]}
-	};
-})();
-
-})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/../node_modules/key.js","/../node_modules")
-},{"jquery-browserify":34,"__browserify_process":1,"__browserify_buffer":2}],34:[function(require,module,exports){
+},{"viclib":30,"processing":5,"prelude-ls":32,"jquery-browserify":34,"__browserify_process":1,"__browserify_buffer":2}],34:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){// Uses Node, AMD or browser globals to create a module.
 
 // If you want something that will work in other stricter CommonJS environments,
@@ -32292,49 +32292,10 @@ return jQuery;
 })( window ); }));
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/../../node_modules/jquery-browserify/lib/jquery.js","/../../node_modules/jquery-browserify/lib")
-},{"__browserify_process":1,"__browserify_buffer":2}],7:[function(require,module,exports){
+},{"__browserify_process":1,"__browserify_buffer":2}],9:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
 require("viclib")();
 (function(){
-  var buzz, names, sounds, res$, i$, len$, name, current_bg_music, this$ = this;
-  buzz = require('buzz');
-  names = ['1up', 'beam_in', 'dead', 'disappearing_block', 'enemy_hit', 'health', 'hurt', 'land', 'pause', 'power_up', 'shoot', 'shot_blocked', 'title', 'hardman', 'stage_select'];
-  res$ = {};
-  for (i$ = 0, len$ = names.length; i$ < len$; ++i$) {
-    name = names[i$];
-    res$[name] = new buzz.sound("sound/" + name, {
-      formats: ["wav", "mp3"]
-    });
-  }
-  sounds = res$;
-  global.play = function(sound){
-    var x$;
-    x$ = sounds[sound];
-    x$.play();
-    x$.setTime(0);
-    return x$;
-  };
-  current_bg_music = void 8;
-  global.bg_music = function(sound){
-    if (current_bg_music != null) {
-      current_bg_music.stop();
-    }
-    current_bg_music = play(sound).loop().setVolume(40);
-    return log(current_bg_music);
-  };
-}).call(this);
-
-})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/sound/sound.js","/sound")
-},{"buzz":3,"viclib":29,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],9:[function(require,module,exports){
-(function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
-require("viclib")();
-(function(){
-  var quadtree;
-  quadtree = require('quadtree');
-  global.tree = quadtree({
-    width: 128,
-    height: 128
-  });
   global.get_around = function(x, y){
     return tree.get(x - 16 / 2, y - 16 / 2, x + 16 / 2, y + 16 / 2);
   };
@@ -32505,7 +32466,40 @@ require("viclib")();
 }).call(this);
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/objects/object.js","/objects")
-},{"quadtree":35,"viclib":29,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],24:[function(require,module,exports){
+},{"viclib":30,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],7:[function(require,module,exports){
+(function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
+require("viclib")();
+(function(){
+  var buzz, names, sounds, res$, i$, len$, name, current_bg_music, this$ = this;
+  buzz = require('buzz');
+  names = ['1up', 'beam_in', 'dead', 'disappearing_block', 'enemy_hit', 'health', 'hurt', 'land', 'pause', 'power_up', 'shoot', 'shot_blocked', 'title', 'hardman', 'stage_select'];
+  res$ = {};
+  for (i$ = 0, len$ = names.length; i$ < len$; ++i$) {
+    name = names[i$];
+    res$[name] = new buzz.sound("sound/" + name, {
+      formats: ["wav", "mp3"]
+    });
+  }
+  sounds = res$;
+  global.play = function(sound){
+    var x$;
+    x$ = sounds[sound];
+    x$.play();
+    x$.setTime(0);
+    return x$;
+  };
+  current_bg_music = void 8;
+  global.bg_music = function(sound){
+    if (current_bg_music != null) {
+      current_bg_music.stop();
+    }
+    current_bg_music = play(sound).loop().setVolume(40);
+    return log(current_bg_music);
+  };
+}).call(this);
+
+})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/sound/sound.js","/sound")
+},{"buzz":3,"viclib":30,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],24:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
 require("viclib")();
 (function(){
@@ -32516,7 +32510,7 @@ require("viclib")();
       music: "hardman",
       objects: {
         o: ground,
-        M: hero,
+        M: mememan,
         B: bee_queen,
         X: bar,
         h: stair,
@@ -32568,15 +32562,11 @@ require("viclib")();
                             : !has_at(obj, x, y + 1)
                               ? "Bottom" + x % 2
                               : "Center" + (x % 2 + y % 2 * 2);
-              if (obj === hero) {
-                lresult1$.push(hero.pos = v3(x * B, y * B, 0));
-              } else {
-                lresult1$.push(obj({
-                  border_type: border_type
-                }, {
-                  pos: v3(x * B, y * B, 0)
-                }));
-              }
+              lresult1$.push(typeof obj === 'function' ? obj({
+                border_type: border_type
+              }, {
+                pos: v3(x * B, y * B, 0)
+              }) : void 8);
             }
             lresult$.push(lresult1$);
           }
@@ -32594,62 +32584,14 @@ require("viclib")();
 }).call(this);
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/stages/stage.js","/stages")
-},{"viclib":29,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],8:[function(require,module,exports){
-(function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
-require("viclib")();
-(function(){
-  global.camera = mixin(function(){
-    var this$ = this;
-    return {
-      pos: v3(0, 0, 0),
-      scale: window.innerHeight / (16 * 16),
-      target_y: void 8,
-      width: 16 * 16 * window.innerWidth / window.innerHeight,
-      height: 16 * 16,
-      center: v3(8 * 16, 8 * 16 * window.innerWidth / window.innerHeight, 0),
-      visible_objects: function(){
-        var c;
-        c = this$.center;
-        return tree.get(c.x - 20 * B, c.y - 10 * B, c.x + 20 * B, c.y + 10 * B);
-      },
-      tick: function(dt){
-        var ref$;
-        this$.scale = window.innerHeight / (16 * 16);
-        this$.width = window.innerWidth / this$.scale;
-        this$.center = v3(this$.pos.x, this$.pos.y + this$.height / 2);
-        this$.offset = {
-          x: -this$.pos.x + window.innerWidth / this$.scale / 2,
-          y: -this$.pos.y
-        };
-        if (this$.target_y == null && ((ref$ = global.hero) != null ? ref$.pos : void 8) != null) {
-          this$.pos.y = hero.pos.y - 16 * 16;
-          this$.target_y = floor(global.hero.pos.y / (16 * 16)) * 16 * 16;
-        }
-        this$.pos.x = global.hero.pos.x;
-        if ((typeof hero != 'undefined' && hero !== null ? hero.pos.y : void 8) < this$.target_y) {
-          this$.target_y -= 16 * B;
-        }
-        if ((typeof hero != 'undefined' && hero !== null ? hero.pos.y : void 8) > this$.target_y + 16 * 16) {
-          this$.target_y += 16 * B;
-        }
-        if (abs(this$.pos.y - this$.target_y) > 8) {
-          return this$.pos.y += (this$.target_y - this$.pos.y) / abs(this$.target_y - this$.pos.y) * 12 * 16 * dt;
-        } else {
-          return this$.pos.y = this$.target_y;
-        }
-      }
-    };
-  })();
-}).call(this);
-
-})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/objects/camera/camera.js","/objects/camera")
-},{"viclib":29,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],10:[function(require,module,exports){
+},{"viclib":30,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],10:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
 require("viclib")();
 (function(){
   var key;
   key = require('key');
-  global.hero = mixin(object, function(){
+  global.enabled_weapons = ["normal", "poke"];
+  global.mememan = mixin(object, function(){
     var this$ = this;
     global.hero = this;
     this.weapons = [
@@ -32672,13 +32614,20 @@ require("viclib")();
           this$.shot(pokeball, {
             pokemon: this$.pokemon,
             dmg: 3,
-            vel: v3(12 * 16 * (Number(this$.dir) + Number(key.down(key_right)) - Number(key.down(key_left))), 12 * 16 * (-1 + Number(key.down(key_down)) - Number(key.down(key_up))), 0)
+            vel: v3(12 * 16 * (this$.dir + this$.pad.x), 12 * 16 * (-1 + this$.pad.y * 1.5), 0)
           });
           return this$.pokemon = void 8;
         }
       }, {
-        name: "",
-        tag: "-"
+        name: "punch",
+        tag: "HM",
+        charge: 24,
+        cost: 3,
+        shot: function(){
+          return this$.shot(punch, {
+            vel: v3(8 * 16 * this$.dir, 6 * 16 * this$.pad.y, 0)
+          });
+        }
       }, {
         name: "",
         tag: "-"
@@ -32689,7 +32638,7 @@ require("viclib")();
     ];
     return {
       weapon: this.weapons[0],
-      type: "hero",
+      type: "mememan",
       sprite: "standing0",
       floats: false,
       dynamic: true,
@@ -32862,11 +32811,122 @@ require("viclib")();
         }, tree.get(this$.pos.x - this$.dir * 16 * 1.1, this$.pos.y - 16 * 1.5, this$.pos.x + this$.dir * 16 * 1.1, this$.pos.y - 16 * 0.5)));
       }
     };
-  })();
+  });
 }).call(this);
 
-})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/objects/hero/hero.js","/objects/hero")
-},{"viclib":29,"key":31,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],11:[function(require,module,exports){
+})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/objects/mememan/mememan.js","/objects/mememan")
+},{"viclib":30,"key":31,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],16:[function(require,module,exports){
+(function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
+require("viclib")();
+(function(){
+  global.hardman = mixin(object, function(){
+    var this$ = this;
+    return {
+      type: "hardman",
+      sprite: "holding",
+      deploy_x: void 8,
+      size: v3(26, 36, 0),
+      hp: 22,
+      maxhp: 22,
+      dmg: 12,
+      state_time: chronometer(),
+      state: 'standing',
+      exhausted: just(false),
+      set_state: function(it){
+        this$.state = it;
+        return this$.state_time = chronometer();
+      },
+      draw: after(this.draw, function(){
+        return draw_healthbar(this$.hp / this$.maxhp, 30, 8, "down", [255, 0, 0]);
+      }),
+      tick: after(this.tick, function(dt){
+        var rnd;
+        this$.dir = signum(hero.pos.x - this$.pos.x);
+        if (this$.hp <= 0) {
+          enabled_weapons.push('punch');
+          stage_select_mode();
+        }
+        switch (this$.state) {
+        case 'standing':
+          this$.sprite = "standing" + cycle([0, 1, 2], 0.6);
+          rnd = Math.random();
+          if (this$.state_time() > 0.8) {
+            if ((rnd -= 0.08) < 0) {
+              return this$.set_state('shooting');
+            } else if ((rnd -= 0.04) < 0) {
+              return this$.set_state('soaring');
+            }
+          }
+          break;
+        case 'shooting':
+          this$.sprite = "shooting" + cycle([0, 1, 2, 3, 4], 0.6);
+          if (!this$.exhausted()) {
+            this$.shot(punch, {
+              vel: this$.dir_to(hero.pos).multiplyScalar(12 * B)
+            });
+            this$.exhausted = true_for(1.2);
+          }
+          if (Math.random() < 0.005 || this$.state_time() > 4) {
+            return this$.set_state('standing');
+          }
+          break;
+        case 'soaring':
+          this$.sprite = "soaring";
+          this$.vel.y = -26 * B;
+          if (has_solid(this$.pos.x, this$.pos.y - 24) || has_solid(this$.pos.x - 24, this$.pos.y - 24)) {
+            this$.vel.y = 0;
+          }
+          this$.vel.x = signum(hero.pos.x - this$.pos.x) * 168;
+          if (abs(this$.pos.x - hero.pos.x) < B / 2) {
+            return this$.set_state('turning');
+          }
+          break;
+        case 'turning':
+          this$.vel.x = 0;
+          if (this$.state_time() < 0.15) {
+            this$.vel.y = 0;
+            return this$.sprite = "turning0";
+          } else if (this$.state_time() < 0.3) {
+            this$.vel.y = 0;
+            return this$.sprite = "turning1";
+          } else {
+            this$.vel.y = 36 * 8;
+            return this$.set_state('diving');
+          }
+          break;
+        case 'diving':
+          this$.sprite = "diving";
+          if (this$.is_grounded()) {
+            this$.set_state('buried');
+            if (hero.is_grounded()) {
+              log("poxa");
+              log(hero.vel.y);
+              hero.vel.y -= 12 * B;
+              hero.pos.y -= 6;
+              setTimeout(function(){
+                return hero.hurt(6);
+              }, 100);
+              log(hero.vel.y);
+            }
+            return camera.pos.y -= 16;
+          }
+          break;
+        case 'buried':
+          if (this$.state_time() < 0.6) {
+            return this$.sprite = "buried0";
+          } else if (this$.state_time() < 2.4) {
+            return this$.sprite = "buried1";
+          } else {
+            return this$.set_state("standing");
+          }
+        }
+      })
+    };
+  });
+}).call(this);
+
+})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/objects/hardman/hardman.js","/objects/hardman")
+},{"viclib":30,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],11:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
 require("viclib")();
 (function(){
@@ -32897,7 +32957,89 @@ require("viclib")();
 }).call(this);
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/objects/macer/macer.js","/objects/macer")
-},{"viclib":29,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],12:[function(require,module,exports){
+},{"viclib":30,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],8:[function(require,module,exports){
+(function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
+require("viclib")();
+(function(){
+  global.camera = mixin(function(){
+    var this$ = this;
+    return {
+      pos: v3(0, 0, 0),
+      scale: window.innerHeight / (16 * 16),
+      target_y: void 8,
+      width: 16 * 16 * window.innerWidth / window.innerHeight,
+      height: 16 * 16,
+      center: v3(8 * 16, 8 * 16 * window.innerWidth / window.innerHeight, 0),
+      visible_objects: function(){
+        var c;
+        c = this$.center;
+        return tree.get(c.x - 20 * B, c.y - 10 * B, c.x + 20 * B, c.y + 10 * B);
+      },
+      tick: function(dt){
+        var ref$;
+        this$.scale = window.innerHeight / (16 * 16);
+        this$.width = window.innerWidth / this$.scale;
+        this$.center = v3(this$.pos.x, this$.pos.y + this$.height / 2);
+        this$.offset = {
+          x: -this$.pos.x + window.innerWidth / this$.scale / 2,
+          y: -this$.pos.y
+        };
+        if (this$.target_y == null && ((ref$ = global.hero) != null ? ref$.pos : void 8) != null) {
+          this$.pos.y = hero.pos.y - 16 * 16;
+          this$.target_y = floor(global.hero.pos.y / (16 * 16)) * 16 * 16;
+        }
+        this$.pos.x = global.hero.pos.x;
+        if ((typeof hero != 'undefined' && hero !== null ? hero.pos.y : void 8) < this$.target_y) {
+          this$.target_y -= 16 * B;
+        }
+        if ((typeof hero != 'undefined' && hero !== null ? hero.pos.y : void 8) > this$.target_y + 16 * 16) {
+          this$.target_y += 16 * B;
+        }
+        if (abs(this$.pos.y - this$.target_y) > 8) {
+          return this$.pos.y += (this$.target_y - this$.pos.y) / abs(this$.target_y - this$.pos.y) * 12 * 16 * dt;
+        } else {
+          return this$.pos.y = this$.target_y;
+        }
+      }
+    };
+  })();
+}).call(this);
+
+})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/objects/camera/camera.js","/objects/camera")
+},{"viclib":30,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],14:[function(require,module,exports){
+(function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
+require("viclib")();
+(function(){
+  global.trapdoor = mixin(object, function(){
+    var this$ = this;
+    defer(function(){
+      return this$.pos.x += 0.5 * B;
+    });
+    return {
+      type: "trapdoor",
+      sprite: "trapdoor",
+      side: "bad",
+      floats: true,
+      solid: true,
+      size: v3(2 * B, B, 0),
+      hp: 999,
+      dmg: 0,
+      exhausted: just(false),
+      tick: after(this.tick, function(dt){
+        if (abs(hero.pos.x - this$.pos.x) < B && !this$.exhausted()) {
+          trapbite({
+            pos: this$.pos.clone(),
+            side: this$.side
+          });
+          return this$.exhausted = true_for(1);
+        }
+      })
+    };
+  });
+}).call(this);
+
+})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/objects/trapdoor/trapdoor.js","/objects/trapdoor")
+},{"viclib":30,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],12:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
 require("viclib")();
 (function(){
@@ -32974,63 +33116,22 @@ require("viclib")();
 }).call(this);
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/objects/bee_queen/bee_queen.js","/objects/bee_queen")
-},{"viclib":29,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],13:[function(require,module,exports){
+},{"viclib":30,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],17:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
 require("viclib")();
 (function(){
-  global.bee = mixin(object, function(){
-    var this$ = this;
+  global.rock = mixin(object, function(){
     return {
-      type: "bee",
-      sprite: "bee",
-      floats: true,
-      deploy_x: void 8,
-      size: v3(12, 8, 0),
-      hp: 2,
-      dmg: 3,
-      tick: after(this.tick, function(dt){
-        this$.vel.add(global.hero.pos.clone().sub(this$.pos).multiplyScalar(0.1));
-        return this$.vel.normalize().multiplyScalar(6 * B);
-      })
+      type: "rock",
+      sprite: "rock",
+      dynamic: false,
+      solid: false
     };
   });
 }).call(this);
 
-})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/objects/bee/bee.js","/objects/bee")
-},{"viclib":29,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],14:[function(require,module,exports){
-(function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
-require("viclib")();
-(function(){
-  global.trapdoor = mixin(object, function(){
-    var this$ = this;
-    defer(function(){
-      return this$.pos.x += 0.5 * B;
-    });
-    return {
-      type: "trapdoor",
-      sprite: "trapdoor",
-      side: "bad",
-      floats: true,
-      solid: true,
-      size: v3(2 * B, B, 0),
-      hp: 999,
-      dmg: 0,
-      exhausted: just(false),
-      tick: after(this.tick, function(dt){
-        if (abs(hero.pos.x - this$.pos.x) < B && !this$.exhausted()) {
-          trapbite({
-            pos: this$.pos.clone(),
-            side: this$.side
-          });
-          return this$.exhausted = true_for(1);
-        }
-      })
-    };
-  });
-}).call(this);
-
-})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/objects/trapdoor/trapdoor.js","/objects/trapdoor")
-},{"viclib":29,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],15:[function(require,module,exports){
+})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/objects/rock/rock.js","/objects/rock")
+},{"viclib":30,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],15:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
 require("viclib")();
 (function(){
@@ -33061,129 +33162,7 @@ require("viclib")();
 }).call(this);
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/objects/trapbite/trapbite.js","/objects/trapbite")
-},{"viclib":29,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],16:[function(require,module,exports){
-(function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
-require("viclib")();
-(function(){
-  global.hardman = mixin(object, function(){
-    var this$ = this;
-    return {
-      type: "hardman",
-      sprite: "holding",
-      deploy_x: void 8,
-      size: v3(26, 36, 0),
-      hp: 220,
-      maxhp: 220,
-      dmg: 12,
-      state_time: chronometer(),
-      state: 'standing',
-      exhausted: just(false),
-      set_state: function(it){
-        this$.state = it;
-        return this$.state_time = chronometer();
-      },
-      draw: after(this.draw, function(){
-        return draw_healthbar(this$.hp / this$.maxhp, 30, 8, "down", [255, 0, 0]);
-      }),
-      tick: after(this.tick, function(dt){
-        var rnd;
-        this$.dir = signum(hero.pos.x - this$.pos.x);
-        switch (this$.state) {
-        case 'standing':
-          this$.sprite = "standing" + cycle([0, 1, 2], 0.6);
-          rnd = Math.random();
-          if (this$.state_time() > 0.8) {
-            if ((rnd -= 0.08) < 0) {
-              return this$.set_state('shooting');
-            } else if ((rnd -= 0.04) < 0) {
-              return this$.set_state('soaring');
-            }
-          }
-          break;
-        case 'shooting':
-          this$.sprite = "shooting" + cycle([0, 1, 2, 3, 4], 0.6);
-          if (!this$.exhausted()) {
-            this$.shot(punch, {
-              vel: this$.dir_to(hero.pos).multiplyScalar(12 * B)
-            });
-            this$.exhausted = true_for(1);
-          }
-          if (Math.random() < 0.005 || this$.state_time() > 4) {
-            return this$.set_state('standing');
-          }
-          break;
-        case 'soaring':
-          this$.sprite = "soaring";
-          this$.vel.y = -26 * B;
-          if (has_solid(this$.pos.x, this$.pos.y - 24) || has_solid(this$.pos.x - 24, this$.pos.y - 24)) {
-            this$.vel.y = 0;
-          }
-          this$.vel.x = signum(hero.pos.x - this$.pos.x) * 168;
-          if (abs(this$.pos.x - hero.pos.x) < B / 2) {
-            return this$.set_state('turning');
-          }
-          break;
-        case 'turning':
-          this$.vel.x = 0;
-          if (this$.state_time() < 0.15) {
-            this$.vel.y = 0;
-            return this$.sprite = "turning0";
-          } else if (this$.state_time() < 0.3) {
-            this$.vel.y = 0;
-            return this$.sprite = "turning1";
-          } else {
-            this$.vel.y = 36 * 8;
-            return this$.set_state('diving');
-          }
-          break;
-        case 'diving':
-          this$.sprite = "diving";
-          if (this$.is_grounded()) {
-            this$.set_state('buried');
-            if (hero.is_grounded()) {
-              log("poxa");
-              log(hero.vel.y);
-              hero.vel.y -= 12 * B;
-              hero.pos.y -= 6;
-              setTimeout(function(){
-                return hero.hurt(6);
-              }, 100);
-              log(hero.vel.y);
-            }
-            return camera.pos.y -= 16;
-          }
-          break;
-        case 'buried':
-          if (this$.state_time() < 0.6) {
-            return this$.sprite = "buried0";
-          } else if (this$.state_time() < 2.4) {
-            return this$.sprite = "buried1";
-          } else {
-            return this$.set_state("standing");
-          }
-        }
-      })
-    };
-  });
-}).call(this);
-
-})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/objects/hardman/hardman.js","/objects/hardman")
-},{"viclib":29,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],17:[function(require,module,exports){
-(function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
-require("viclib")();
-(function(){
-  global.rock = mixin(object, function(){
-    return {
-      type: "rock",
-      sprite: "rock",
-      dynamic: false,
-      solid: false
-    };
-  });
-}).call(this);
-
-})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/objects/rock/rock.js","/objects/rock")
-},{"viclib":29,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],18:[function(require,module,exports){
+},{"viclib":30,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],18:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
 require("viclib")();
 (function(){
@@ -33214,7 +33193,7 @@ require("viclib")();
 }).call(this);
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/objects/shot/shot.js","/objects/shot")
-},{"viclib":29,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],19:[function(require,module,exports){
+},{"viclib":30,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],19:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
 require("viclib")();
 (function(){
@@ -33235,17 +33214,18 @@ require("viclib")();
       collide: function(it){
         var key$;
         if (this$.pokemon != null) {
-          if (it === hero) {
+          if (it === this$.owner) {
             it.pokemon = this$.pokemon;
             return this$.destroy();
           } else if (!this$.locked) {
             (typeof global[key$ = this$.pokemon] === 'function' ? global[key$]({
-              pos: this$.pos.clone().add(v3(0, 0, 0))
+              pos: this$.pos.clone().add(v3(0, 0, 0)),
+              owner: this$.owner
             }) : void 8).side = "good";
             this$.pokemon = void 8;
             return this$.destroy();
           }
-        } else if (it.dynamic && !it.is_shot && it !== hero) {
+        } else if (it.dynamic && !it.is_shot && it !== this$.owner) {
           it.destroy();
           this$.pokemon = it.type;
           this$.locked = true;
@@ -33258,131 +33238,30 @@ require("viclib")();
 }).call(this);
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/objects/pokeball/pokeball.js","/objects/pokeball")
-},{"viclib":29,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],20:[function(require,module,exports){
+},{"viclib":30,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],13:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
 require("viclib")();
 (function(){
-  global.ground = mixin(object, function(){
-    return {
-      type: "ground",
-      sprite: this.border_type,
-      floats: true,
-      solid: true,
-      dynamic: false
-    };
-  });
-}).call(this);
-
-})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/objects/ground/ground.js","/objects/ground")
-},{"viclib":29,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],21:[function(require,module,exports){
-(function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
-require("viclib")();
-(function(){
-  global.bar = mixin(object, function(){
-    return {
-      type: "bar",
-      sprite: "bar",
-      dynamic: false,
-      solid: true
-    };
-  });
-}).call(this);
-
-})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/objects/bar/bar.js","/objects/bar")
-},{"viclib":29,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],22:[function(require,module,exports){
-(function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
-require("viclib")();
-(function(){
-  global.stair = mixin(object, function(){
+  global.bee = mixin(object, function(){
     var this$ = this;
-    defer(function(){
-      if (!has_stair(this$.pos.x, this$.pos.y - B)) {
-        return this$.solid = true;
-      }
-    });
     return {
-      type: "stair",
-      sprite: "stair",
-      solid: false,
-      dynamic: false,
-      is_stair: true
-    };
-  });
-}).call(this);
-
-})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/objects/stair/stair.js","/objects/stair")
-},{"viclib":29,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],23:[function(require,module,exports){
-(function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
-require("viclib")();
-(function(){
-  global.punch = mixin(object, function(){
-    var ref$, this$ = this;
-    return {
-      type: "punch",
-      sprite: "punch",
-      tick: after(this.tick, function(){
-        if (this$.age() > 1.6) {
-          this$.vel = this$.dir_to(this$.owner.pos).multiplyScalar(8 * B);
-          if (abs(this$.pos.x - this$.owner.pos.x) < B) {
-            this$.destroy();
-          }
-        }
-        if (this$.age() > 5) {
-          this$.destroy();
-        }
-        return this$.dir = signum(this$.vel.x);
-      }),
-      is_shot: true,
-      side: (ref$ = this.side) != null ? ref$ : "bad",
-      size: v3(6, 6, 0),
+      type: "bee",
+      sprite: "bee",
       floats: true,
-      collide: function(it){
-        if (!it.is_shot && it.side !== this$.side) {
-          this$.hp = 0;
-        }
-        return log(this$.hp);
-      },
-      hp: 4,
-      dmg: (ref$ = this.dmg) != null ? ref$ : 3
+      deploy_x: void 8,
+      size: v3(12, 8, 0),
+      hp: 2,
+      dmg: 3,
+      tick: after(this.tick, function(dt){
+        this$.vel.add(global.hero.pos.clone().sub(this$.pos).multiplyScalar(0.1));
+        return this$.vel.normalize().multiplyScalar(6 * B);
+      })
     };
   });
 }).call(this);
 
-})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/objects/punch/punch.js","/objects/punch")
-},{"viclib":29,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],25:[function(require,module,exports){
-(function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
-require("viclib")();
-(function(){
-  var this$ = this;
-  global.hardstage = mixin(stage, function(){
-    return {
-      music: "hardman",
-      background: function(){
-        var ref$;
-        if (100 < (ref$ = camera.pos.y) && ref$ < 1700) {
-          return sprite("stages/hardstage/sprites/cavern.png");
-        } else {
-          return sprite("stages/hardstage/sprites/mountains.png");
-        }
-      },
-      objects: {
-        o: ground,
-        M: hero,
-        b: bee_queen,
-        X: bar,
-        h: stair,
-        T: trapdoor,
-        m: macer,
-        H: stair,
-        B: hardman
-      },
-      stage_map: ['...........................................................................................................................................................................ooooooooooooooooooooooooooooooooo..............................................ooooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................ooooooooooooooooooooooooooooooooo..............................................ooooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................ooooooooooooooooooooooooooooooooo..............................................ooooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................ooooooooooooooooooooooooooooooooo..............................................ooooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................ooooooooooooooooooooooooooooooooo..............................................ooooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................ooooooooooooooooooooooooooooooooo..............................................ooooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................ooooooooooooooooooooooooooooooooo..............................................ooooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................ooooooooooooooooooooooooooooooooo..............................................ooooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................ooooooooooooooooooooooooooooooooo..........b.........b.........b...............ooooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................ooooooooooooooooooooooooooooooooo...b...........b..............................ooooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................ooooooooooooooooooooooooooooooooo..............................................ooooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................ooooooooooooooooooooooooooooooooo..............................................ooooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................ooooooooooooooooooooooooooooooooo..T.T.T.T.T.....T.T...T.......T.T......m......oooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................oooooooooooooooooooooooooooooooooHooooooooooooo..ooooT.ooooooooooooooooooooooo.oooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................oooooooooooooooooooooooooooooooooHoooooooooooooT.ooooooooooooooooooooooooooooo.oooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................oooooooooooooooooooooooooooooooooHoooooooooooooooooooooooooooooooooooooooooooo.oooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................oooooooooooooooooooooooooooooooooHoooooooooooooooooooooooooooooooooooooooooooo,oooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................oooooooooooooooooooooooooooooooooHoooo,,,,,,,,,oooooooooooooooooooo,,,,,,,,,,,,,,,,,,oooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................oooooooooooooooooooooooooooooooooH,,,,,,,,,,,,,oooooooooooooooooooo,,,,,,,,,,,,,,,,,,oooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................oooooooooooooooooooooooooooooooooH,oooooooooXoHoooooooooooooooooooo,,,,,,,,,,,,,,,,,,oooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................oooooooooooooooooooooooooooooooooH,oooooooooXoHoooooooooooooooooooo,,,,,,,,,,,,,,,,,,oooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................oooooooooooooooooooooooooooooooooH,oooooooooXoHoooooooooooooooooooo,,,,,,,,,,,,,,,,,,oooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................oooooooooooooooooooooooooooooooooH,oooooooooXoHoooooooooooooooooooo,,,,,,,,,,,,,,,,,,oooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................ooooooooooooooooooooooooooooooooo,,,,,,,,,,oXoHoooooooooooooooooooo,,,,,,,,,,,,,,,,,,oooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................ooooooooooooooooooooooooooooooooo,,,,,,,,,,oXoHoooooooooooooooooooo,,,,,,,,,,,,,,,,,,oooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................ooooooooooooooooooooooooooooooooo,,,,m,,,,,oXoHoooooooooooooooooooo,,,,,,,,,,,,,,,,,,oooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................ooooooooooooooooooooooooooooooooooooooooooHoXoHoooooooooooooooooooo,,,,,,,,,,,,,,,,,,oooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................ooooooooooooooooooooooooooooooooooooooooooHoXoHoooooooooooooooooooo,,,,,,,,,,,,,,,,,,oooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................ooooooooooooooooooooooooooooooooooooooooooHoXoHoooooooooooooooooooo,,,,,,,,,,,,,,,,,,oooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................ooooooooooooooooooooooooooooooooooooooooooHoXoHoooooooooooooooooooo,,B,,,,,,,,,,,,,M,oooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................ooooooooooooooooooooooooooooooooooooooooooHoXoHoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................ooooooooooooooooooooooooooooooooooooooooooHoXoHoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................ooooooooooooooooooooooooooooooooo,,,,,,,,XX,,,,,,,,,,,,,,,oooooooooooooooooooooooooooooooooooooooooooooooooHoXoHooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................ooooooooooooooooooooooooooooooooo,,,,,,,,XX,,,,,,,,,,,,,,,ooooooooooooooooooooo,,,,,,,,,,,,,,,,,,,,,,,,,,,,,oX,Hooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................ooooooooooooooooooooooooooooooooo,,,,,,,,XX,,,,,,,,,,,,,,,,oooooooooooooooooooo,,,,,,,,,,,,,,,,,,,,,,,,,,,,,oX,Hooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................ooooooooooooooooooooooooooooooooo,,,,,,,,XX,,,,,,,,,,,,,,,,oooooooooooooooooooo,,,,,,,,,,,,,,,,,,,,,,,,,,,,,oX,Hooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................ooooooooooooooooooooooooooooooooo,,,,,,,,XX,,,,,,,,,,,,,,,,oooooooooooooooooooo,,,,,,,,,,,,,,,,,,,,m,,,,,,,,oX,Hooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooHooo,,,,XX,,,,,,,,,,,,,,,,oooooooooooooooooooo,,,,,,,,,,,oooooooooooooooooooX,Hooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooHooo,,,,XX,,,,,,,,,,,,,,,,oooooooooooooooooooo,,,,,,,,,,,oooooooooooooooooooX,Hooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooHooo,,,,XX,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,oooooooooooooooooooX,Hooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooHooo,,,,XX,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,b,,,,,,,,,ooooooooooooooooooooooX,,ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooHooo,,,,XX,,,,,,,,m,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,oooooooooooooooooooooooooX,,ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooHooo,,,,XX,,,oooooooooooo,,,,,,,,,,,,,,,,,,,,,,,,,,oooooooooooooooooooooooooX,,ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooHooo,,,,,,,,,ooooooooooooo,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooHooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooHooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooHooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooHooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooHooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooHooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooHooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooHooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooH,,,,,,,,,,,oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooH,,,,,,,,,,,oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooH,,,,,,,,,,,oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooH,,,,,,,,,,,oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooH,,,,,,,,,,,oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooH,,,,,,,,,,,oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................ooooooooooooooooooooooooooooooooo,,,,,,,,,,,,oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................ooooooooooooooooooooooooooooooooo,,,,,,,,,,,,oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................ooooooooooooooooooooooooooooooooo,,,,,,,,,,,,oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................ooooooooooooooooooooooooooooooooo,,,m,,,,,,,,oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooXoooooXoooH,oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooXoooooXoooH,oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooXoooooXoooH,oooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooXoooooXoooH,oooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooXoooooXoooH,oooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooXoooooXoooH,oooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooXoooooXoooH,oooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooXoooooXoooH,oooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooXoooooXoooH,oooooooooooooooooooooooooooooooooo', '..........................................................................................................ooooooooooooooooooooooooooooooooo,,,,,,,,,,H,oooooooooooooooooooooooooooooooooo', '..........................................................................................................ooooooooooooooooooooooooooooooooo,,,,,,,,,,H,oooooooooooooooooooooooooooooooooo', '..........................................................................................................ooooooooooooooooooooooooooooooooo,,,,,,,,,,H,oooooooooooooooooooooooooooooooooo', '..........................................................................................................ooooooooooooooooooooooooooooooooo,,,m,,,,,,H,oooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooooooooooooH,oooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooooooooooooH,oooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooooooooooooH,oooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooooooooooooH,oooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooooooooooooH,oooooooooooooooooooooooooooooooooo', '....................................................................oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooH,oooooooooooooooooooooooooooooooooo', '....................................................................oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooH,oooooooooooooooooooooooooooooooooo', '....................................................................oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooH,oooooooooooooooooooooooooooooooooo', '....................................................................oooooooooooooooooooooooooooooooooo,,,,,,,,,,oooooooooooooooo,,ooooooooooooooo,,ooH,oooooooooooooooooooooooooooooooooo', '....................................................................oooooooooooooooooooooooooooooooooo,,,,,,,,,,ooooooooooo,,,,,,,,,,,,,,,,oooo,,,,,,H,oooooooooooooooooooooooooooooooooo', '....................................................................oooooooooooooooooooooooooooooooooo,,,,,,,,,,,,,,,oo,,,,,,,,,,,,,,,,,,,,,,oo,,,,,,H,oooooooooooooooooooooooooooooooooo', '....................................................................ooooooooooooooooooooooooooooooooooHoooo,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,oooooooooooooooooooooooooooooooooo', '....................................................................ooooooooooooooooooooooooooooooooooHooooo,,,,,,,,,,,,,,,b,,,,,,,,,,,,,b,,,,,,,,,,,,,oooooooooooooooooooooooooooooooooo', '....................................................................ooooooooooooooooooooooooooooooooooHoooooo,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,oooooooooooooooooooooooooooooooooo', '....................................................................ooooooooooooooooooooooooooooooooooHooooooo,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,m,,,,,,,oooooooooooooooooooooooooooooooooo', '....................................................................ooooooooooooooooooooooooooooooooooHoooooooo,,,,,,,,,,,,,,,,,,,,,,,,oooooooooooooooooooooooooooooooooooooooooooooooooo', '....................................................................ooooooooooooooooooooooooooooooooooHooooooooo,,,,,,,,,,,,,m,,,,,oooooooooooooooooooooooooooooooooooooooooooooooooooooo', '....................................................................ooooooooooooooooooooooooooooooooooHoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '....................................................................ooooooooooooooooooooooooooooooooooHoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '....................................................................ooooooooooooooooooooooooooooooooooHoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '....................................................................ooooooooooooooooooooooooooooooooooHoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooo.............................................ooooooooooooooooooooooooooooooooooHoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooo.............................................ooooooooooooooooooooooooooooooooooHoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooo.............................................ooooooooooooooooooooooooooooooooooH,,,,,,,,,,,oooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooo.............................................ooooooooooooooooooooooooooooooooooH,,,,,,,,,,,oooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooo.............................................ooooooooooooooooooooooooooooooooooH,,,,,,,,,,,oooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooo.............................................ooooooooooooooooooooooooooooooooooH,,,,,,,,,,,oooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooo.............................................ooooooooooooooooooooooooooooooooooH,,,m,,,,,,,oooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooo.............................................ooooooooooooooooooooooooooooooooooH,,oooooH,,,oooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooo.............................................ooooooooooooooooooooooooooooooooooH,,oooooH,,,oooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooo.............................................oooooooooooooooooooooooooooooooooo,,,oooooH,,,oooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooo.............................................oooooooooooooooooooooooooooooooooo,,,oooooH,,,oooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooo.............................................oooooooooooooooooooooooooooooooooo,,,ooo,,,,,,oooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooo.............................................oooooooooooooooooooooooooooooooooo,,,ooo,,,,,,oooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooo.............................................ooooooooooooooooooooooooooooooooooooooooHooooooooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooo.............................................ooooooooooooooooooooooooooooooooooooooooHooooooooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooo.............................................ooooooooooooooooooooooooooooooooooooooooHooooooooooooooooooooooooooooooooooooooo', 'oooooooooooooooooooooooX.X..........................................ooooooooooooooooooooooooooooooooooooooooHooooooooooooooooooooooooooooooooooooooo', 'oooooooooooooooooooooooX.X..........................................ooooooooooooooooooooooooooooooooooooooooHooooooooooooooooooooooooooooooooooooooo', 'oooooooooooooooooooooooX.X....................................................................ooooooo,,,,,,,H,,,,ooooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooooX........................................................................oooo,,,,,,,,,,,,ooooooooooooooooooooooooooooooooooo', 'oooooooooooooooooooooooo.........................................................................oooo,,,,,,,,,,,,ooooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooooX.........................................................................ooo,,,,,,,,,,,,ooooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooooX........................................................b................ooo,*,,,,,,,,,,ooooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooooX..........................................................................ooooT,T,T,oooHooooooooooooooooooooooooooooooooooo', 'oooooooooooooooooooooooo...........................................................................oooooooooooooHooooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooooXX.................................b............ooooo........oo..............oooooooooooHooooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooooX...........................................ooooooooo......oooo..............oooooooooooHooooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooooXX..........................oo.............ooooooooooooo...oooooo.......ooo....oooooo....ooooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooooxx.......................T.oooo............oooooooooooooo..ooooooT.T.T.oooo..............ooooooooooooooooooooooooooooooooooo', 'oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', 'oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', 'oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', 'oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo']
-    };
-  })();
-}).call(this);
-
-})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/stages/hardstage/hardstage.js","/stages/hardstage")
-},{"viclib":29,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],26:[function(require,module,exports){
+})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/objects/bee/bee.js","/objects/bee")
+},{"viclib":30,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],26:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
 require("viclib")();
 (function(){
@@ -33390,6 +33269,7 @@ require("viclib")();
     var select, this$ = this;
     global.mode = this;
     bg_music("stage_select");
+    this.hero = void 8;
     select = function(){
       var stage_info;
       if (global.mode !== this$) {
@@ -33490,158 +33370,124 @@ require("viclib")();
 }).call(this);
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/modes/stage_select_mode/stage_select_mode.js","/modes/stage_select_mode")
-},{"viclib":29,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],27:[function(require,module,exports){
+},{"viclib":30,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],21:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
 require("viclib")();
 (function(){
-  global.game_mode = mixin(function(){
-    var refresh_pad, this$ = this;
-    global.mode = this;
-    stage.create();
-    key.press(key_down, function(){
-      if (mode === this$) {
-        if (this$.paused) {
-          return this$.move_cursor(1);
-        }
-      }
-    });
-    key.press(key_a, function(){
-      if (mode === this$) {
-        if (this$.paused) {
-          play("pause");
-          return this$.paused = false;
-        } else {
-          if (key.down(key_down)) {
-            return hero.slide();
-          } else {
-            return hero.jump();
-          }
-        }
-      }
-    });
-    refresh_pad = function(){
-      return hero.pad = {
-        x: (key.down(key_right) ? 1 : 0) + (key.down(key_left) ? -1 : 0),
-        y: (key.down(key_down) ? 1 : 0) + (key.down(key_up) ? -1 : 0)
-      };
-    };
-    each(function(it){
-      key.press(it, function(){
-        if (mode === this$) {
-          return defer(refresh_pad);
-        }
-      });
-      return key.release(it, function(){
-        if (mode === this$) {
-          return defer(refresh_pad);
-        }
-      });
-    }, [key_right, key_left, key_down, key_up]);
-    key.release(key_a, function(){
-      if (mode === this$) {
-        return hero.stop_jump();
-      }
-    });
-    key.press(key_b, function(){
-      if (mode === this$) {
-        return hero.fire_weapon();
-      }
-    });
-    key.press(key_up, function(){
-      if (mode === this$) {
-        if (this$.paused) {
-          return this$.move_cursor(-1);
-        }
-      }
-    });
-    key.press(key_start, function(){
-      if (mode === this$) {
-        play("pause");
-        return this$.paused = !this$.paused;
-      }
-    });
+  global.bar = mixin(object, function(){
     return {
-      cursor: 0,
-      move_cursor: function(it){
-        var ref$;
-        if (this$.paused) {
-          return this$.cursor = ((this$.cursor + it) % (ref$ = hero.weapons.length) + ref$) % ref$;
-        }
-      },
-      paused: false,
-      draw: function(screen){
-        var ref$, x, y, X, Y, i$, to$, i, wpn, wpn_x, wpn_y, bg, j$, j, visible_objects, dt, len$, obj, dynamic_objects;
-        if (this$.paused) {
-          screen.fill(107, 8, 0);
-          ref$ = [0, camera.height * 3 / 4, camera.width, camera.height], x = ref$[0], y = ref$[1], X = ref$[2], Y = ref$[3];
-          screen.rect(0, camera.height * 3 / 4, camera.width, camera.height * 1 / 4);
-          screen.fill(255, 255, 255);
-          screen.textFont(courier_new);
-          screen.textSize(8);
-          screen.text("Paused!", x + 10, y + 10);
-          screen.text("Lives: " + hero.lives, X - 44, y + 10);
-          screen.text("Stuff: " + 0, X - 44, y + 20);
-          for (i$ = 0, to$ = hero.weapons.length; i$ < to$; ++i$) {
-            i = i$;
-            wpn = hero.weapons[i];
-            wpn_x = x + 10 + 80 * floor(i / 3);
-            wpn_y = y + 20 + 14 * (i % 3);
-            if (this$.cursor !== i || blink(0.5)) {
-              draw_healthbar(((ref$ = wpn.charge) != null
-                ? ref$
-                : hero.hp) / hero.maxhp, wpn_x + 12, wpn_y, "right");
-              screen.fill(255, 255, 255);
-              screen.text(wpn.tag, wpn_x, wpn_y + 7);
-            }
-            if (this$.cursor === i) {
-              hero.weapon = wpn;
-            }
-          }
-          return;
-        }
-        screen.background(222, 222, 222);
-        bg = stage.background();
-        for (i$ = -1; i$ <= 3; ++i$) {
-          i = i$;
-          for (j$ = -1; j$ <= 3; ++j$) {
-            j = j$;
-            screen.image(bg, bg.width * i - hero.pos.x % bg.width, bg.height * j);
-          }
-        }
-        visible_objects = camera.visible_objects();
-        dt = min(now() - global.last_tick, 0.03);
-        camera.tick(dt);
-        for (i$ = 0, len$ = visible_objects.length; i$ < len$; ++i$) {
-          obj = visible_objects[i$];
-          if (obj.dynamic) {
-            obj.tick(dt);
-          }
-        }
-        global.last_tick = now();
-        dynamic_objects = [];
-        for (i$ = 0, len$ = visible_objects.length; i$ < len$; ++i$) {
-          obj = visible_objects[i$];
-          if (!obj.dynamic) {
-            obj.draw(screen);
-          } else {
-            dynamic_objects.push(obj);
-          }
-        }
-        for (i$ = 0, len$ = dynamic_objects.length; i$ < len$; ++i$) {
-          obj = dynamic_objects[i$];
-          obj.draw(screen);
-        }
-        draw_healthbar(hero.hp / hero.maxhp, 8, 8, "down");
-        if (hero.weapon.charge != null) {
-          return draw_healthbar(hero.weapon.charge / hero.maxhp, 18, 8, "down");
-        }
-      }
+      type: "bar",
+      sprite: "bar",
+      dynamic: false,
+      solid: true
     };
   });
 }).call(this);
 
-})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/modes/game_mode/game_mode.js","/modes/game_mode")
-},{"viclib":29,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],28:[function(require,module,exports){
+})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/objects/bar/bar.js","/objects/bar")
+},{"viclib":30,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],23:[function(require,module,exports){
+(function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
+require("viclib")();
+(function(){
+  global.punch = mixin(object, function(){
+    var ref$, this$ = this;
+    return {
+      type: "punch",
+      sprite: "punch",
+      tick: after(this.tick, function(){
+        if (this$.age() > 1.1) {
+          this$.vel = this$.dir_to(this$.owner.pos).multiplyScalar(8 * B);
+          if (abs(this$.pos.x - this$.owner.pos.x) < 8) {
+            this$.destroy();
+          }
+        }
+        if (this$.age() > 8) {
+          this$.destroy();
+        }
+        return this$.dir = signum(this$.vel.x);
+      }),
+      side: (ref$ = this.side) != null ? ref$ : "bad",
+      size: v3(6, 6, 0),
+      floats: true,
+      hp: 5,
+      dmg: (ref$ = this.dmg) != null ? ref$ : 3
+    };
+  });
+}).call(this);
+
+})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/objects/punch/punch.js","/objects/punch")
+},{"viclib":30,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],22:[function(require,module,exports){
+(function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
+require("viclib")();
+(function(){
+  global.stair = mixin(object, function(){
+    var this$ = this;
+    defer(function(){
+      if (!has_stair(this$.pos.x, this$.pos.y - B)) {
+        return this$.solid = true;
+      }
+    });
+    return {
+      type: "stair",
+      sprite: "stair",
+      solid: false,
+      dynamic: false,
+      is_stair: true
+    };
+  });
+}).call(this);
+
+})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/objects/stair/stair.js","/objects/stair")
+},{"viclib":30,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],20:[function(require,module,exports){
+(function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
+require("viclib")();
+(function(){
+  global.ground = mixin(object, function(){
+    return {
+      type: "ground",
+      sprite: this.border_type,
+      floats: true,
+      solid: true,
+      dynamic: false
+    };
+  });
+}).call(this);
+
+})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/objects/ground/ground.js","/objects/ground")
+},{"viclib":30,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],25:[function(require,module,exports){
+(function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
+require("viclib")();
+(function(){
+  var this$ = this;
+  global.hardstage = mixin(stage, function(){
+    return {
+      music: "hardman",
+      background: function(){
+        var ref$;
+        if (100 < (ref$ = camera.pos.y) && ref$ < 1700) {
+          return sprite("stages/hardstage/sprites/cavern.png");
+        } else {
+          return sprite("stages/hardstage/sprites/mountains.png");
+        }
+      },
+      objects: {
+        o: ground,
+        M: mememan,
+        b: bee_queen,
+        X: bar,
+        h: stair,
+        T: trapdoor,
+        m: macer,
+        H: stair,
+        B: hardman
+      },
+      stage_map: ['...........................................................................................................................................................................ooooooooooooooooooooooooooooooooo..............................................ooooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................ooooooooooooooooooooooooooooooooo..............................................ooooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................ooooooooooooooooooooooooooooooooo..............................................ooooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................ooooooooooooooooooooooooooooooooo..............................................ooooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................ooooooooooooooooooooooooooooooooo..............................................ooooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................ooooooooooooooooooooooooooooooooo..............................................ooooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................ooooooooooooooooooooooooooooooooo..............................................ooooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................ooooooooooooooooooooooooooooooooo..............................................ooooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................ooooooooooooooooooooooooooooooooo..............................................ooooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................ooooooooooooooooooooooooooooooooo........................b.....................ooooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................ooooooooooooooooooooooooooooooooo..............................................ooooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................ooooooooooooooooooooooooooooooooo..............................................ooooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................ooooooooooooooooooooooooooooooooo..T.T.T.T.T.....T.T...T.......T.T......m......oooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................oooooooooooooooooooooooooooooooooHooooooooooooo..ooooT.ooooooooooooooooooooooo.oooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................oooooooooooooooooooooooooooooooooHoooooooooooooT.ooooooooooooooooooooooooooooo.oooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................oooooooooooooooooooooooooooooooooHoooooooooooooooooooooooooooooooooooooooooooo.oooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................oooooooooooooooooooooooooooooooooHoooooooooooooooooooooooooooooooooooooooooooo,oooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................oooooooooooooooooooooooooooooooooHoooo,,,,,,,,,oooooooooooooooooooo,,,,,,,,,,,,,,,,,,oooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................oooooooooooooooooooooooooooooooooH,,,,,,,,,,,,,oooooooooooooooooooo,,,,,,,,,,,,,,,,,,oooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................oooooooooooooooooooooooooooooooooH,oooooooooXoHoooooooooooooooooooo,,,,,,,,,,,,,,,,,,oooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................oooooooooooooooooooooooooooooooooH,oooooooooXoHoooooooooooooooooooo,,,,,,,,,,,,,,,,,,oooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................oooooooooooooooooooooooooooooooooH,oooooooooXoHoooooooooooooooooooo,,,,,,,,,,,,,,,,,,oooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................oooooooooooooooooooooooooooooooooH,oooooooooXoHoooooooooooooooooooo,,,,,,,,,,,,,,,,,,oooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................ooooooooooooooooooooooooooooooooo,,,,,,,,,,oXoHoooooooooooooooooooo,,,,,,,,,,,,,,,,,,oooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................ooooooooooooooooooooooooooooooooo,,,,,,,,,,oXoHoooooooooooooooooooo,,,,,,,,,,,,,,,,,,oooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................ooooooooooooooooooooooooooooooooo,,,,m,,,,,oXoHoooooooooooooooooooo,,,,,,,,,,,,,,,,,,oooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................ooooooooooooooooooooooooooooooooooooooooooHoXoHoooooooooooooooooooo,,,,,,,,,,,,,,,,,,oooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................ooooooooooooooooooooooooooooooooooooooooooHoXoHoooooooooooooooooooo,,,,,,,,,,,,,,,,,,oooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................ooooooooooooooooooooooooooooooooooooooooooHoXoHoooooooooooooooooooo,,,,,,,,,,,,,,,,,,oooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................ooooooooooooooooooooooooooooooooooooooooooHoXoHoooooooooooooooooooo,,B,,,,,,,,,,,,,,,oooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................ooooooooooooooooooooooooooooooooooooooooooHoXoHoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '...........................................................................................................................................................................ooooooooooooooooooooooooooooooooooooooooooHoXoHoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................ooooooooooooooooooooooooooooooooo,,,,,,,,XX,,,,,,,,,,,,,,,oooooooooooooooooooooooooooooooooooooooooooooooooHoXoHooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................ooooooooooooooooooooooooooooooooo,,,,,,,,XX,,,,,,,,,,,,,,,ooooooooooooooooooooo,,,,,,,,,,,,,,,,,,,,,,,,,,,,,oX,Hooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................ooooooooooooooooooooooooooooooooo,,,,,,,,XX,,,,,,,,,,,,,,,,oooooooooooooooooooo,,,,,,,,,,,,,,,,,,,,,,,,,,,,,oX,Hooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................ooooooooooooooooooooooooooooooooo,,,,,,,,XX,,,,,,,,,,,,,,,,oooooooooooooooooooo,,,,,,,,,,,,,,,,,,,,,,,,,,,,,oX,Hooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................ooooooooooooooooooooooooooooooooo,,,,,,,,XX,,,,,,,,,,,,,,,,oooooooooooooooooooo,,,,,,,,,,,,,,,,,,,,m,,,,,,,,oX,Hooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooHooo,,,,XX,,,,,,,,,,,,,,,,oooooooooooooooooooo,,,,,,,,,,,oooooooooooooooooooX,Hooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooHooo,,,,XX,,,,,,,,,,,,,,,,oooooooooooooooooooo,,,,,,,,,,,oooooooooooooooooooX,Hooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooHooo,,,,XX,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,oooooooooooooooooooX,Hooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooHooo,,,,XX,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,b,,,,,,,,,ooooooooooooooooooooooX,,ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooHooo,,,,XX,,,,,,,,m,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,oooooooooooooooooooooooooX,,ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooHooo,,,,XX,,,oooooooooooo,,,,,,,,,,,,,,,,,,,,,,,,,,oooooooooooooooooooooooooX,,ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooHooo,,,,,,,,,ooooooooooooo,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooHooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooHooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooHooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooHooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooHooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooHooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooHooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooHooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooH,,,,,,,,,,,oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooH,,,,,,,,,,,oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooH,,,,,,,,,,,oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooH,,,,,,,,,,,oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooH,,,,,,,,,,,oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooH,,,,,,,,,,,oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................ooooooooooooooooooooooooooooooooo,,,,,,,,,,,,oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................ooooooooooooooooooooooooooooooooo,,,,,,,,,,,,oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................ooooooooooooooooooooooooooooooooo,,,,,,,,,,,,oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................ooooooooooooooooooooooooooooooooo,,,m,,,,,,,,oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooXoooooXoooH,oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooXoooooXoooH,oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooXoooooXoooH,oooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooXoooooXoooH,oooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooXoooooXoooH,oooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooXoooooXoooH,oooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooXoooooXoooH,oooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooXoooooXoooH,oooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooXoooooXoooH,oooooooooooooooooooooooooooooooooo', '..........................................................................................................ooooooooooooooooooooooooooooooooo,,,,,,,,,,H,oooooooooooooooooooooooooooooooooo', '..........................................................................................................ooooooooooooooooooooooooooooooooo,,,,,,,,,,H,oooooooooooooooooooooooooooooooooo', '..........................................................................................................ooooooooooooooooooooooooooooooooo,,,,,,,,,,H,oooooooooooooooooooooooooooooooooo', '..........................................................................................................ooooooooooooooooooooooooooooooooo,,,m,,,,,,H,oooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooooooooooooH,oooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooooooooooooH,oooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooooooooooooH,oooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooooooooooooH,oooooooooooooooooooooooooooooooooo', '..........................................................................................................oooooooooooooooooooooooooooooooooooooooooooH,oooooooooooooooooooooooooooooooooo', '....................................................................oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooH,oooooooooooooooooooooooooooooooooo', '....................................................................oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooH,oooooooooooooooooooooooooooooooooo', '....................................................................oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooH,oooooooooooooooooooooooooooooooooo', '....................................................................oooooooooooooooooooooooooooooooooo,,,,,,,,,,oooooooooooooooo,,ooooooooooooooo,,ooH,oooooooooooooooooooooooooooooooooo', '....................................................................oooooooooooooooooooooooooooooooooo,,,,,,,,,,ooooooooooo,,,,,,,,,,,,,,,,oooo,,,,,,H,oooooooooooooooooooooooooooooooooo', '....................................................................oooooooooooooooooooooooooooooooooo,,,,,,,,,,,,,,,oo,,,,,,,,,,,,,,,,,,,,,,oo,,,,,,H,oooooooooooooooooooooooooooooooooo', '....................................................................ooooooooooooooooooooooooooooooooooHoooo,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,oooooooooooooooooooooooooooooooooo', '....................................................................ooooooooooooooooooooooooooooooooooHooooo,,,,,,,,,,,,,,,b,,,,,,,,,,,,,b,,,,,,,,,,,,,oooooooooooooooooooooooooooooooooo', '....................................................................ooooooooooooooooooooooooooooooooooHoooooo,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,oooooooooooooooooooooooooooooooooo', '....................................................................ooooooooooooooooooooooooooooooooooHooooooo,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,m,,,,,,,oooooooooooooooooooooooooooooooooo', '....................................................................ooooooooooooooooooooooooooooooooooHoooooooo,,,,,,,,,,,,,,,,,,,,,,,,oooooooooooooooooooooooooooooooooooooooooooooooooo', '....................................................................ooooooooooooooooooooooooooooooooooHooooooooo,,,,,,,,,,,,,m,,,,,oooooooooooooooooooooooooooooooooooooooooooooooooooooo', '....................................................................ooooooooooooooooooooooooooooooooooHoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '....................................................................ooooooooooooooooooooooooooooooooooHoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '....................................................................ooooooooooooooooooooooooooooooooooHoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', '....................................................................ooooooooooooooooooooooooooooooooooHoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooo.............................................ooooooooooooooooooooooooooooooooooHoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooo.............................................ooooooooooooooooooooooooooooooooooHoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooo.............................................ooooooooooooooooooooooooooooooooooH,,,,,,,,,,,oooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooo.............................................ooooooooooooooooooooooooooooooooooH,,,,,,,,,,,oooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooo.............................................ooooooooooooooooooooooooooooooooooH,,,,,,,,,,,oooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooo.............................................ooooooooooooooooooooooooooooooooooH,,,,,,,,,,,oooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooo.............................................ooooooooooooooooooooooooooooooooooH,,,m,,,,,,,oooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooo.............................................ooooooooooooooooooooooooooooooooooH,,oooooH,,,oooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooo.............................................ooooooooooooooooooooooooooooooooooH,,oooooH,,,oooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooo.............................................oooooooooooooooooooooooooooooooooo,,,oooooH,,,oooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooo.............................................oooooooooooooooooooooooooooooooooo,,,oooooH,,,oooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooo.............................................oooooooooooooooooooooooooooooooooo,,,ooo,,,,,,oooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooo.............................................oooooooooooooooooooooooooooooooooo,,,ooo,,,,,,oooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooo.............................................ooooooooooooooooooooooooooooooooooooooooHooooooooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooo.............................................ooooooooooooooooooooooooooooooooooooooooHooooooooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooo.............................................ooooooooooooooooooooooooooooooooooooooooHooooooooooooooooooooooooooooooooooooooo', 'oooooooooooooooooooooooX.X..........................................ooooooooooooooooooooooooooooooooooooooooHooooooooooooooooooooooooooooooooooooooo', 'oooooooooooooooooooooooX.X..........................................ooooooooooooooooooooooooooooooooooooooooHooooooooooooooooooooooooooooooooooooooo', 'oooooooooooooooooooooooX.X....................................................................ooooooo,,,,,,,H,,,,ooooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooooX........................................................................oooo,,,,,,,,,,,,ooooooooooooooooooooooooooooooooooo', 'oooooooooooooooooooooooo.........................................................................oooo,,,,,,,,,,,,ooooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooooX.........................................................................ooo,,,,,,,,,,,,ooooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooooX........................................................b................ooo,*,,,,,,,,,,ooooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooooX..........................................................................ooooT,T,T,oooHooooooooooooooooooooooooooooooooooo', 'oooooooooooooooooooooooo...........................................................................oooooooooooooHooooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooooXX.................................b............ooooo........oo..............oooooooooooHooooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooooX...........................................ooooooooo......oooo..............oooooooooooHooooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooooXX..........................oo.............ooooooooooooo...oooooo.......ooo....oooooo....ooooooooooooooooooooooooooooooooooo', 'ooooooooooooooooooooooooxx...M...................T.oooo............oooooooooooooo..ooooooT.T.T.oooo..............ooooooooooooooooooooooooooooooooooo', 'oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', 'oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', 'oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', 'oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo']
+    };
+  })();
+}).call(this);
+
+})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/stages/hardstage/hardstage.js","/stages/hardstage")
+},{"viclib":30,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],28:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
 require("viclib")();
 (function(){
@@ -33732,7 +33578,176 @@ require("viclib")();
 }).call(this);
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/modes/title_mode/title_mode.js","/modes/title_mode")
-},{"viclib":29,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],35:[function(require,module,exports){
+},{"viclib":30,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],27:[function(require,module,exports){
+(function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
+require("viclib")();
+(function(){
+  var quadtree;
+  quadtree = require('quadtree');
+  global.game_mode = mixin(function(){
+    var refresh_pad, this$ = this;
+    global.mode = this;
+    global.tree = quadtree({
+      width: 128,
+      height: 128
+    });
+    stage.create();
+    key.press(key_down, function(){
+      if (mode === this$) {
+        if (this$.paused) {
+          return this$.move_cursor(1);
+        }
+      }
+    });
+    key.press(key_a, function(){
+      if (mode === this$) {
+        if (this$.paused) {
+          play("pause");
+          return this$.paused = false;
+        } else {
+          if (key.down(key_down)) {
+            return hero.slide();
+          } else {
+            return hero.jump();
+          }
+        }
+      }
+    });
+    refresh_pad = function(){
+      return hero.pad = {
+        x: (key.down(key_right) ? 1 : 0) + (key.down(key_left) ? -1 : 0),
+        y: (key.down(key_down) ? 1 : 0) + (key.down(key_up) ? -1 : 0)
+      };
+    };
+    each(function(it){
+      key.press(it, function(){
+        if (mode === this$ && !this$.paused) {
+          return defer(refresh_pad);
+        }
+      });
+      return key.release(it, function(){
+        if (mode === this$ && !this$.paused) {
+          return defer(refresh_pad);
+        }
+      });
+    }, [key_right, key_left, key_down, key_up]);
+    key.release(key_a, function(){
+      if (mode === this$) {
+        if (!this$.paused) {
+          return hero.stop_jump();
+        }
+      }
+    });
+    key.press(key_b, function(){
+      if (mode === this$) {
+        if (!this$.paused) {
+          return hero.fire_weapon();
+        }
+      }
+    });
+    key.press(key_up, function(){
+      if (mode === this$) {
+        if (this$.paused) {
+          return this$.move_cursor(-1);
+        }
+      }
+    });
+    key.press(key_start, function(){
+      if (mode === this$) {
+        play("pause");
+        return this$.paused = !this$.paused;
+      }
+    });
+    return {
+      cursor: 0,
+      move_cursor: function(it){
+        var ref$;
+        if (this$.paused) {
+          return this$.cursor = ((this$.cursor + it) % (ref$ = hero.weapons.length) + ref$) % ref$;
+        }
+      },
+      paused: false,
+      draw: function(screen){
+        var ref$, x, y, X, Y, i, i$, len$, wpn, wpn_x, wpn_y, ref1$, bg, j$, j, visible_objects, dt, obj, dynamic_objects;
+        if (this$.paused) {
+          screen.fill(107, 8, 0);
+          ref$ = [0, camera.height * 3 / 4, camera.width, camera.height], x = ref$[0], y = ref$[1], X = ref$[2], Y = ref$[3];
+          screen.rect(0, camera.height * 3 / 4, camera.width, camera.height * 1 / 4);
+          screen.fill(255, 255, 255);
+          screen.textFont(courier_new);
+          screen.textSize(8);
+          screen.text("Paused!", x + 10, y + 10);
+          screen.text("Lives: " + hero.lives, X - 44, y + 10);
+          screen.text("Stuff: " + 0, X - 44, y + 20);
+          i = 0;
+          for (i$ = 0, len$ = (ref$ = hero.weapons).length; i$ < len$; ++i$) {
+            wpn = ref$[i$];
+            if (in$(wpn.name, enabled_weapons)) {
+              wpn_x = x + 10 + 80 * floor(i / 3);
+              wpn_y = y + 20 + 14 * (i % 3);
+              if (this$.cursor !== i || blink(0.5)) {
+                draw_healthbar(((ref1$ = wpn.charge) != null
+                  ? ref1$
+                  : hero.hp) / hero.maxhp, wpn_x + 12, wpn_y, "right");
+                screen.fill(255, 255, 255);
+                screen.text(wpn.tag, wpn_x, wpn_y + 7);
+              }
+              if (this$.cursor === i) {
+                hero.weapon = wpn;
+              }
+              ++i;
+            }
+          }
+          return;
+        }
+        screen.background(222, 222, 222);
+        bg = stage.background();
+        for (i$ = -1; i$ <= 3; ++i$) {
+          i = i$;
+          for (j$ = -1; j$ <= 3; ++j$) {
+            j = j$;
+            screen.image(bg, bg.width * i - hero.pos.x % bg.width, bg.height * j);
+          }
+        }
+        visible_objects = camera.visible_objects();
+        dt = min(now() - global.last_tick, 0.03);
+        camera.tick(dt);
+        for (i$ = 0, len$ = visible_objects.length; i$ < len$; ++i$) {
+          obj = visible_objects[i$];
+          if (obj.dynamic) {
+            obj.tick(dt);
+          }
+        }
+        global.last_tick = now();
+        dynamic_objects = [];
+        for (i$ = 0, len$ = visible_objects.length; i$ < len$; ++i$) {
+          obj = visible_objects[i$];
+          if (!obj.dynamic) {
+            obj.draw(screen);
+          } else {
+            dynamic_objects.push(obj);
+          }
+        }
+        for (i$ = 0, len$ = dynamic_objects.length; i$ < len$; ++i$) {
+          obj = dynamic_objects[i$];
+          obj.draw(screen);
+        }
+        draw_healthbar(hero.hp / hero.maxhp, 8, 8, "down");
+        if (hero.weapon.charge != null) {
+          return draw_healthbar(hero.weapon.charge / hero.maxhp, 18, 8, "down", [0, 0, 255]);
+        }
+      }
+    };
+  });
+  function in$(x, arr){
+    var i = -1, l = arr.length >>> 0;
+    while (++i < l) if (x === arr[i] && i in arr) return true;
+    return false;
+  }
+}).call(this);
+
+})(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/modes/game_mode/game_mode.js","/modes/game_mode")
+},{"quadtree":35,"viclib":30,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}],35:[function(require,module,exports){
 (function(process,Buffer,global,__filename,__dirname){require("prelude-ls").installPrelude(global);
 require("viclib")();
 (function(){
@@ -33787,10 +33802,11 @@ require("viclib")();
       },
       remove: function(it){
         var it_pos, ref$;
-        log("removing", it);
         it_pos = pos_of[it.id];
-        remove(tree[projx(it_pos.x) + "," + projy(it_pos.y)], it);
-        return ref$ = pos_of[it], delete pos_of[it], ref$;
+        if (it_pos != null) {
+          remove(tree[projx(it_pos.x) + "," + projy(it_pos.y)], it);
+          return ref$ = pos_of[it], delete pos_of[it], ref$;
+        }
       },
       clear: function(){
         var key, ref$, results$ = [];
@@ -33835,5 +33851,5 @@ require("viclib")();
 }).call(this);
 
 })(require("__browserify_process"),require("__browserify_buffer").Buffer,window,"/node_modules/quadtree.js","/node_modules")
-},{"viclib":29,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}]},{},[6])
+},{"viclib":30,"prelude-ls":32,"__browserify_process":1,"__browserify_buffer":2}]},{},[6])
 ;</script></body></html>

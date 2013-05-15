@@ -1,9 +1,15 @@
 require("prelude-ls").installPrelude(global);
 require("viclib")();
 (function(){
+  var quadtree;
+  quadtree = require('quadtree');
   global.game_mode = mixin(function(){
     var refresh_pad, this$ = this;
     global.mode = this;
+    global.tree = quadtree({
+      width: 128,
+      height: 128
+    });
     stage.create();
     key.press(key_down, function(){
       if (mode === this$) {
@@ -34,24 +40,28 @@ require("viclib")();
     };
     each(function(it){
       key.press(it, function(){
-        if (mode === this$) {
+        if (mode === this$ && !this$.paused) {
           return defer(refresh_pad);
         }
       });
       return key.release(it, function(){
-        if (mode === this$) {
+        if (mode === this$ && !this$.paused) {
           return defer(refresh_pad);
         }
       });
     }, [key_right, key_left, key_down, key_up]);
     key.release(key_a, function(){
       if (mode === this$) {
-        return hero.stop_jump();
+        if (!this$.paused) {
+          return hero.stop_jump();
+        }
       }
     });
     key.press(key_b, function(){
       if (mode === this$) {
-        return hero.fire_weapon();
+        if (!this$.paused) {
+          return hero.fire_weapon();
+        }
       }
     });
     key.press(key_up, function(){
@@ -77,7 +87,7 @@ require("viclib")();
       },
       paused: false,
       draw: function(screen){
-        var ref$, x, y, X, Y, i$, to$, i, wpn, wpn_x, wpn_y, bg, j$, j, visible_objects, dt, len$, obj, dynamic_objects;
+        var ref$, x, y, X, Y, i, i$, len$, wpn, wpn_x, wpn_y, ref1$, bg, j$, j, visible_objects, dt, obj, dynamic_objects;
         if (this$.paused) {
           screen.fill(107, 8, 0);
           ref$ = [0, camera.height * 3 / 4, camera.width, camera.height], x = ref$[0], y = ref$[1], X = ref$[2], Y = ref$[3];
@@ -88,20 +98,23 @@ require("viclib")();
           screen.text("Paused!", x + 10, y + 10);
           screen.text("Lives: " + hero.lives, X - 44, y + 10);
           screen.text("Stuff: " + 0, X - 44, y + 20);
-          for (i$ = 0, to$ = hero.weapons.length; i$ < to$; ++i$) {
-            i = i$;
-            wpn = hero.weapons[i];
-            wpn_x = x + 10 + 80 * floor(i / 3);
-            wpn_y = y + 20 + 14 * (i % 3);
-            if (this$.cursor !== i || blink(0.5)) {
-              draw_healthbar(((ref$ = wpn.charge) != null
-                ? ref$
-                : hero.hp) / hero.maxhp, wpn_x + 12, wpn_y, "right");
-              screen.fill(255, 255, 255);
-              screen.text(wpn.tag, wpn_x, wpn_y + 7);
-            }
-            if (this$.cursor === i) {
-              hero.weapon = wpn;
+          i = 0;
+          for (i$ = 0, len$ = (ref$ = hero.weapons).length; i$ < len$; ++i$) {
+            wpn = ref$[i$];
+            if (in$(wpn.name, enabled_weapons)) {
+              wpn_x = x + 10 + 80 * floor(i / 3);
+              wpn_y = y + 20 + 14 * (i % 3);
+              if (this$.cursor !== i || blink(0.5)) {
+                draw_healthbar(((ref1$ = wpn.charge) != null
+                  ? ref1$
+                  : hero.hp) / hero.maxhp, wpn_x + 12, wpn_y, "right");
+                screen.fill(255, 255, 255);
+                screen.text(wpn.tag, wpn_x, wpn_y + 7);
+              }
+              if (this$.cursor === i) {
+                hero.weapon = wpn;
+              }
+              ++i;
             }
           }
           return;
@@ -140,9 +153,14 @@ require("viclib")();
         }
         draw_healthbar(hero.hp / hero.maxhp, 8, 8, "down");
         if (hero.weapon.charge != null) {
-          return draw_healthbar(hero.weapon.charge / hero.maxhp, 18, 8, "down");
+          return draw_healthbar(hero.weapon.charge / hero.maxhp, 18, 8, "down", [0, 0, 255]);
         }
       }
     };
   });
+  function in$(x, arr){
+    var i = -1, l = arr.length >>> 0;
+    while (++i < l) if (x === arr[i] && i in arr) return true;
+    return false;
+  }
 }).call(this);
