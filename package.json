@@ -1,0 +1,21 @@
+{
+  "name": "mememan",
+  "version": "0.0.0",
+  "description": "HTML5 game project inspired on Megaman 3",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": "",
+  "keywords": [
+    "megaman",
+    "game",
+    "mememan",
+    "html5",
+    "app"
+  ],
+  "author": "Viclib",
+  "license": "BSD"
+}
