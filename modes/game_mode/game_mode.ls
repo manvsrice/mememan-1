@@ -1,5 +1,6 @@
 require! {quadtree}
 global.game_mode = mixin ->
+	# test
 	global.mode = @
 
 	global.tree = quadtree {width:128,height:128}
@@ -73,8 +74,8 @@ global.game_mode = mixin ->
 
 		screen.background 222 222 222
 		bg = stage.background!
-		for i from -1 to 3
-			for j from -1 to 3
+		for i from -1 to 5
+			for j from -1 to 5
 				screen.image bg, 
 					bg.width * i - hero.pos.x % bg.width, 
 					bg.height * j

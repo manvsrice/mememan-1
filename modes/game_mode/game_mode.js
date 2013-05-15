@@ -122,9 +122,9 @@ require("viclib")();
         }
         screen.background(222, 222, 222);
         bg = stage.background();
-        for (i$ = -1; i$ <= 3; ++i$) {
+        for (i$ = -1; i$ <= 5; ++i$) {
           i = i$;
-          for (j$ = -1; j$ <= 3; ++j$) {
+          for (j$ = -1; j$ <= 5; ++j$) {
             j = j$;
             screen.image(bg, bg.width * i - hero.pos.x % bg.width, bg.height * j);
           }
