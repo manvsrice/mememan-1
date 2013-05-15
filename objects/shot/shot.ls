@@ -1,12 +1,13 @@
 global.shot = mixin object, ->
 	type: "shot"
-	tick: after @tick, ~> @destroy! if time_since(@created) > 1.2
-	created: now!
 	sprite: "shot"
+	tick: after @tick, ~> @destroy! if @age! > 1.2
+	is_shot: true #avoids collision with other shots
 	side: @side ? "bad"
 	size: v3(4,4,0)
 	floats: true
-	shot: true
-	collide: ~> @hp=0 if !it.shot
+	collide: ~> 
+		@hp = 0 if !it.is_shot
+		log @hp
 	hp: 1
 	dmg: @dmg ? 2

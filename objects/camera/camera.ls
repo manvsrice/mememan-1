@@ -8,6 +8,7 @@ global.camera = do mixin ->
 	visible_objects: ~>
 		c = @center
 		tree.get(c.x - 20*B, c.y - 10*B, c.x + 20*B, c.y + 10*B)
+		#tree.get(c.x - 6*B, hero.pos.y - 6*B, c.x + 6*B, hero.pos.y + 6*B)
 	tick: (dt) ~>
 		@scale = window.innerHeight / (16*16)
 		@width = window.innerWidth / @scale

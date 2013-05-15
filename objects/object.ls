@@ -20,12 +20,14 @@ global.object = mixin ->
 	is_immune: just false #invulnerable to damage
 
 	type: "missingty"
+	side: @side ? "bad"
 	draw: (screen) ~>
 		global.drw++
-		return if @is_immune! and now!%0.2<0.1
+		return if @is_immune! and blink(0.2)
 		if @sprite? then
 			spr = sprite("objects/"+ @type + "/sprites/" + @sprite + (if @dir? and @dir==1 then "_r" else "") + ".png")
-			screen.image spr, @pos.x - spr.width/2 + camera.offset.x, @pos.y - spr.height/2 + camera.offset.y
+			draw_sprite spr, @pos.x, @pos.y
+			#screen.image spr, @pos.x - spr.width/2 + camera.offset.x, @pos.y - spr.height/2 + camera.offset.y
 		else
 			screen.fill 222, 222, 222
 			screen.rect @pos.x-@size.x/2, @pos.y-@size.y/2, @size.x, @size.y
@@ -76,4 +78,6 @@ global.object = mixin ->
 	hurt: (dmg) ~> 
 		@hp -= dmg if !@is_immune!
 		play "enemy_hit" if @ !=hero
+	shot: (type,attrs) ~> type (attrs <<< {side:@side})
+	age: chronometer!
 	old_pos: v3(0,0,0)

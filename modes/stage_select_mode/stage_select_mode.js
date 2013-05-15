@@ -2,10 +2,10 @@ require("prelude-ls").installPrelude(global);
 require("viclib")();
 (function(){
   global.stage_select_mode = mixin(function(){
-    var this$ = this;
+    var select, this$ = this;
     global.mode = this;
     bg_music("stage_select");
-    key.press(key_a, function(){
+    select = function(){
       var stage_info;
       if (global.mode !== this$) {
         return;
@@ -13,7 +13,9 @@ require("viclib")();
       stage_info = this$.stages["" + this$.cursor.x + this$.cursor.y];
       global.stage = stage_info.stage;
       return game_mode();
-    });
+    };
+    key.press(key_a, select);
+    key.press(key_start, select);
     key.press(key_down, function(){
       if (global.mode === this$) {
         return log("af", this$.cursor.y++);

@@ -11,10 +11,11 @@ global.title_mode = mixin ->
 	log "Loading sprites..."
 	preload = map ("modes/stage_select_mode/sprites/"+), 
 		<[look_00 look_01 look_02 look_10 look_11 look_12 look_20 look_21 look_22]>
-	preload ++= map ("objects/mememan/sprites/"+),
-		<[climbed climbed_shooting climbing hurt jumping jumping_shoot sliding
-		standing_shoot standing0 standing1 standing2 walking_shoot0 walking_shoot1 walking_shoot2
-		walking0 walking1 walking2]>
+
+	for wpn in <[normal poke]>
+		preload ++= map ("objects/mememan/sprites/"+wpn+"/"+), <[climbed climbed_shooting climbing hurt jumping jumping_shoot sliding
+				standing_shoot standing0 standing1 walking_shoot0 walking_shoot1 walking_shoot2
+				walking0 walking1 walking2]>
 	preload ++= map ("objects/trapbite/sprites/"+), <[closed open]>
 	preload ++= map ("objects/trapdoor/sprites/"+), <[trapdoor]>
 	preload ++= map ("objects/ground/sprites/"+),
@@ -40,3 +41,8 @@ global.title_mode = mixin ->
 		screen.background 0 0 0
 		global.title = sprite("modes/title_mode/sprites/background.png")
 		screen.image title, camera.width/2 - title.width/2, 0
+		screen.fill 255 255 255
+		screen.textFont courier_new
+		screen.textSize 4
+		screen.text "Loading prototype. Press start when the main screen shows up.", 0, 5
+		screen.text "Keys: A/S/D/W = directions, J = jump/select, K = slide, L = start", 0, 10

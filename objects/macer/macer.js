@@ -16,9 +16,8 @@ require("viclib")();
           : -1;
         this$.sprite = "standing" + cycle([0, 1, 2, 3], 0.5);
         if (Math.random() < 0.02) {
-          return shot({
+          return this$.shot(shot, {
             dmg: 2,
-            owner: this$,
             pos: v3(this$.pos.x + B * this$.dir, this$.pos.y, 0),
             vel: v3(22 * B * this$.dir, 0, 0)
           });

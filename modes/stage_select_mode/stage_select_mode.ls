@@ -2,12 +2,13 @@ global.stage_select_mode = mixin ->
 	global.mode = @
 	bg_music "stage_select"
 
-	key.press key_a, ~> 
+	select = ~> 
 		return if global.mode != @
 		stage_info = @stages[""+@cursor.x+@cursor.y]
 		global.stage = stage_info.stage
 		game_mode! 
-
+	key.press key_a, select
+	key.press key_start, select
 	key.press key_down, ~> log "af", @cursor.y++ if global.mode == @
 	key.press key_up, ~> @cursor.y-- if global.mode == @
 	key.press key_left, ~> @cursor.x-- if global.mode == @

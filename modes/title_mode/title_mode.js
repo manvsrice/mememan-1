@@ -2,7 +2,7 @@ require("prelude-ls").installPrelude(global);
 require("viclib")();
 (function(){
   global.title_mode = mixin(function(){
-    var preload, i$, len$, spr, this$ = this;
+    var preload, i$, ref$, len$, wpn, spr, this$ = this;
     global.mode = this;
     bg_music("title");
     key.press(key_down, function(){
@@ -24,9 +24,10 @@ require("viclib")();
     preload = map((function(it){
       return "modes/stage_select_mode/sprites/" + it;
     }), ['look_00', 'look_01', 'look_02', 'look_10', 'look_11', 'look_12', 'look_20', 'look_21', 'look_22']);
-    preload = preload.concat(map((function(it){
-      return "objects/mememan/sprites/" + it;
-    }), ['climbed', 'climbed_shooting', 'climbing', 'hurt', 'jumping', 'jumping_shoot', 'sliding', 'standing_shoot', 'standing0', 'standing1', 'standing2', 'walking_shoot0', 'walking_shoot1', 'walking_shoot2', 'walking0', 'walking1', 'walking2']));
+    for (i$ = 0, len$ = (ref$ = ['normal', 'poke']).length; i$ < len$; ++i$) {
+      wpn = ref$[i$];
+      preload = preload.concat(map((fn$), ['climbed', 'climbed_shooting', 'climbing', 'hurt', 'jumping', 'jumping_shoot', 'sliding', 'standing_shoot', 'standing0', 'standing1', 'walking_shoot0', 'walking_shoot1', 'walking_shoot2', 'walking0', 'walking1', 'walking2']));
+    }
     preload = preload.concat(map((function(it){
       return "objects/trapbite/sprites/" + it;
     }), ['closed', 'open']));
@@ -72,8 +73,16 @@ require("viclib")();
       draw: function(screen){
         screen.background(0, 0, 0);
         global.title = sprite("modes/title_mode/sprites/background.png");
-        return screen.image(title, camera.width / 2 - title.width / 2, 0);
+        screen.image(title, camera.width / 2 - title.width / 2, 0);
+        screen.fill(255, 255, 255);
+        screen.textFont(courier_new);
+        screen.textSize(4);
+        screen.text("Loading prototype. Press start when the main screen shows up.", 0, 5);
+        return screen.text("Keys: A/S/D/W = directions, J = jump/select, K = slide, L = start", 0, 10);
       }
     };
+    function fn$(it){
+      return "objects/mememan/sprites/" + wpn + "/" + it;
+    }
   });
 }).call(this);

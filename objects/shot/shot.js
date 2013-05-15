@@ -5,21 +5,21 @@ require("viclib")();
     var ref$, this$ = this;
     return {
       type: "shot",
+      sprite: "shot",
       tick: after(this.tick, function(){
-        if (time_since(this$.created) > 1.2) {
+        if (this$.age() > 1.2) {
           return this$.destroy();
         }
       }),
-      created: now(),
-      sprite: "shot",
+      is_shot: true,
       side: (ref$ = this.side) != null ? ref$ : "bad",
       size: v3(4, 4, 0),
       floats: true,
-      shot: true,
       collide: function(it){
-        if (!it.shot) {
-          return this$.hp = 0;
+        if (!it.is_shot) {
+          this$.hp = 0;
         }
+        return log(this$.hp);
       },
       hp: 1,
       dmg: (ref$ = this.dmg) != null ? ref$ : 2

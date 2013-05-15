@@ -45,15 +45,16 @@ require("viclib")();
       floats: false,
       is_immune: just(false),
       type: "missingty",
+      side: (ref$ = this.side) != null ? ref$ : "bad",
       draw: function(screen){
         var spr;
         global.drw++;
-        if (this$.is_immune() && now() % 0.2 < 0.1) {
+        if (this$.is_immune() && blink(0.2)) {
           return;
         }
         if (this$.sprite != null) {
           spr = sprite("objects/" + this$.type + "/sprites/" + this$.sprite + (this$.dir != null && this$.dir === 1 ? "_r" : "") + ".png");
-          return screen.image(spr, this$.pos.x - spr.width / 2 + camera.offset.x, this$.pos.y - spr.height / 2 + camera.offset.y);
+          return draw_sprite(spr, this$.pos.x, this$.pos.y);
         } else {
           screen.fill(222, 222, 222);
           return screen.rect(this$.pos.x - this$.size.x / 2, this$.pos.y - this$.size.y / 2, this$.size.x, this$.size.y);
@@ -158,6 +159,10 @@ require("viclib")();
           return play("enemy_hit");
         }
       },
+      shot: function(type, attrs){
+        return type((attrs.side = this$.side, attrs));
+      },
+      age: chronometer(),
       old_pos: v3(0, 0, 0)
     };
   });

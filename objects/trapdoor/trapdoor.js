@@ -9,6 +9,7 @@ require("viclib")();
     return {
       type: "trapdoor",
       sprite: "trapdoor",
+      side: "bad",
       floats: true,
       solid: true,
       size: v3(2 * B, B, 0),
@@ -18,7 +19,8 @@ require("viclib")();
       tick: after(this.tick, function(dt){
         if (abs(hero.pos.x - this$.pos.x) < B && !this$.exhausted()) {
           trapbite({
-            pos: this$.pos.clone()
+            pos: this$.pos.clone(),
+            side: this$.side
           });
           return this$.exhausted = true_for(1);
         }

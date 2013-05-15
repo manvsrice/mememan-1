@@ -6,47 +6,54 @@ require("viclib")();
   global.mememan = mixin(object, function(){
     var this$ = this;
     global.hero = this;
-    key.press(key_a, function(){
-      if (this$.is_sliding()) {
-        return;
-      }
-      if (this$.is_grounded() && key.down('s')) {
-        return this$.is_sliding = true_for(0.35);
-      } else {
-        if (this$.is_grounded()) {
-          this$.vel.y = -23 * B;
+    this.weapons = [
+      {
+        name: "normal",
+        tag: "P",
+        shot: function(){
+          return this$.shot(shot, {
+            dmg: 2,
+            side: this$.side,
+            pos: v3(this$.pos.x + B * this$.dir, this$.pos.y, 0),
+            vel: v3(22 * B * this$.dir, 0, 0)
+          });
         }
-        if (this$.is_climbing()) {
-          return this$.is_climbing = just(false);
+      }, {
+        name: "poke",
+        tag: "PM",
+        charge: 28,
+        shot: function(){
+          this$.shot(pokeball, {
+            pokemon: this$.pokemon,
+            dmg: 3,
+            pos: v3(this$.pos.x + B * this$.dir, this$.pos.y, 0),
+            vel: v3(12 * B * (Number(this$.dir) + Number(key.down(key_right)) - Number(key.down(key_left))), 12 * B * (-1 + Number(key.down(key_down)) - Number(key.down(key_up))), 0)
+          });
+          return this$.pokemon = void 8;
         }
+      }, {
+        name: "",
+        tag: "-"
+      }, {
+        name: "",
+        tag: "-"
+      }, {
+        name: "",
+        tag: "-"
       }
-    });
-    key.press(key_b, function(){
-      if (this$.is_walking() || this$.is_jumping() || this$.is_climbing() || this$.is_shooting()) {
-        global.play("shoot");
-        shot({
-          dmg: 2,
-          side: this$.side,
-          pos: v3(this$.pos.x + B * this$.dir, this$.pos.y, 0),
-          vel: v3(22 * B * this$.dir, 0, 0)
-        });
-        return this$.is_shooting = true_for(0.3);
-      }
-    });
-    key.release(key_a, function(){
-      if (this$.is_jumping()) {
-        return this$.vel.y = 0;
-      }
-    });
+    ];
     return {
+      weapon: this.weapons[0],
       type: "mememan",
       sprite: "standing0",
       floats: false,
       dynamic: true,
+      lives: 3,
       hp: 28,
       depth: -1,
       size: v3(16, 25, 0),
       vel: v3(0, 0, 0),
+      key_a: function(){},
       climb: function(dir){
         this$.is_climbing = just(true);
         this$.just_climbed = true_for(0.4);
@@ -56,16 +63,37 @@ require("viclib")();
           : -1);
       },
       draw: after(this.draw, function(screen){
-        var i$, to$, y, results$ = [];
-        screen.fill(0, 0, 0);
-        screen.rect(7, 8, 8, 57);
-        screen.fill(255, 255, 0);
-        for (i$ = 63, to$ = 63 - this$.hp * 2; i$ > to$; i$ -= 2) {
-          y = i$;
-          results$.push(screen.rect(8, y, 6, 1));
+        if (this$.pokemon) {
+          return screen.image(sprite("objects/pokeball/sprites/pokeball.png"), this$.pos.x * this$.dir + camera.offset.x, this$.pos.y + camera.offset.y);
         }
-        return results$;
       }),
+      fire_weapon: function(){
+        if (this$.is_walking() || this$.is_jumping() || this$.is_climbing() || this$.is_shooting()) {
+          global.play("shoot");
+          this$.weapon.shot();
+          return this$.is_shooting = true_for(0.3);
+        }
+      },
+      stop_jump: function(){
+        if (this$.is_jumping()) {
+          return this$.vel.y = 0;
+        }
+      },
+      slide: function(){
+        if (!this$.is_sliding()) {
+          return this$.is_sliding = true_for(0.35);
+        }
+      },
+      jump: function(){
+        if (!this$.is_jumping()) {
+          if (this$.is_grounded()) {
+            this$.vel.y = -23 * B;
+          }
+          if (this$.is_climbing()) {
+            return this$.is_climbing = just(false);
+          }
+        }
+      },
       hurt: after(this.hurt, function(){
         if (this$.is_immune()) {
           return;
@@ -75,8 +103,12 @@ require("viclib")();
         this$.just_hurt = true_for(0.5);
         return this$.is_immune = true_for(1.2);
       }),
+      pad: v3(0, 0, 0),
       tick: after(this.tick, function(dt){
-        var stair;
+        var align;
+        if (this$.pad.x !== 0) {
+          this$.dir = this$.pad.x;
+        }
         this$.vel.x = (function(){
           switch (false) {
           case !this.just_hurt():
@@ -93,69 +125,64 @@ require("viclib")();
             return 0;
           }
         }.call(this$));
-        this$.vel.y = (function(){
-          switch (false) {
-          case !!this.is_climbing():
-            return this.vel.y;
-          case !this.just_climbed():
-            return this.vel.y;
-          case !key.down(key_down):
-            return B * 3;
-          case !key.down(key_up):
-            return -B * 3;
-          default:
-            return 0;
+        if (this$.is_climbing()) {
+          if (!this$.just_climbed()) {
+            this$.vel.y = this$.pad.y * B * 3;
           }
-        }.call(this$));
-        if (this$.vel.x > 0 && !this$.just_hurt()) {
-          this$.dir = 1;
-        }
-        if (this$.vel.x < 0 && !this$.just_hurt()) {
-          this$.dir = -1;
+          if (this$.pad.x === 0 && !this$.is_shooting()) {
+            this$.dir = -1 + floor((this$.pos.y / 16) % 2) * 2;
+          }
         }
         this$.ghost = this$.floats = this$.is_climbing();
-        if (this$.is_climbing()) {
-          stair = filter(function(it){
-            return it.is_stair;
-          }, get_around(this$.pos.x, this$.pos.y))[0];
-          if (stair != null) {
-            this$.pos.x = stair.pos.x;
-          }
+        if (this$.is_climbing() && (align = filter(function(it){
+          return it.is_stair;
+        }, get_around(this$.pos.x, this$.pos.y))[0])) {
+          this$.pos.x = align.pos.x;
         }
         if (this$.is_sliding() && !this$.has_solid_ahead() && this$.vel.y === 0 && this$.has_solid_over()) {
           this$.ghost = this$.floats = true;
-          if (key.down('d')) {
-            this$.dir = 1;
-          }
-          if (key.down('a')) {
-            this$.dir = -1;
-          }
           this$.is_sliding = true_for(0.04);
         }
         if (!this$.is_climbing() && !this$.is_sliding()) {
-          if (key.down('s') && has_stair(this$.pos.x, this$.pos.y + B)) {
+          if (key.down(key_down) && has_stair(this$.pos.x, this$.pos.y + B)) {
             this$.climb('down');
-          } else if (key.down('w') && has_stair(this$.pos.x, this$.pos.y - B)) {
+          } else if (key.down(key_up) && has_stair(this$.pos.x, this$.pos.y - B)) {
             this$.climb('up');
           }
         } else if (this$.is_climbing() && !this$.just_climbed() && !has_stair(this$.pos.x, this$.pos.y + B / 4)) {
           this$.is_climbing = just(false);
         }
-        return this$.sprite = this$.just_hurt()
-          ? "hurt"
-          : this$.is_climbing()
-            ? (this$.dir = -1 + floor((this$.pos.y / 16) % 2) * 2, this$.is_almost_climbing() ? "climbed" : "climbing")
-            : this$.is_sliding()
-              ? "sliding"
-              : this$.is_grounded()
-                ? this$.is_stopped()
-                  ? this$.is_shooting()
-                    ? "standing_shoot"
-                    : "standing" + cycle([0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 4)
-                  : this$.is_shooting()
-                    ? "walking_shoot" + cycle([0, 1, 2, 1], 0.5)
-                    : "walking" + cycle([0, 1, 2, 1], 0.5)
-                : this$.is_shooting() ? "jumping_shoot" : "jumping";
+        this$.sprite = (function(){
+          switch (false) {
+          case !this.just_hurt():
+            return "hurt";
+          case !this.is_climbing():
+            if (this.is_almost_climbing()) {
+              return "climbed";
+            } else {
+              return "climbing" + (this.is_shooting() ? "_shooting" : "");
+            }
+            break;
+          case !this.is_sliding():
+            return "sliding";
+          case !this.is_standing():
+            if (this.is_shooting()) {
+              return "standing_shoot";
+            } else {
+              return "standing" + cycle([0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 4);
+            }
+            break;
+          case !this.is_grounded():
+            return (this.is_shooting() ? "walking_shoot" : "walking") + cycle([0, 1, 2, 1], 0.5);
+          default:
+            if (this.is_shooting()) {
+              return "jumping_shoot";
+            } else {
+              return "jumping";
+            }
+          }
+        }.call(this$));
+        return this$.sprite = this$.weapon.name + "/" + this$.sprite;
       }),
       dir: 1,
       side: "good",
@@ -176,6 +203,9 @@ require("viclib")();
       },
       is_stopped: function(){
         return this$.vel.x === 0 && this$.vel.y === 0;
+      },
+      is_standing: function(){
+        return this$.is_grounded() && this$.is_stopped();
       },
       has_solid_ahead: function(){
         return has_solid(this$.pos.x + this$.dir * B, this$.pos.y);
