@@ -81,14 +81,12 @@ require("viclib")();
           if (this$.is_grounded()) {
             this$.set_state('buried');
             if (hero.is_grounded()) {
-              log("poxa");
               log(hero.vel.y);
               hero.vel.y -= 12 * B;
               hero.pos.y -= 6;
               setTimeout(function(){
                 return hero.hurt(6);
               }, 100);
-              log(hero.vel.y);
             }
             return camera.pos.y -= 16;
           }
