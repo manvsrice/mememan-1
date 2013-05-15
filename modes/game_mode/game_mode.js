@@ -5,39 +5,6 @@ require("viclib")();
     var refresh_pad, this$ = this;
     global.mode = this;
     stage.create();
-    global.draw_healthbar = function(screen, bars, max, x, y, dir){
-      var bar_w, bar_h, w, h, sx, sy, addx, addy, i$, i, results$ = [];
-      dir == null && (dir = "down");
-      switch (dir) {
-      case 'down':
-        bar_w = 6;
-        bar_h = 1;
-        w = bar_w + 2;
-        h = bar_h * max * 2 + 1;
-        sx = x + 1;
-        sy = y + h - 2;
-        addx = 0;
-        addy = -2;
-        break;
-      case 'right':
-        bar_w = 1;
-        bar_h = 6;
-        w = bar_w * max * 2 + 1;
-        h = bar_h + 2;
-        sx = x + 1;
-        sy = y + 1;
-        addx = 2;
-        addy = 0;
-      }
-      screen.fill(0, 0, 0);
-      screen.rect(x, y, w, h);
-      screen.fill(255, 255, 0);
-      for (i$ = 0; i$ < bars; ++i$) {
-        i = i$;
-        results$.push(screen.rect(sx + i * addx, sy + i * addy, bar_w, bar_h));
-      }
-      return results$;
-    };
     key.press(key_down, function(){
       if (mode === this$) {
         if (this$.paused) {
@@ -127,9 +94,9 @@ require("viclib")();
             wpn_x = x + 10 + 80 * floor(i / 3);
             wpn_y = y + 20 + 14 * (i % 3);
             if (this$.cursor !== i || blink(0.5)) {
-              draw_healthbar(screen, (ref$ = wpn.charge) != null
+              draw_healthbar(((ref$ = wpn.charge) != null
                 ? ref$
-                : hero.hp, 24, wpn_x + 12, wpn_y, "right");
+                : hero.hp) / hero.maxhp, wpn_x + 12, wpn_y, "right");
               screen.fill(255, 255, 255);
               screen.text(wpn.tag, wpn_x, wpn_y + 7);
             }
@@ -171,9 +138,9 @@ require("viclib")();
           obj = dynamic_objects[i$];
           obj.draw(screen);
         }
-        draw_healthbar(screen, hero.hp, 24, 8, 8, "down");
+        draw_healthbar(hero.hp / hero.maxhp, 8, 8, "down");
         if (hero.weapon.charge != null) {
-          return draw_healthbar(screen, hero.weapon.charge, 24, 18, 8, "down");
+          return draw_healthbar(hero.weapon.charge / hero.maxhp, 18, 8, "down");
         }
       }
     };

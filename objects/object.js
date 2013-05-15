@@ -3,13 +3,12 @@ require("viclib")();
 (function(){
   var quadtree;
   quadtree = require('quadtree');
-  global.objects = [];
   global.tree = quadtree({
     width: 128,
     height: 128
   });
   global.get_around = function(x, y){
-    return tree.get(x - B / 2, y - B / 2, x + B / 2, y + B / 2);
+    return tree.get(x - 16 / 2, y - 16 / 2, x + 16 / 2, y + 16 / 2);
   };
   global.has_solid = function(x, y){
     return !empty(filter(function(it){
@@ -24,21 +23,20 @@ require("viclib")();
   global.object = mixin(function(){
     var ref$, this$ = this;
     defer(function(){
-      objects.push(this$);
       return tree.add(this$, this$.pos.x, this$.pos.y);
     });
     return {
       dir: void 8,
       size: (ref$ = this.size) != null
         ? ref$
-        : v3(B, B, 0),
+        : v3(16, 16, 0),
       pos: (ref$ = this.pos) != null
         ? ref$
         : v3(0, 0, 0),
       vel: (ref$ = this.vel) != null
         ? ref$
         : v3(0, 0, 0),
-      hp: (ref$ = this.hp) != null ? ref$ : 28,
+      hp: (ref$ = this.hp) != null ? ref$ : 24,
       dynamic: true,
       solid: false,
       ghost: false,
@@ -62,7 +60,6 @@ require("viclib")();
       },
       destroy: function(){
         return defer(function(){
-          remove(objects, this$);
           return tree.remove(this$);
         });
       },
@@ -78,7 +75,7 @@ require("viclib")();
           this$.vel.y += G * dt;
         }
         this$.is_grounded = just(false);
-        near_objects = tree.get(this$.pos.x - B * 2, this$.pos.y - B * 2, this$.pos.x + B * 2, this$.pos.y + B * 2);
+        near_objects = tree.get(this$.pos.x - 16 * 2, this$.pos.y - 16 * 2, this$.pos.x + 16 * 2, this$.pos.y + 16 * 2);
         for (i$ = 0, len$ = near_objects.length; i$ < len$; ++i$) {
           near = near_objects[i$];
           if (near !== this$ && (near.dynamic || near.solid)) {
@@ -160,10 +157,21 @@ require("viclib")();
         }
       },
       shot: function(type, attrs){
-        return type((attrs.side = this$.side, attrs));
+        var ref$;
+        return type((ref$ = import$({
+          pos: v3(this$.pos.x + 16 * this$.dir, this$.pos.y, 0)
+        }, attrs), ref$.side = this$.side, ref$.owner = this$, ref$));
       },
       age: chronometer(),
-      old_pos: v3(0, 0, 0)
+      old_pos: v3(0, 0, 0),
+      dir_to: function(it){
+        return v3(it.x - this$.pos.x, it.y - this$.pos.y, 0).normalize();
+      }
     };
   });
+  function import$(obj, src){
+    var own = {}.hasOwnProperty;
+    for (var key in src) if (own.call(src, key)) obj[key] = src[key];
+    return obj;
+  }
 }).call(this);

@@ -3,18 +3,6 @@ global.game_mode = mixin ->
 
 	stage.create!
 
-	global.draw_healthbar = (screen,bars,max,x,y,dir = "down") ~>
-		switch (dir)
-		| \down 	=> bar_w = 6; bar_h = 1; w = bar_w+2; h = bar_h*max*2+1; sx = x+1; sy = y+h - 2; addx = 0; addy = -2;
-		| \right 	=> bar_w = 1; bar_h = 6; w = bar_w*max*2+1; h = bar_h+2; sx = x + 1; sy = y+1; addx = 2; addy = 0;
-
-		screen.fill(0,0,0)
-		screen.rect x, y, w, h
-
-		screen.fill(255,255,0)
-		for i from 0 til bars
-			screen.rect sx+i*addx, sy+i*addy, bar_w, bar_h
-	
 	key.press key_down, ~> if mode == @
 		@move_cursor 1 if @paused
 
@@ -72,7 +60,7 @@ global.game_mode = mixin ->
 				wpn_x = x + 10 + 80 * floor(i / 3)
 				wpn_y = y + 20 + 14 * (i % 3)
 				if @cursor!=i or blink(0.5s) then
-					draw_healthbar screen, wpn.charge ? hero.hp, 24, wpn_x + 12, wpn_y, "right"
+					draw_healthbar (wpn.charge ? hero.hp)/hero.maxhp, wpn_x + 12, wpn_y, "right"
 					screen.fill 255, 255, 255
 					screen.text wpn.tag, wpn_x , wpn_y + 7
 				if @cursor==i then
@@ -104,5 +92,5 @@ global.game_mode = mixin ->
 		for obj in dynamic_objects
 			obj.draw screen
 
-		draw_healthbar screen, hero.hp, 24, 8, 8, "down"
-		draw_healthbar screen, hero.weapon.charge, 24, 18, 8, "down" if hero.weapon.charge?
+		draw_healthbar hero.hp/hero.maxhp, 8, 8, "down"
+		draw_healthbar hero.weapon.charge/hero.maxhp, 18, 8, "down" if hero.weapon.charge?

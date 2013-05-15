@@ -1,17 +1,16 @@
 require! {quadtree}
-global.objects = []
 global.tree = quadtree {width:128,height:128}
-global.get_around = (x,y) -> tree.get(x - B/2, y - B/2, x + B/2, y + B/2)
+global.get_around = (x,y) -> tree.get(x - 16/2, y - 16/2, x + 16/2, y + 16/2)
 global.has_solid = (x,y) -> not empty(filter (.solid), get_around(x,y))
 global.has_stair = (x,y) -> not empty(filter (.is_stair), get_around(x,y))
 global.object = mixin ->
-	defer ~> objects.push @; tree.add(@,@pos.x,@pos.y)
+	defer ~> tree.add(@,@pos.x,@pos.y)
 
 	dir: void
-	size: @size ? v3(B,B,0)
+	size: @size ? v3(16,16,0)
 	pos: @pos ? v3(0,0,0)
 	vel: @vel ? v3(0,0,0)
-	hp: @hp ? 28
+	hp: @hp ? 24
 
 	dynamic: true #set false for background objects so they don't waste cpu
 	solid: false #will push objects away when they collide with me
@@ -31,10 +30,7 @@ global.object = mixin ->
 		else
 			screen.fill 222, 222, 222
 			screen.rect @pos.x-@size.x/2, @pos.y-@size.y/2, @size.x, @size.y
-	destroy: ~>
-		defer ~> 
-			remove objects, @
-			tree.remove @
+	destroy: ~> defer ~> tree.remove @
 	tick: (dt) ~>
 		return @destroy! if @hp<=0
 		@pos.x += @vel.x*dt
@@ -43,9 +39,9 @@ global.object = mixin ->
 			@pos.y += 0.5*G*dt*dt
 			@vel.y += G*dt
 		@is_grounded = just false
-		#near_objects = tree.get(@pos.x - B*4, @pos.y - B*4, @pos.x + B*4, @pos.y + B*4)
+		#near_objects = tree.get(@pos.x - 16*4, @pos.y - 16*4, @pos.x + 16*4, @pos.y + 16*4)
 
-		near_objects = tree.get(@pos.x - B*2, @pos.y - B*2, @pos.x + B*2, @pos.y + B*2)
+		near_objects = tree.get(@pos.x - 16*2, @pos.y - 16*2, @pos.x + 16*2, @pos.y + 16*2)
 		for near in near_objects
 			if near!=@ and (near.dynamic or near.solid)
 				@check_collision near
@@ -78,6 +74,7 @@ global.object = mixin ->
 	hurt: (dmg) ~> 
 		@hp -= dmg if !@is_immune!
 		play "enemy_hit" if @ !=hero
-	shot: (type,attrs) ~> type (attrs <<< {side:@side})
+	shot: (type,attrs) ~> type ({pos:v3(@pos.x+16*@dir,@pos.y,0)} <<< attrs <<< {side:@side,owner:@})
 	age: chronometer!
 	old_pos: v3(0,0,0)
+	dir_to: ~> v3(it.x - @pos.x, it.y - @pos.y, 0).normalize()

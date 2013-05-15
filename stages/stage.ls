@@ -21,7 +21,7 @@ global.stage = mixin ->
 	music: "hardman" 
 	objects:
 		o: ground
-		M: mememan
+		M: hero
 		B: bee_queen
 		X: bar
 		h: stair
@@ -58,6 +58,9 @@ global.stage = mixin ->
 							"Bottom"+x%2
 						else
 							"Center"+(x%2+y%2*2)
-					obj {border_type:border_type} {pos:v3(x*B,y*B,0)}
+					if obj==hero then
+						hero.pos = v3(x*B,y*B,0)
+					else
+						obj {border_type:border_type} {pos:v3(x*B,y*B,0)}
 					
 

@@ -14,7 +14,6 @@ require("viclib")();
   sounds = res$;
   global.play = function(sound){
     var x$;
-    log("playing ", sound);
     x$ = sounds[sound];
     x$.play();
     x$.setTime(0);
