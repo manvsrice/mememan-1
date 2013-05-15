@@ -3,8 +3,8 @@ global.hardman = mixin object, ->
 	sprite: "holding"
 	deploy_x: void 
 	size: v3(26,36,0)
-	hp: 22
-	maxhp: 22
+	hp: 200
+	maxhp: 200
 	dmg: 12
 	state_time: chronometer!
 	state: \standing
@@ -59,12 +59,10 @@ global.hardman = mixin object, ->
 			if @is_grounded! then
 				@set_state \buried
 				if hero.is_grounded! then
-					log "poxa"
 					log hero.vel.y
 					hero.vel.y -= 12*B
 					hero.pos.y -= 6
 					setTimeout (~> hero.hurt 6), 100
-					log hero.vel.y
 				camera.pos.y -= 16
 		| \buried =>
 			if @state_time! < 0.6 then

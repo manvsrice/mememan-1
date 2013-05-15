@@ -17,9 +17,8 @@ require("viclib")();
       floats: true,
       collide: function(it){
         if (!it.is_shot && it.side !== this$.side) {
-          this$.hp = 0;
+          return this$.hp = 0;
         }
-        return log(this$.hp);
       },
       hp: 1,
       dmg: (ref$ = this.dmg) != null ? ref$ : 2

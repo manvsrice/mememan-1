@@ -54,6 +54,7 @@ global.canvas = processing window.innerWidth, window.innerHeight,
 			for i from 0 til floor(hp*max)
 				@rect sx+i*addx, sy+i*addy, bar_w, bar_h
 		global.courier_new = @loadFont("courier new")
+		# 3990 460jjjjjj
 
 		# Note: adding the sprites here is not necessary, but that will cause
 		# them to load upon demand and, thus, new things could be invisible
@@ -61,7 +62,7 @@ global.canvas = processing window.innerWidth, window.innerHeight,
 		log "Loading sprites..."
 		preload = map ("modes/stage_select_mode/sprites/"+), 
 			<[look_00 look_01 look_02 look_10 look_11 look_12 look_20 look_21 look_22]>
-		for wpn in <[normal poke]>
+		for wpn in <[normal poke punch]>
 			preload ++= map ("objects/mememan/sprites/"+wpn+"/"+), <[climbed climbing_shooting climbing hurt jumping jumping_shoot sliding
 					standing_shoot standing0 standing1 walking_shoot0 walking_shoot1 walking_shoot2
 					walking0 walking1 walking2]>

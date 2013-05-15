@@ -4,6 +4,7 @@ global.game_mode = mixin ->
 
 	global.tree = quadtree {width:128,height:128}
 	stage.create!
+	camera.pos = hero.pos.clone().add(v3(0,-200,0))
 
 	key.press key_down, ~> if mode == @
 		@move_cursor 1 if @paused

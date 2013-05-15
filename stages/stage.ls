@@ -29,7 +29,6 @@ global.stage = mixin ->
 		m: macer
 		H: stair
 	create: ~>
-		log @
 		bg_music @music
 		stage_map = map (.split("")), @stage_map
 		objects_at = (x,y) ~> 

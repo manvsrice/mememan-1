@@ -11,6 +11,7 @@ require("viclib")();
       height: 128
     });
     stage.create();
+    camera.pos = hero.pos.clone().add(v3(0, -200, 0));
     key.press(key_down, function(){
       if (mode === this$) {
         if (this$.paused) {

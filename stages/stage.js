@@ -18,7 +18,6 @@ require("viclib")();
       },
       create: function(){
         var stage_map, objects_at, has_at, i$, to$, y, lresult$, j$, to1$, x, lresult1$, k$, ref$, len$, obj, border_type, results$ = [];
-        log(this$);
         bg_music(this$.music);
         stage_map = map(function(it){
           return it.split("");
